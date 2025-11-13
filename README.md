@@ -6,7 +6,7 @@
 
 Your project should have this structure:
 ```
-C:\SWE PROJECT\supply-chain-system\
+C:\SWE PROJECT
 │
 ├── src/
 │   └── main/
@@ -29,22 +29,9 @@ C:\SWE PROJECT\supply-chain-system\
 │                       │   └── DatabaseConnection.java
 │                       └── views/
 │                           └── LoginScreen.java
-├── lib/
-│   ├── javafx-sdk-21/
-│   │   └── lib/
-│   │       ├── javafx.base.jar
-│   │       ├── javafx.controls.jar
-│   │       ├── javafx.fxml.jar
-│   │       ├── javafx.graphics.jar
-│   │       └── ... (other JavaFX jars)
-│   └── mysql-connector-java-8.0.33.jar
-├── bin/
-├── .vscode/
-│   ├── settings.json
-│   └── launch.json
-├── run.bat
-├── run.ps1
-└── database_setup.sql
+├
+  
+
 ```
 
 ## Setup Instructions
