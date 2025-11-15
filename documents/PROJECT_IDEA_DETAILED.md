@@ -1,7 +1,7 @@
 # Fresh Dairy Co. - Supply Chain Management System
 ## Comprehensive Project Idea Document
 
-**Version:** 1.1
+**Version:** 1.1.0
 **Last Updated:** November 15, 2025
 **Course:** CSC 305 - Software Engineering
 **Team:** Supply Chain Management Team
