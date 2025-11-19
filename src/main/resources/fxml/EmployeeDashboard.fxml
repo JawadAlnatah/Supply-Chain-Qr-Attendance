@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.team.supplychain.controllers.EmployeeDashboardController"
+            styleClass="dashboard-root"
+            stylesheets="@../css/dashboard-employee.css">
+
+    <!-- TOP: Header Section -->
+    <top>
+        <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="20" right="30" bottom="20" left="30"/>
+            </padding>
+
+            <Label text="My Portal" styleClass="dashboard-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="currentUserLabel" text="Employee: Jawad Hassan" styleClass="user-label"/>
+            <Button fx:id="logoutButton" text="🚪" styleClass="icon-button" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+
+    <!-- CENTER: Main Dashboard Content -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="dashboard-scroll">
+            <VBox spacing="30" styleClass="dashboard-content" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="40" right="30" bottom="30" left="30"/>
+                </padding>
+
+                <!-- Welcome Section -->
+                <VBox spacing="10" alignment="CENTER">
+                    <Label fx:id="welcomeLabel" text="Welcome, Jawad!" styleClass="welcome-message"/>
+                    <Label fx:id="dateTimeLabel" text="Monday, November 19, 2025 • 2:45 PM" styleClass="datetime-label"/>
+                </VBox>
+
+                <!-- ROW 1: Attendance Status Card (Large, Prominent) -->
+                <VBox styleClass="dashboard-card, attendance-card" spacing="20" maxWidth="700">
+                    <padding>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
+                    </padding>
+
+                    <Label text="Today's Attendance" styleClass="card-title-large"/>
+
+                    <HBox spacing="40" alignment="CENTER">
+                        <!-- Status Indicator -->
+                        <VBox spacing="15" alignment="CENTER">
+                            <StackPane>
+                                <Circle radius="60" styleClass="status-circle, status-checked-in"/>
+                                <Label text="✓" styleClass="status-icon"/>
+                            </StackPane>
+                            <Label fx:id="attendanceStatusLabel" text="CHECKED IN" styleClass="status-label, status-label-active"/>
+                        </VBox>
+
+                        <!-- Time Details -->
+                        <VBox spacing="12" HBox.hgrow="ALWAYS">
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="🕐" styleClass="detail-icon"/>
+                                <VBox spacing="3">
+                                    <Label text="Check-In Time" styleClass="detail-label"/>
+                                    <Label fx:id="checkInTimeLabel" text="8:15 AM" styleClass="detail-value"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="⏱" styleClass="detail-icon"/>
+                                <VBox spacing="3">
+                                    <Label text="Hours Today" styleClass="detail-label"/>
+                                    <Label fx:id="hoursWorkedLabel" text="6h 30m" styleClass="detail-value"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="📍" styleClass="detail-icon"/>
+                                <VBox spacing="3">
+                                    <Label text="Location" styleClass="detail-label"/>
+                                    <Label fx:id="checkInLocationLabel" text="Main Gate - Gate 1" styleClass="detail-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- ROW 2: Weekly Attendance and Team Info -->
+                <HBox spacing="25" alignment="TOP_CENTER" maxWidth="900">
+                    <!-- Weekly Attendance Calendar -->
+                    <VBox styleClass="dashboard-card, calendar-card" spacing="15" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="This Week's Attendance" styleClass="card-title"/>
+
+                        <HBox spacing="10" alignment="CENTER" styleClass="week-calendar">
+                            <!-- Monday -->
+                            <VBox spacing="8" alignment="CENTER" styleClass="day-box, day-present" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="12" right="8" bottom="12" left="8"/>
+                                </padding>
+                                <Label text="MON" styleClass="day-label"/>
+                                <Label text="18" styleClass="day-number"/>
+                                <Label text="✓" styleClass="day-status"/>
+                            </VBox>
+
+                            <!-- Tuesday -->
+                            <VBox spacing="8" alignment="CENTER" styleClass="day-box, day-present" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="12" right="8" bottom="12" left="8"/>
+                                </padding>
+                                <Label text="TUE" styleClass="day-label"/>
+                                <Label text="19" styleClass="day-number"/>
+                                <Label text="✓" styleClass="day-status"/>
+                            </VBox>
+
+                            <!-- Wednesday -->
+                            <VBox spacing="8" alignment="CENTER" styleClass="day-box, day-today" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="12" right="8" bottom="12" left="8"/>
+                                </padding>
+                                <Label text="WED" styleClass="day-label"/>
+                                <Label text="20" styleClass="day-number"/>
+                                <Label text="•" styleClass="day-status"/>
+                            </VBox>
+
+                            <!-- Thursday -->
+                            <VBox spacing="8" alignment="CENTER" styleClass="day-box, day-future" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="12" right="8" bottom="12" left="8"/>
+                                </padding>
+                                <Label text="THU" styleClass="day-label"/>
+                                <Label text="21" styleClass="day-number"/>
+                                <Label text="—" styleClass="day-status"/>
+                            </VBox>
+
+                            <!-- Friday -->
+                            <VBox spacing="8" alignment="CENTER" styleClass="day-box, day-future" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="12" right="8" bottom="12" left="8"/>
+                                </padding>
+                                <Label text="FRI" styleClass="day-label"/>
+                                <Label text="22" styleClass="day-number"/>
+                                <Label text="—" styleClass="day-status"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="20" alignment="CENTER" styleClass="legend">
+                            <HBox spacing="5" alignment="CENTER">
+                                <Circle radius="5" styleClass="legend-dot, legend-present"/>
+                                <Label text="Present" styleClass="legend-label"/>
+                            </HBox>
+                            <HBox spacing="5" alignment="CENTER">
+                                <Circle radius="5" styleClass="legend-dot, legend-today"/>
+                                <Label text="Today" styleClass="legend-label"/>
+                            </HBox>
+                            <HBox spacing="5" alignment="CENTER">
+                                <Circle radius="5" styleClass="legend-dot, legend-future"/>
+                                <Label text="Upcoming" styleClass="legend-label"/>
+                            </HBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Team Info Card -->
+                    <VBox styleClass="dashboard-card, team-card" spacing="15" prefWidth="280">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="Team Status" styleClass="card-title"/>
+
+                        <VBox spacing="15" alignment="CENTER">
+                            <VBox spacing="8" alignment="CENTER">
+                                <Label text="👥" styleClass="team-icon"/>
+                                <Label fx:id="teamOnSiteLabel" text="18" styleClass="team-count"/>
+                                <Label text="Colleagues On-Site" styleClass="team-subtitle"/>
+                            </VBox>
+
+                            <VBox spacing="5" styleClass="department-info">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="📦" styleClass="dept-icon"/>
+                                    <Label text="Your Department:" styleClass="dept-label"/>
+                                </HBox>
+                                <Label fx:id="departmentLabel" text="Warehouse Operations" styleClass="dept-value"/>
+                            </VBox>
+
+                            <VBox spacing="5" styleClass="position-info">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="💼" styleClass="pos-icon"/>
+                                    <Label text="Position:" styleClass="pos-label"/>
+                                </HBox>
+                                <Label fx:id="positionLabel" text="Inventory Specialist" styleClass="pos-value"/>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+                </HBox>
+
+                <!-- ROW 3: Quick Stats -->
+                <HBox spacing="20" alignment="CENTER" maxWidth="900">
+                    <!-- Days Present This Month -->
+                    <VBox styleClass="dashboard-card, stat-card" spacing="10" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="📅" styleClass="stat-icon"/>
+                        <Label fx:id="daysThisMonthLabel" text="15" styleClass="stat-value"/>
+                        <Label text="Days This Month" styleClass="stat-label"/>
+                    </VBox>
+
+                    <!-- Total Hours This Week -->
+                    <VBox styleClass="dashboard-card, stat-card" spacing="10" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="⏰" styleClass="stat-icon"/>
+                        <Label fx:id="hoursThisWeekLabel" text="22.5" styleClass="stat-value"/>
+                        <Label text="Hours This Week" styleClass="stat-label"/>
+                    </VBox>
+
+                    <!-- Average Check-In Time -->
+                    <VBox styleClass="dashboard-card, stat-card" spacing="10" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label text="🕐" styleClass="stat-icon"/>
+                        <Label fx:id="avgCheckInLabel" text="8:12 AM" styleClass="stat-value"/>
+                        <Label text="Avg Check-In Time" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- BOTTOM: Quick Action Bar -->
+    <bottom>
+        <HBox styleClass="dashboard-footer" spacing="15" alignment="CENTER">
+            <padding>
+                <Insets top="20" right="30" bottom="20" left="30"/>
+            </padding>
+
+            <Button text="📋 View Full Attendance History" styleClass="quick-action-button" onAction="#handleViewHistory"/>
+            <Button text="📊 My Performance Report" styleClass="quick-action-button" onAction="#handleViewReport"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

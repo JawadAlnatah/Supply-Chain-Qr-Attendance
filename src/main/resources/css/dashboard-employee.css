@@ -1,0 +1,422 @@
+/* ============================================
+   EMPLOYEE DASHBOARD - FRESH DAIRY CO.
+   Material Design Inspired Theme
+   Primary Color: Green (#43a047)
+   ============================================ */
+
+/* ROOT CONTAINER */
+.dashboard-root {
+    -fx-background-color: linear-gradient(to bottom, #e8f5e9 0%, #ffffff 100%);
+}
+
+/* HEADER SECTION */
+.dashboard-header {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #43a047;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.user-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #424242;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.icon-button {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #43a047;
+    -fx-font-size: 18px;
+    -fx-background-radius: 20;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 1);
+}
+
+.icon-button:hover {
+    -fx-background-color: #c8e6c9;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.icon-button:pressed {
+    -fx-background-color: #a5d6a7;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* SCROLL PANE */
+.dashboard-scroll {
+    -fx-background-color: transparent;
+}
+
+.dashboard-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* CONTENT AREA */
+.dashboard-content {
+    -fx-background-color: transparent;
+}
+
+/* WELCOME SECTION */
+.welcome-message {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.datetime-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* DASHBOARD CARDS - BASE STYLE */
+.dashboard-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 2);
+    -fx-border-radius: 12;
+}
+
+.dashboard-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 15, 0, 0, 4);
+}
+
+/* ATTENDANCE CARD (Large, Prominent) */
+.attendance-card {
+    -fx-min-height: 220px;
+    -fx-background-color: linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%);
+    -fx-border-color: #43a047;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+}
+
+.card-title-large {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #424242;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* STATUS CIRCLE */
+.status-circle {
+    -fx-fill: transparent;
+    -fx-stroke-width: 5;
+}
+
+.status-checked-in {
+    -fx-fill: #e8f5e9;
+    -fx-stroke: #43a047;
+}
+
+.status-icon {
+    -fx-font-size: 48px;
+    -fx-text-fill: #43a047;
+    -fx-font-weight: bold;
+}
+
+.status-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.status-label-active {
+    -fx-text-fill: #43a047;
+}
+
+/* DETAIL LABELS */
+.detail-icon {
+    -fx-font-size: 24px;
+}
+
+.detail-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.detail-value {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212121;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* CALENDAR CARD */
+.calendar-card {
+    -fx-min-height: 200px;
+}
+
+.week-calendar {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+.day-box {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-min-width: 70px;
+}
+
+.day-present {
+    -fx-border-color: #43a047;
+    -fx-border-width: 2;
+    -fx-background-color: #e8f5e9;
+}
+
+.day-today {
+    -fx-border-color: #2e7d32;
+    -fx-border-width: 3;
+    -fx-background-color: #c8e6c9;
+}
+
+.day-future {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-background-color: white;
+}
+
+.day-box:hover {
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+}
+
+.day-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #616161;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-letter-spacing: 0.5px;
+}
+
+.day-number {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212121;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.day-status {
+    -fx-font-size: 16px;
+    -fx-text-fill: #43a047;
+}
+
+.day-today .day-status {
+    -fx-text-fill: #2e7d32;
+}
+
+.day-future .day-status {
+    -fx-text-fill: #bdbdbd;
+}
+
+/* LEGEND */
+.legend {
+    -fx-padding: 10 0 0 0;
+}
+
+.legend-dot {
+    -fx-stroke: transparent;
+}
+
+.legend-present {
+    -fx-fill: #43a047;
+}
+
+.legend-today {
+    -fx-fill: #2e7d32;
+}
+
+.legend-future {
+    -fx-fill: #e0e0e0;
+}
+
+.legend-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #616161;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* TEAM CARD */
+.team-card {
+    -fx-min-height: 200px;
+}
+
+.team-icon {
+    -fx-font-size: 40px;
+}
+
+.team-count {
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #43a047;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.team-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.department-info,
+.position-info {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+.dept-icon,
+.pos-icon {
+    -fx-font-size: 16px;
+}
+
+.dept-label,
+.pos-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #616161;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.dept-value,
+.pos-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212121;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 5 0 0 0;
+}
+
+/* STAT CARDS */
+.stat-card {
+    -fx-min-height: 140px;
+    -fx-alignment: center;
+}
+
+.stat-icon {
+    -fx-font-size: 36px;
+}
+
+.stat-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #43a047;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.stat-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #757575;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-alignment: center;
+}
+
+/* FOOTER */
+.dashboard-footer {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, -2);
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.quick-action-button {
+    -fx-background-color: linear-gradient(to bottom, #43a047, #388e3c);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 8;
+    -fx-padding: 12 24 12 24;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(67, 160, 71, 0.3), 8, 0, 0, 2);
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.quick-action-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #388e3c, #2e7d32);
+    -fx-effect: dropshadow(gaussian, rgba(67, 160, 71, 0.5), 12, 0, 0, 4);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.quick-action-button:pressed {
+    -fx-background-color: #2e7d32;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from {
+        -fx-opacity: 0;
+        -fx-translate-y: 10px;
+    }
+    to {
+        -fx-opacity: 1;
+        -fx-translate-y: 0;
+    }
+}
+
+.dashboard-card {
+    -fx-animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        -fx-scale-x: 1;
+        -fx-scale-y: 1;
+    }
+    50% {
+        -fx-scale-x: 1.05;
+        -fx-scale-y: 1.05;
+    }
+}
+
+.status-checked-in {
+    -fx-animation: pulse 2s ease-in-out infinite;
+}
+
+/* SCROLLBAR STYLING */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #bdbdbd;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #9e9e9e;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}

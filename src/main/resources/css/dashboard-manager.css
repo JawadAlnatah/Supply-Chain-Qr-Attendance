@@ -1,0 +1,417 @@
+/* ============================================
+   MANAGER DASHBOARD - FRESH DAIRY CO.
+   Sophisticated Dark Theme
+   Primary: Soft Purple (#a78bfa)
+   Accent: Amber (#fbbf24)
+   Background: Rich Dark (#0f172a)
+   ============================================ */
+
+/* ROOT CONTAINER */
+.dashboard-root {
+    -fx-background-color: #0f172a;
+}
+
+/* HEADER SECTION */
+.dashboard-header {
+    -fx-background-color: #1e293b;
+    -fx-padding: 20 30 20 30;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.user-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.icon-button {
+    -fx-background-color: #334155;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 16px;
+    -fx-background-radius: 8;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-cursor: hand;
+}
+
+.icon-button:hover {
+    -fx-background-color: #475569;
+    -fx-text-fill: #f1f5f9;
+}
+
+.icon-button:pressed {
+    -fx-background-color: #1e293b;
+}
+
+/* SCROLL PANE */
+.dashboard-scroll {
+    -fx-background-color: transparent;
+}
+
+.dashboard-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* CONTENT AREA */
+.dashboard-content {
+    -fx-background-color: transparent;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-card {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 12;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+}
+
+.dashboard-card:hover {
+    -fx-border-color: #475569;
+}
+
+/* METRIC CARDS */
+.metric-card {
+    -fx-min-height: 140px;
+    -fx-alignment: top-left;
+}
+
+.card-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.metric-icon {
+    -fx-font-size: 32px;
+}
+
+.metric-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #f1f5f9;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.card-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.card-action-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #a78bfa;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-padding: 8 0 8 0;
+}
+
+.card-action-button:hover {
+    -fx-text-fill: #c4b5fd;
+    -fx-underline: true;
+}
+
+/* HEALTH PROGRESS BAR */
+.health-progress-bar {
+    -fx-accent: #a78bfa;
+}
+
+.health-progress-bar > .bar {
+    -fx-background-color: #a78bfa;
+    -fx-background-radius: 4;
+    -fx-padding: 4;
+}
+
+.health-progress-bar > .track {
+    -fx-background-color: #334155;
+    -fx-background-radius: 4;
+}
+
+/* CHART CARD */
+.chart-card {
+    -fx-min-height: 300px;
+}
+
+/* BAR CHART STYLING */
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: #0f172a;
+}
+
+.default-color0.chart-bar {
+    -fx-bar-fill: #a78bfa;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #334155;
+    -fx-stroke-dash-array: 5 5;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #334155;
+    -fx-stroke-dash-array: 5 5;
+}
+
+.axis {
+    -fx-tick-label-fill: #64748b;
+    -fx-font-size: 11px;
+}
+
+.axis-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: 500;
+    -fx-font-size: 12px;
+}
+
+/* ACTIVITY PANEL */
+.activity-panel {
+    -fx-min-height: 300px;
+}
+
+.activity-list {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.activity-item {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 8;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
+.activity-item:hover {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #475569;
+    -fx-cursor: hand;
+}
+
+.activity-item-warning {
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 0 0 0 3;
+}
+
+.activity-item-success {
+    -fx-border-color: #10b981;
+    -fx-border-width: 0 0 0 3;
+}
+
+.activity-item-info {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 0 0 0 3;
+}
+
+.activity-icon {
+    -fx-font-size: 20px;
+}
+
+.activity-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #f1f5f9;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.activity-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.activity-timestamp {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.card-action-button-primary {
+    -fx-background-color: #a78bfa;
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+}
+
+.card-action-button-primary:hover {
+    -fx-background-color: #c4b5fd;
+}
+
+.card-action-button-primary:pressed {
+    -fx-background-color: #8b5cf6;
+}
+
+/* PURCHASE ORDER TRACKING CARD */
+.po-tracking-card {
+    -fx-min-height: 250px;
+}
+
+.create-po-button {
+    -fx-background-color: #a78bfa;
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+}
+
+.create-po-button:hover {
+    -fx-background-color: #c4b5fd;
+}
+
+.create-po-button:pressed {
+    -fx-background-color: #8b5cf6;
+}
+
+/* PO ITEM STYLING */
+.po-item {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 10;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+.po-item:hover {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #475569;
+    -fx-cursor: hand;
+}
+
+.po-number {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #f1f5f9;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.po-separator {
+    -fx-font-size: 12px;
+    -fx-text-fill: #475569;
+}
+
+.po-supplier {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.po-items {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.po-progress-bar {
+    -fx-accent: #a78bfa;
+}
+
+.po-progress-bar > .bar {
+    -fx-background-color: #a78bfa;
+    -fx-background-radius: 4;
+    -fx-padding: 3;
+}
+
+.po-progress-bar > .track {
+    -fx-background-color: #334155;
+    -fx-background-radius: 4;
+}
+
+.po-status {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-padding: 5 12 5 12;
+    -fx-background-radius: 6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.po-status-pending {
+    -fx-background-color: #451a03;
+    -fx-text-fill: #fbbf24;
+}
+
+.po-status-preparing {
+    -fx-background-color: #450a0a;
+    -fx-text-fill: #fb923c;
+}
+
+.po-status-shipped {
+    -fx-background-color: #022c22;
+    -fx-text-fill: #34d399;
+}
+
+.po-eta {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* FOOTER */
+.dashboard-footer {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1 0 0 0;
+}
+
+.quick-action-button {
+    -fx-background-color: #334155;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-background-radius: 8;
+    -fx-padding: 12 20 12 20;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.quick-action-button:hover {
+    -fx-background-color: #475569;
+    -fx-text-fill: #f1f5f9;
+}
+
+.quick-action-button:pressed {
+    -fx-background-color: #1e293b;
+}
+
+/* SCROLLBAR STYLING */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #475569;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #64748b;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}

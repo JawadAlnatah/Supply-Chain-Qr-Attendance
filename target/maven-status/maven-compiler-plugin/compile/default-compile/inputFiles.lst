@@ -1,10 +1,13 @@
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\UserDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\test\java\com\supplychain\test\TestConnection.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\utils\DatabaseConnection.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\EmployeeDashboardController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\utils\AlertUtil.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\utils\DatabasePasswordUpdater.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AdminDashboardController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\User.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\EmployeeDAO.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerDashboardController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\Supplier.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\utils\PasswordUtil.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\services\QRCodeService.java
@@ -16,7 +19,6 @@ C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\Employee.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\Main.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\enums\AttendanceStatus.java
-C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\PurchaseOrderDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\LoginController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\AttendanceDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\InventoryController.java
