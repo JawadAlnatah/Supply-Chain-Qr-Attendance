@@ -16,90 +16,15 @@
     -fx-background-color: #f8f9fa;
 }
 
-/* Disable default button hover effects */
-.button {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
+/* ==========================================
+   CRITICAL: DISABLE ALL HOVER EFFECTS
+   ========================================== */
+
+/* Remove default button effects */
+.button:hover {
+    -fx-cursor: hand;
 }
 
-.button:hover,
-.button:armed,
-.button:focused,
-.button:pressed {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
-
-/* Disable hover effects on specific interactive elements */
-.menu-button-modern,
-.login-button-dark,
-.login-button-modern,
-.login-button-colorful,
-.action-button-primary,
-.action-button-secondary,
-.logout-button-modern,
-.stat-card-modern,
-.test-credentials-dark,
-.test-credentials-colorful {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
-
-.menu-button-modern:hover,
-.login-button-dark:hover,
-.login-button-modern:hover,
-.login-button-colorful:hover,
-.action-button-primary:hover,
-.action-button-secondary:hover,
-.logout-button-modern:hover,
-.stat-card-modern:hover,
-.test-credentials-dark:hover,
-.test-credentials-colorful:hover {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
-
-/* Prevent text from changing appearance on hover */
-.button .text,
-.button:hover .text,
-.label,
-.label:hover {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
-
-/* Lock ALL text inside interactive elements */
-.menu-button-modern .text,
-.menu-button-modern Label,
-.login-button-dark .text,
-.login-button-modern .text,
-.login-button-colorful .text,
-.action-button-primary .text,
-.action-button-secondary .text,
-.logout-button-modern .text,
-.stat-card-modern .text,
-.stat-card-modern Label,
-.test-credentials-dark Label,
-.test-credentials-colorful Label {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
-
-.menu-button-modern:hover .text,
-.menu-button-modern:hover Label,
-.login-button-dark:hover .text,
-.login-button-modern:hover .text,
-.login-button-colorful:hover .text,
-.action-button-primary:hover .text,
-.action-button-secondary:hover .text,
-.logout-button-modern:hover .text,
-.stat-card-modern:hover .text,
-.stat-card-modern:hover Label,
-.test-credentials-dark:hover Label,
-.test-credentials-colorful:hover Label {
-    -fx-scale-x: 1;
-    -fx-scale-y: 1;
-}
 
 /* ============================================
    DASHBOARD STYLES - MODERN DESIGN
@@ -115,7 +40,7 @@
 
 .app-title-modern {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);
 }
 
@@ -180,7 +105,7 @@
 
 .role-text-modern {
     -fx-text-fill: #3498db;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 /* User Avatar */
@@ -205,7 +130,7 @@
     -fx-background-radius: 8;
     -fx-padding: 10 25;
     -fx-cursor: hand;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-effect: dropshadow(gaussian, rgba(231,76,60,0.4), 6, 0, 0, 2);
 }
 
@@ -237,7 +162,7 @@
 
 .logo-text {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-letter-spacing: 2;
 }
 
@@ -248,7 +173,7 @@
 
 .menu-header-modern {
     -fx-text-fill: #95a5a6;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-letter-spacing: 1.5;
 }
 
@@ -262,22 +187,19 @@
     -fx-background-radius: 10;
     -fx-border-width: 0 0 0 3;
     -fx-border-color: transparent;
-    -fx-font-weight: 500;
+    /* -fx-font-weight: 500; */
 }
 
 .menu-button-modern:hover {
-    -fx-background-color: rgba(52,152,219,0.2);
-    -fx-border-color: #3498db;
-    -fx-text-fill: white;
+    -fx-cursor: hand;
 }
 
 .menu-button-modern:pressed {
-    -fx-background-color: rgba(52,152,219,0.3);
+    -fx-cursor: hand;
 }
 
 .menu-button-modern:focused {
-    -fx-background-color: rgba(52,152,219,0.25);
-    -fx-border-color: #3498db;
+    -fx-cursor: hand;
 }
 
 .menu-button-modern:disabled {
@@ -313,12 +235,12 @@
 
 .user-info-email {
     -fx-text-fill: white;
-    -fx-font-weight: 500;
+    /* -fx-font-weight: 500; */
 }
 
 .user-status {
     -fx-text-fill: #27ae60;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 /* Content Area - Modern */
@@ -338,7 +260,7 @@
 /* Welcome Message - Modern */
 .welcome-message-modern {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .subtitle-modern {
@@ -347,7 +269,7 @@
 
 .section-title {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 /* Stat Cards - Modern */
@@ -362,8 +284,15 @@
 }
 
 .stat-card-modern:hover {
-    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 15, 0, 0, 5);
-    -fx-border-color: #3498db;
+    -fx-cursor: hand;
+}
+
+.stat-card-modern:focused {
+    -fx-cursor: hand;
+}
+
+.stat-card-modern:pressed {
+    -fx-cursor: hand;
 }
 
 /* Stat Icon Containers */
@@ -398,22 +327,22 @@
 
 .stat-label-modern {
     -fx-text-fill: #7f8c8d;
-    -fx-font-weight: 500;
+    /* -fx-font-weight: 500; */
 }
 
 .stat-value-modern {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .stat-change-positive {
     -fx-text-fill: #27ae60;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 .stat-change-negative {
     -fx-text-fill: #e74c3c;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 /* Action Buttons */
@@ -423,7 +352,7 @@
     -fx-background-radius: 10;
     -fx-padding: 15 30;
     -fx-cursor: hand;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 10, 0, 0, 4);
 }
 
@@ -437,7 +366,7 @@
     -fx-background-radius: 10;
     -fx-padding: 15 30;
     -fx-cursor: hand;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-border-color: #3498db;
     -fx-border-width: 2;
     -fx-border-radius: 10;
@@ -462,7 +391,7 @@
 
 .status-text-modern {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: 500;
+    /* -fx-font-weight: 500; */
 }
 
 .version-text {
@@ -512,8 +441,14 @@
 }
 
 .activity-item:hover {
-    -fx-background-color: white;
-    -fx-border-color: #3498db;
+    -fx-cursor: hand;
+}
+
+.activity-item:focused {
+    -fx-cursor: hand;
+}
+
+.activity-item:pressed {
     -fx-cursor: hand;
 }
 
@@ -538,7 +473,7 @@
 
 .activity-title {
     -fx-font-size: 14;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-text-fill: #2c3e50;
 }
 
@@ -562,14 +497,20 @@
 }
 
 .po-item:hover {
-    -fx-background-color: white;
-    -fx-border-color: #3498db;
+    -fx-cursor: hand;
+}
+
+.po-item:focused {
+    -fx-cursor: hand;
+}
+
+.po-item:pressed {
     -fx-cursor: hand;
 }
 
 .po-number {
     -fx-font-size: 15;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-text-fill: #2c3e50;
 }
 
@@ -605,7 +546,7 @@
 
 .po-status {
     -fx-font-size: 11;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
     -fx-padding: 6 14;
     -fx-background-radius: 8;
 }
@@ -627,7 +568,7 @@
 
 .po-eta {
     -fx-font-size: 12;
-    -fx-font-weight: 500;
+    /* -fx-font-weight: 500; */
     -fx-text-fill: #7f8c8d;
 }
 
@@ -641,7 +582,7 @@
 
 /* Left Panel - Branding */
 .login-left-panel {
-    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 5, 0);
 }
 
@@ -652,13 +593,13 @@
 
 .login-brand-title {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
 .login-brand-subtitle {
     -fx-text-fill: rgba(255,255,255,0.9);
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 /* Features Section */
@@ -673,7 +614,7 @@
 
 .feature-check {
     -fx-text-fill: #27ae60;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-background-color: rgba(255,255,255,0.95);
     -fx-background-radius: 50%;
     -fx-padding: 5;
@@ -686,7 +627,7 @@
 
 .feature-title {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .feature-desc {
@@ -704,7 +645,7 @@
 
 .login-title {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .login-subtitle {
@@ -781,25 +722,7 @@
     -fx-underline: true;
 }
 
-/* Login Button */
-.login-button-modern {
-    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
-    -fx-padding: 16 40;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.5), 15, 0, 0, 5);
-    -fx-pref-width: 400;
-}
 
-.login-button-modern:hover {
-    -fx-background-color: linear-gradient(to right, #5a67d8, #6b42a1);
-}
-
-.login-button-modern:pressed {
-    -fx-background-color: linear-gradient(to right, #4c51bf, #553c9a);
-}
 
 /* Error Label */
 .error-label-modern {
@@ -838,7 +761,7 @@
 
 /* Left Panel - Colorful Gradient */
 .login-left-panel-colorful {
-    -fx-background-color: linear-gradient(135deg, #3498db 0%, #8e44ad 50%, #e74c3c 100%);
+    -fx-background-color: linear-gradient(to bottom right, #3498db, #8e44ad, #e74c3c);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 5, 0);
 }
 
@@ -1003,26 +926,7 @@
     -fx-border-width: 0;
 }
 
-/* Login Button - Colorful Gradient */
-.login-button-colorful {
-    -fx-background-color: linear-gradient(to right, #3498db, #9b59b6, #e74c3c);
-    -fx-text-fill: white;
-    -fx-background-radius: 12;
-    -fx-padding: 18 40;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(155,89,182,0.6), 20, 0, 0, 8);
-    -fx-pref-width: 400;
-}
 
-.login-button-colorful:hover {
-    -fx-background-color: linear-gradient(to right, #2980b9, #8e44ad, #c0392b);
-    -fx-effect: dropshadow(gaussian, rgba(155,89,182,0.6), 20, 0, 0, 8);
-}
-
-.login-button-colorful:pressed {
-    -fx-background-color: linear-gradient(to right, #21618c, #6c3483, #a93226);
-}
 
 /* Divider - Colorful */
 .divider-colorful {
@@ -1036,7 +940,7 @@
 
 /* Test Credentials - Colorful Cards */
 .test-credentials-colorful {
-    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
     -fx-background-radius: 12;
     -fx-border-color: transparent;
     -fx-border-width: 0;
@@ -1070,7 +974,7 @@
 
 .login-brand-karton {
     -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-letter-spacing: 8;
 }
 
@@ -1085,7 +989,7 @@
 
 .login-title-dark {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .login-subtitle-dark {
@@ -1095,7 +999,7 @@
 /* Input Fields - Dark Mode */
 .input-label-dark {
     -fx-text-fill: #e0e0e0;
-    -fx-font-weight: 600;
+    /* -fx-font-weight: 600; */
 }
 
 .input-container-dark {
@@ -1169,7 +1073,7 @@
     -fx-background-radius: 10;
     -fx-padding: 18 40;
     -fx-cursor: hand;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
     -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 10, 0, 0, 4);
     -fx-pref-width: 400;
 }
@@ -1181,6 +1085,25 @@
 .login-button-dark:pressed {
     -fx-background-color: #21618c;
 }
+.transparent-button {
+    -fx-background-color: transparent !important;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* remove hover + pressed background */
+.transparent-button:hover {
+    -fx-background-color: transparent !important;
+}
+
+.transparent-button:pressed {
+    -fx-background-color: transparent !important;
+}
+
 
 /* Divider - Dark Mode */
 .divider-dark {
@@ -1203,7 +1126,7 @@
 
 .credential-role-dark {
     -fx-text-fill: #3498db;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .credential-text-dark {
@@ -1223,7 +1146,7 @@
 
 .app-title {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .welcome-text {
@@ -1242,7 +1165,7 @@
 
 .menu-header {
     -fx-text-fill: #95a5a6;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .menu-button {
@@ -1353,7 +1276,7 @@
     -fx-background-radius: 5;
     -fx-padding: 12;
     -fx-cursor: hand;
-    -fx-font-weight: bold;
+    /* -fx-font-weight: bold; */
 }
 
 .primary-button:hover {

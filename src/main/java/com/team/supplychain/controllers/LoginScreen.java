@@ -88,6 +88,8 @@ public class LoginScreen {
         
         // Create scene
         Scene scene = new Scene(root, 800, 600);
+        stage.setWidth(1100);   
+        stage.setHeight(700);   
         
         // Enter key support
         passwordField.setOnAction(e -> handleLogin());

@@ -44,14 +44,10 @@
 .icon-button:hover {
     -fx-background-color: #c8e6c9;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
 }
 
 .icon-button:pressed {
     -fx-background-color: #a5d6a7;
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
 }
 
 /* SCROLL PANE */
@@ -355,14 +351,10 @@
 .quick-action-button:hover {
     -fx-background-color: linear-gradient(to bottom, #388e3c, #2e7d32);
     -fx-effect: dropshadow(gaussian, rgba(67, 160, 71, 0.5), 12, 0, 0, 4);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
 }
 
 .quick-action-button:pressed {
     -fx-background-color: #2e7d32;
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
 }
 
 /* ANIMATIONS */
@@ -381,20 +373,7 @@
     -fx-animation: fadeIn 0.4s ease-out;
 }
 
-@keyframes pulse {
-    0%, 100% {
-        -fx-scale-x: 1;
-        -fx-scale-y: 1;
-    }
-    50% {
-        -fx-scale-x: 1.05;
-        -fx-scale-y: 1.05;
-    }
-}
-
-.status-checked-in {
-    -fx-animation: pulse 2s ease-in-out infinite;
-}
+/* Removed pulse animation to prevent scaling effects */
 
 /* SCROLLBAR STYLING */
 .scroll-bar {

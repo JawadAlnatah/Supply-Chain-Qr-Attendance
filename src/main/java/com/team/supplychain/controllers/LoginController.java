@@ -62,6 +62,22 @@ public class LoginController {
         }
     }
 
+    @FXML
+    private void handleAdminCredentialsClick(ActionEvent event) {
+        usernameField.setText("admin");
+        passwordField.setText("password123");
+    }
+    @FXML
+    private void handleManagerCredentialsClick(ActionEvent event) {
+        usernameField.setText("manager");
+        passwordField.setText("password123");
+    }
+    @FXML
+    private void handleEmployeeCredentialsClick(ActionEvent event) {
+        usernameField.setText("employee");
+        passwordField.setText("password123");
+    }
+
     /**
      * TEMPORARY METHOD: Create mock users for testing dashboards
      * Remove this and use userDAO.authenticate() when database is ready
@@ -161,7 +177,8 @@ public class LoginController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle(dashboardTitle);
-
+            stage.setWidth(1200);
+            stage.setHeight(800);
             // Make window fullscreen
             stage.setMaximized(true);
             stage.setFullScreen(false); // Use maximized instead of true fullscreen for better UX
