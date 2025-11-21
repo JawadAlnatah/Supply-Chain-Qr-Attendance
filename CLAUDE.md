@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Essential Commands:**
 ```bash
-# Run the JavaFX application (PRIMARY COMMAND)
+# Run the JavaFX application  (PRIMARY COMMAND)
 mvn javafx:run
 
 # Clean and build with dependencies
