@@ -239,7 +239,7 @@
 
     <!-- CENTER: Main Dashboard Content -->
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
+        <ScrollPane fx:id="centerScrollPane" fitToWidth="true" fitToHeight="true" styleClass="content-scroll">
             <VBox spacing="30" styleClass="content-area-modern">
                 <padding>
                     <Insets top="30" right="30" bottom="30" left="30"/>

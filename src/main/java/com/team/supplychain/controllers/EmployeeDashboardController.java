@@ -153,9 +153,18 @@ public class EmployeeDashboardController {
             Parent loginView = loader.load();
 
             Stage stage = (Stage) logoutButton.getScene().getWindow();
+
+            // Reset window state before switching to login
+            stage.setMaximized(false);
+            stage.setResizable(false);
+
+            // Set login scene
             Scene scene = new Scene(loginView);
             stage.setScene(scene);
-            stage.setTitle("Supply Chain Management - Login");
+            stage.setTitle("Supply Chain Management System - Login");
+
+            // Center the window on screen
+            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
             showError("Logout Error", "Failed to return to login screen");

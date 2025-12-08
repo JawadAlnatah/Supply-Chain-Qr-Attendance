@@ -383,3 +383,285 @@
 .po-eta {
     -fx-text-fill: #6c757d;
 }
+
+/* ============================================
+   MODERN TABLE VIEW STYLING - CYAN THEME
+   ============================================ */
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Table Header */
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #f1f3f5);
+    -fx-background-radius: 8px 8px 0 0;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #22d3ee;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: rgba(34,211,238,0.15);
+    -fx-padding: 14px 12px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.table-view .column-header:hover {
+    -fx-background-color: rgba(34,211,238,0.08);
+}
+
+.table-view .filler {
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #f1f3f5);
+}
+
+/* Table Rows */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f1f3f5;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #fafbfc;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(34,211,238,0.08);
+    -fx-cursor: hand;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(34,211,238,0.2);
+    -fx-border-color: #22d3ee;
+    -fx-border-width: 0 0 2 0;
+}
+
+.table-row-cell:focused {
+    -fx-background-color: rgba(34,211,238,0.15);
+}
+
+/* Table Cells */
+.table-cell {
+    -fx-padding: 12px 12px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-cell:selected {
+    -fx-text-fill: #0f172a;
+}
+
+/* Table Placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 14px;
+}
+
+/* Table Scrollbar - Cyan Theme */
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8px;
+}
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(34,211,238,0.4);
+    -fx-background-radius: 8px;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(34,211,238,0.6);
+}
+
+.table-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #22d3ee;
+}
+
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar:horizontal .track {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8px;
+}
+
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(34,211,238,0.4);
+    -fx-background-radius: 8px;
+}
+
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(34,211,238,0.6);
+}
+
+.table-view .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: #22d3ee;
+}
+
+/* Scroll Bar Arrows */
+.table-view .scroll-bar .increment-button,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.table-view .scroll-bar .increment-arrow,
+.table-view .scroll-bar .decrement-arrow {
+    -fx-background-color: #22d3ee;
+}
+
+/* ============================================
+   MODERN COMBOBOX STYLING - CYAN THEME
+   ============================================ */
+
+.modern-combobox,
+.combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding: 12px 16px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+}
+
+.modern-combobox:hover,
+.combo-box:hover {
+    -fx-border-color: #22d3ee;
+    -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.3), 10, 0, 0, 3);
+}
+
+.modern-combobox:focused,
+.combo-box:focused {
+    -fx-border-color: #22d3ee;
+    -fx-border-width: 2.5px;
+    -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.5), 15, 0, 0, 4);
+    -fx-background-color: #f0fdff;
+}
+
+.modern-combobox:showing,
+.combo-box:showing {
+    -fx-border-color: #22d3ee;
+    -fx-background-color: #f0fdff;
+}
+
+/* ComboBox Arrow Button */
+.modern-combobox .arrow-button,
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 8px 8px 0;
+    -fx-padding: 0 12px 0 8px;
+}
+
+.modern-combobox:hover .arrow-button,
+.combo-box:hover .arrow-button {
+    -fx-background-color: rgba(34,211,238,0.1);
+}
+
+/* Arrow Icon - Cyan */
+.modern-combobox .arrow,
+.combo-box .arrow {
+    -fx-background-color: #22d3ee;
+    -fx-padding: 5px 5px 2.5px 5px;
+    -fx-shape: "M 0 0 L 5 5 L 10 0 Z";
+}
+
+.modern-combobox:hover .arrow,
+.combo-box:hover .arrow {
+    -fx-background-color: #06b6d4;
+}
+
+/* ComboBox Popup/Dropdown */
+.modern-combobox .list-view,
+.combo-box .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #22d3ee;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.4), 25, 0, 0, 10);
+    -fx-padding: 8px;
+}
+
+/* Dropdown List Cell */
+.modern-combobox .list-cell,
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-padding: 12px 14px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+}
+
+.modern-combobox .list-cell:hover,
+.combo-box .list-cell:hover {
+    -fx-background-color: rgba(34,211,238,0.12);
+    -fx-cursor: hand;
+}
+
+.modern-combobox .list-cell:selected,
+.combo-box .list-cell:selected {
+    -fx-background-color: #22d3ee;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Dropdown Scrollbar - Cyan Theme */
+.modern-combobox .list-view .scroll-bar:vertical,
+.combo-box .list-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10px;
+}
+
+.modern-combobox .list-view .scroll-bar:vertical .track,
+.combo-box .list-view .scroll-bar:vertical .track {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8px;
+}
+
+.modern-combobox .list-view .scroll-bar:vertical .thumb,
+.combo-box .list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(34,211,238,0.4);
+    -fx-background-radius: 8px;
+}
+
+.modern-combobox .list-view .scroll-bar:vertical .thumb:hover,
+.combo-box .list-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(34,211,238,0.6);
+}
+
+.modern-combobox .list-view .scroll-bar:vertical .thumb:pressed,
+.combo-box .list-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #22d3ee;
+}
+
+.modern-combobox .list-view .scroll-bar .increment-button,
+.modern-combobox .list-view .scroll-bar .decrement-button,
+.combo-box .list-view .scroll-bar .increment-button,
+.combo-box .list-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ComboBox Popup Arrow */
+.modern-combobox-popup,
+.combo-box-popup {
+    -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.35), 20, 0, 0, 8);
+}

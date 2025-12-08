@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.AdminReportsController"
+      spacing="30"
+      style="-fx-background-color: #f8f9fa;">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <VBox spacing="10">
+        <Label text="Reports and Analytics" styleClass="section-title">
+            <font><Font name="System Bold" size="28"/></font>
+            <style>-fx-text-fill: #2c3e50;</style>
+        </Label>
+        <Label text="Generate comprehensive system reports, analytics, and business intelligence dashboards" styleClass="subtitle-modern">
+            <font><Font size="14"/></font>
+            <style>-fx-text-fill: #7f8c8d;</style>
+        </Label>
+    </VBox>
+
+    <HBox spacing="15">
+        <Button fx:id="generateButton" text="+ Generate New Report" onAction="#handleGenerate">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: linear-gradient(to bottom right, #22d3ee, #06b6d4);
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.4), 10, 0, 0, 3);
+            </style>
+        </Button>
+        <Button fx:id="scheduleButton" text="📅 Schedule Report" onAction="#handleSchedule">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: white;
+                -fx-text-fill: #22d3ee;
+                -fx-border-color: #22d3ee;
+                -fx-border-width: 2px;
+                -fx-background-radius: 10px;
+                -fx-border-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Button fx:id="dashboardButton" text="📊 View Dashboard" onAction="#handleDashboard">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: white;
+                -fx-text-fill: #22d3ee;
+                -fx-border-color: #22d3ee;
+                -fx-border-width: 2px;
+                -fx-background-radius: 10px;
+                -fx-border-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
+            <font><Font size="13"/></font>
+            <style>
+                -fx-background-color: #e0e0e0;
+                -fx-text-fill: #2c3e50;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+    </HBox>
+
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+        </columnConstraints>
+
+        <VBox GridPane.columnIndex="0" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #22d3ee; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="📊" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Reports Generated"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="reportsGeneratedLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #22d3ee;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="1" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #10b981; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="🕒" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Scheduled Reports"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="scheduledLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #10b981;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="2" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #fbbf24; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="⏱️" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Avg Generation Time"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="avgTimeLabel" text="0s"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #fbbf24;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="3" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #a855f7; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(168,85,247,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="📥" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Total Downloads"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="downloadsLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #a855f7;</style></Label>
+            </VBox>
+        </VBox>
+    </GridPane>
+
+    <VBox spacing="15" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #e0e0e0; -fx-border-width: 1px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 3); -fx-padding: 25;">
+
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="Generated Reports"><font><Font name="System Bold" size="20"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="reportTypeFilter" promptText="Report Type" styleClass="modern-combobox" style="-fx-pref-width: 170px;"/>
+            <ComboBox fx:id="formatFilter" promptText="Format" styleClass="modern-combobox" style="-fx-pref-width: 130px;"/>
+            <ComboBox fx:id="statusFilter" promptText="Status" styleClass="modern-combobox" style="-fx-pref-width: 130px;"/>
+            <TextField fx:id="searchField" promptText="Search..." style="-fx-background-color: #f8f9fa; -fx-background-radius: 10px; -fx-padding: 10px 15px; -fx-pref-width: 200px; -fx-border-color: #e0e0e0; -fx-border-radius: 10px; -fx-border-width: 1px;"><font><Font size="13"/></font></TextField>
+        </HBox>
+
+        <TableView fx:id="reportsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <columns>
+                <TableColumn fx:id="reportIdColumn" text="Report ID" prefWidth="100"/>
+                <TableColumn fx:id="reportNameColumn" text="Report Name" prefWidth="250"/>
+                <TableColumn fx:id="reportTypeColumn" text="Type" prefWidth="150"/>
+                <TableColumn fx:id="generatedByColumn" text="Generated By" prefWidth="120"/>
+                <TableColumn fx:id="generatedDateColumn" text="Generated Date" prefWidth="140"/>
+                <TableColumn fx:id="formatColumn" text="Format" prefWidth="80"/>
+                <TableColumn fx:id="sizeColumn" text="Size" prefWidth="100"/>
+                <TableColumn fx:id="reportStatusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="180"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

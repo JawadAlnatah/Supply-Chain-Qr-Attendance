@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.ManagerAttendanceController"
+      spacing="30"
+      style="-fx-background-color: #f8f9fa;">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <!-- Page Header -->
+    <VBox spacing="10">
+        <Label text="Attendance Tracking" styleClass="section-title">
+            <font><Font name="System Bold" size="28"/></font>
+            <style>-fx-text-fill: #2c3e50;</style>
+        </Label>
+        <Label text="Monitor employee attendance, check-ins, and generate attendance reports" styleClass="subtitle-modern">
+            <font><Font size="14"/></font>
+            <style>-fx-text-fill: #7f8c8d;</style>
+        </Label>
+    </VBox>
+
+    <!-- Date Selector & Actions -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <DatePicker fx:id="datePicker" promptText="Select Date">
+            <style>
+                -fx-pref-width: 200px;
+                -fx-background-color: white;
+                -fx-background-radius: 10px;
+                -fx-border-color: #e0e0e0;
+                -fx-border-width: 2px;
+                -fx-border-radius: 10px;
+                -fx-padding: 10px 15px;
+            </style>
+        </DatePicker>
+        <Button fx:id="todayButton" text="Today" onAction="#handleToday">
+            <font><Font size="13"/></font>
+            <style>
+                -fx-background-color: #a78bfa;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 10px 20px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="exportButton" text="Export Report" onAction="#handleExport" styleClass="action-button-secondary">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: white;
+                -fx-text-fill: #a78bfa;
+                -fx-border-color: #a78bfa;
+                -fx-border-width: 2px;
+                -fx-background-radius: 10px;
+                -fx-border-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
+            <font><Font size="13"/></font>
+            <style>
+                -fx-background-color: #e0e0e0;
+                -fx-text-fill: #2c3e50;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+    </HBox>
+
+    <!-- Attendance Stats -->
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+        </columnConstraints>
+
+        <!-- Total Employees -->
+        <VBox GridPane.columnIndex="0" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #e0e0e0; -fx-border-width: 1px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="👥" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Total Employees"><font><Font size="11"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="totalEmployeesLabel" text="0"><font><Font name="System Bold" size="28"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
+            </VBox>
+        </VBox>
+
+        <!-- Present -->
+        <VBox GridPane.columnIndex="1" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #10b981; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="✓" style="-fx-font-size: 32px; -fx-text-fill: #10b981;"/>
+            <VBox spacing="3">
+                <Label text="Present"><font><Font size="11"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="presentLabel" text="0"><font><Font name="System Bold" size="28"/></font><style>-fx-text-fill: #10b981;</style></Label>
+            </VBox>
+        </VBox>
+
+        <!-- Absent -->
+        <VBox GridPane.columnIndex="2" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #ef4444; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="✗" style="-fx-font-size: 32px; -fx-text-fill: #ef4444;"/>
+            <VBox spacing="3">
+                <Label text="Absent"><font><Font size="11"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="absentLabel" text="0"><font><Font name="System Bold" size="28"/></font><style>-fx-text-fill: #ef4444;</style></Label>
+            </VBox>
+        </VBox>
+
+        <!-- Late -->
+        <VBox GridPane.columnIndex="3" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #fbbf24; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="⏰" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Late"><font><Font size="11"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="lateLabel" text="0"><font><Font name="System Bold" size="28"/></font><style>-fx-text-fill: #fbbf24;</style></Label>
+            </VBox>
+        </VBox>
+
+        <!-- Attendance Rate -->
+        <VBox GridPane.columnIndex="4" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #a78bfa; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="📊" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Attendance Rate"><font><Font size="11"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="attendanceRateLabel" text="0%"><font><Font name="System Bold" size="28"/></font><style>-fx-text-fill: #a78bfa;</style></Label>
+            </VBox>
+        </VBox>
+    </GridPane>
+
+    <!-- Attendance Table -->
+    <VBox spacing="15" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #e0e0e0; -fx-border-width: 1px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 3); -fx-padding: 25;">
+
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="Today's Attendance"><font><Font name="System Bold" size="20"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="departmentFilter" promptText="Filter by Department" styleClass="modern-combobox" style="-fx-pref-width: 200px;"/>
+            <TextField fx:id="searchField" promptText="Search employee..." style="-fx-background-color: #f8f9fa; -fx-background-radius: 10px; -fx-padding: 10px 15px; -fx-pref-width: 250px; -fx-border-color: #e0e0e0; -fx-border-radius: 10px; -fx-border-width: 1px;"><font><Font size="13"/></font></TextField>
+        </HBox>
+
+        <TableView fx:id="attendanceTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <columns>
+                <TableColumn fx:id="employeeIdColumn" text="Employee ID" prefWidth="120"/>
+                <TableColumn fx:id="employeeNameColumn" text="Name" prefWidth="200"/>
+                <TableColumn fx:id="departmentColumn" text="Department" prefWidth="150"/>
+                <TableColumn fx:id="checkInColumn" text="Check In" prefWidth="120"/>
+                <TableColumn fx:id="checkOutColumn" text="Check Out" prefWidth="120"/>
+                <TableColumn fx:id="hoursWorkedColumn" text="Hours" prefWidth="100"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

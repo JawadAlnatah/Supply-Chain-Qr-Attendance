@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.ManagerPurchaseOrdersController"
+      spacing="30"
+      style="-fx-background-color: #f8f9fa;">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <!-- Page Header -->
+    <VBox spacing="10">
+        <Label text="Purchase Orders" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+            <style>
+                -fx-text-fill: #2c3e50;
+            </style>
+        </Label>
+        <Label text="Track and manage all purchase orders, approvals, and supplier deliveries" styleClass="subtitle-modern">
+            <font>
+                <Font size="14"/>
+            </font>
+            <style>
+                -fx-text-fill: #7f8c8d;
+            </style>
+        </Label>
+    </VBox>
+
+    <!-- Action Buttons -->
+    <HBox spacing="15">
+        <Button fx:id="createPOButton" text="+ Create New PO" onAction="#handleCreatePO" styleClass="action-button-primary">
+            <font>
+                <Font name="System Bold" size="13"/>
+            </font>
+            <style>
+                -fx-background-color: linear-gradient(to bottom right, #a78bfa, #8b5cf6);
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.4), 10, 0, 0, 3);
+            </style>
+        </Button>
+        <Button fx:id="approveButton" text="✓ Approve Selected" onAction="#handleApprove" styleClass="action-button-secondary">
+            <font>
+                <Font name="System Bold" size="13"/>
+            </font>
+            <style>
+                -fx-background-color: #10b981;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Button fx:id="rejectButton" text="✗ Reject Selected" onAction="#handleReject">
+            <font>
+                <Font name="System Bold" size="13"/>
+            </font>
+            <style>
+                -fx-background-color: #ef4444;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
+            <font>
+                <Font size="13"/>
+            </font>
+            <style>
+                -fx-background-color: #e0e0e0;
+                -fx-text-fill: #2c3e50;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+    </HBox>
+
+    <!-- PO Stats Cards -->
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+        </columnConstraints>
+
+        <!-- Pending Approval -->
+        <VBox GridPane.columnIndex="0" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #fbbf24;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3);
+            </style>
+
+            <Label text="⏳" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Pending" styleClass="stat-label-modern">
+                    <font><Font size="11"/></font>
+                    <style>-fx-text-fill: #7f8c8d;</style>
+                </Label>
+                <Label fx:id="pendingLabel" text="0" styleClass="stat-value-modern">
+                    <font><Font name="System Bold" size="28"/></font>
+                    <style>-fx-text-fill: #fbbf24;</style>
+                </Label>
+            </VBox>
+        </VBox>
+
+        <!-- Approved -->
+        <VBox GridPane.columnIndex="1" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #10b981;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 12, 0, 0, 3);
+            </style>
+
+            <Label text="✓" style="-fx-font-size: 32px; -fx-text-fill: #10b981;"/>
+            <VBox spacing="3">
+                <Label text="Approved" styleClass="stat-label-modern">
+                    <font><Font size="11"/></font>
+                    <style>-fx-text-fill: #7f8c8d;</style>
+                </Label>
+                <Label fx:id="approvedLabel" text="0" styleClass="stat-value-modern">
+                    <font><Font name="System Bold" size="28"/></font>
+                    <style>-fx-text-fill: #10b981;</style>
+                </Label>
+            </VBox>
+        </VBox>
+
+        <!-- In Transit -->
+        <VBox GridPane.columnIndex="2" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #3b82f6;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.3), 12, 0, 0, 3);
+            </style>
+
+            <Label text="🚚" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="In Transit" styleClass="stat-label-modern">
+                    <font><Font size="11"/></font>
+                    <style>-fx-text-fill: #7f8c8d;</style>
+                </Label>
+                <Label fx:id="inTransitLabel" text="0" styleClass="stat-value-modern">
+                    <font><Font name="System Bold" size="28"/></font>
+                    <style>-fx-text-fill: #3b82f6;</style>
+                </Label>
+            </VBox>
+        </VBox>
+
+        <!-- Delivered -->
+        <VBox GridPane.columnIndex="3" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #a78bfa;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.3), 12, 0, 0, 3);
+            </style>
+
+            <Label text="📦" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Delivered" styleClass="stat-label-modern">
+                    <font><Font size="11"/></font>
+                    <style>-fx-text-fill: #7f8c8d;</style>
+                </Label>
+                <Label fx:id="deliveredLabel" text="0" styleClass="stat-value-modern">
+                    <font><Font name="System Bold" size="28"/></font>
+                    <style>-fx-text-fill: #a78bfa;</style>
+                </Label>
+            </VBox>
+        </VBox>
+
+        <!-- Total Value -->
+        <VBox GridPane.columnIndex="4" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #e0e0e0;
+                -fx-border-width: 1px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
+            </style>
+
+            <Label text="💰" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3">
+                <Label text="Total Value" styleClass="stat-label-modern">
+                    <font><Font size="11"/></font>
+                    <style>-fx-text-fill: #7f8c8d;</style>
+                </Label>
+                <Label fx:id="totalValueLabel" text="0" styleClass="stat-value-modern">
+                    <font><Font name="System Bold" size="24"/></font>
+                    <style>-fx-text-fill: #2c3e50;</style>
+                </Label>
+            </VBox>
+        </VBox>
+    </GridPane>
+
+    <!-- Purchase Orders Table Card -->
+    <VBox spacing="15" styleClass="stat-card-modern" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="25" right="25" bottom="25" left="25"/>
+        </padding>
+        <style>
+            -fx-background-color: white;
+            -fx-background-radius: 15px;
+            -fx-border-color: #e0e0e0;
+            -fx-border-width: 1px;
+            -fx-border-radius: 15px;
+            -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
+        </style>
+
+        <!-- Table Header -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="Purchase Orders List" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="20"/>
+                </font>
+                <style>
+                    -fx-text-fill: #2c3e50;
+                </style>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="statusFilter" promptText="Filter by Status" styleClass="modern-combobox">
+                <style>
+                    -fx-pref-width: 200px;
+                </style>
+            </ComboBox>
+            <TextField fx:id="searchField" promptText="Search PO#, Supplier..." styleClass="search-field">
+                <font><Font size="13"/></font>
+                <style>
+                    -fx-background-color: #f8f9fa;
+                    -fx-background-radius: 10px;
+                    -fx-padding: 10px 15px;
+                    -fx-pref-width: 250px;
+                    -fx-border-color: #e0e0e0;
+                    -fx-border-radius: 10px;
+                    -fx-border-width: 1px;
+                </style>
+            </TextField>
+        </HBox>
+
+        <!-- TableView -->
+        <TableView fx:id="purchaseOrdersTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="selectColumn" text="☑" prefWidth="50"/>
+                <TableColumn fx:id="poNumberColumn" text="PO Number" prefWidth="120"/>
+                <TableColumn fx:id="supplierColumn" text="Supplier" prefWidth="200"/>
+                <TableColumn fx:id="requestedByColumn" text="Requested By" prefWidth="150"/>
+                <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
+                <TableColumn fx:id="itemsCountColumn" text="Items" prefWidth="80"/>
+                <TableColumn fx:id="totalAmountColumn" text="Amount" prefWidth="120"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="180"/>
+            </columns>
+            <style>
+                -fx-background-color: transparent;
+                -fx-table-cell-border-color: transparent;
+            </style>
+        </TableView>
+    </VBox>
+
+</VBox>

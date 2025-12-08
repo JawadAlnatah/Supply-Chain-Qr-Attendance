@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.AdminSecurityController"
+      spacing="30"
+      style="-fx-background-color: #f8f9fa;">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <VBox spacing="10">
+        <Label text="Security and Access Control" styleClass="section-title">
+            <font><Font name="System Bold" size="28"/></font>
+            <style>-fx-text-fill: #2c3e50;</style>
+        </Label>
+        <Label text="Monitor security threats, manage access permissions, and review security incidents" styleClass="subtitle-modern">
+            <font><Font size="14"/></font>
+            <style>-fx-text-fill: #7f8c8d;</style>
+        </Label>
+    </VBox>
+
+    <HBox spacing="15">
+        <Button fx:id="exportButton" text="Export Security Log" onAction="#handleExport">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: white;
+                -fx-text-fill: #22d3ee;
+                -fx-border-color: #22d3ee;
+                -fx-border-width: 2px;
+                -fx-background-radius: 10px;
+                -fx-border-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Button fx:id="clearSessionsButton" text="🔓 Clear All Sessions" onAction="#handleClearSessions">
+            <font><Font name="System Bold" size="13"/></font>
+            <style>
+                -fx-background-color: #ef4444;
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
+            <font><Font size="13"/></font>
+            <style>
+                -fx-background-color: #e0e0e0;
+                -fx-text-fill: #2c3e50;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+    </HBox>
+
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+        </columnConstraints>
+
+        <VBox GridPane.columnIndex="0" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #ef4444; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="🔒" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Failed Logins (24h)"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="failedLoginsLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #ef4444;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="1" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #22d3ee; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="🔐" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Active Sessions"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="activeSessionsLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #22d3ee;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="2" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #fbbf24; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="🚫" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Blocked IPs"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="blockedIpsLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #fbbf24;</style></Label>
+            </VBox>
+        </VBox>
+
+        <VBox GridPane.columnIndex="3" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #10b981; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 12, 0, 0, 3); -fx-padding: 20;">
+            <Label text="🛡️" style="-fx-font-size: 36px;"/>
+            <VBox spacing="5">
+                <Label text="Security Score"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label fx:id="securityScoreLabel" text="0%"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #10b981;</style></Label>
+            </VBox>
+        </VBox>
+    </GridPane>
+
+    <VBox spacing="15" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #e0e0e0; -fx-border-width: 1px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0, 0, 3); -fx-padding: 25;">
+
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="Security Incidents"><font><Font name="System Bold" size="20"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="eventTypeFilter" promptText="Event Type" styleClass="modern-combobox" style="-fx-pref-width: 170px;"/>
+            <ComboBox fx:id="severityFilter" promptText="Severity" styleClass="modern-combobox" style="-fx-pref-width: 150px;"/>
+            <ComboBox fx:id="statusFilter" promptText="Status" styleClass="modern-combobox" style="-fx-pref-width: 150px;"/>
+            <TextField fx:id="searchField" promptText="Search..." style="-fx-background-color: #f8f9fa; -fx-background-radius: 10px; -fx-padding: 10px 15px; -fx-pref-width: 200px; -fx-border-color: #e0e0e0; -fx-border-radius: 10px; -fx-border-width: 1px;"><font><Font size="13"/></font></TextField>
+        </HBox>
+
+        <TableView fx:id="incidentsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <columns>
+                <TableColumn fx:id="incidentIdColumn" text="Incident ID" prefWidth="100"/>
+                <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="140"/>
+                <TableColumn fx:id="eventTypeColumn" text="Event Type" prefWidth="150"/>
+                <TableColumn fx:id="usernameColumn" text="Username" prefWidth="130"/>
+                <TableColumn fx:id="ipAddressColumn" text="IP Address" prefWidth="130"/>
+                <TableColumn fx:id="locationColumn" text="Location" prefWidth="140"/>
+                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="100"/>
+                <TableColumn fx:id="incidentStatusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

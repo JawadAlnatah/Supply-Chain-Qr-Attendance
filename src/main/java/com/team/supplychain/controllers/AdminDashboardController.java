@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -23,6 +24,9 @@ public class AdminDashboardController {
     @FXML private Label userNameLabel;
     @FXML private Button logoutButton;
     @FXML private Button notificationsButton;
+
+    // ==================== MAIN CONTENT AREA ====================
+    @FXML private ScrollPane centerScrollPane;
 
     // ==================== SIDEBAR NAVIGATION ====================
     @FXML private Button dashboardButton;
@@ -85,31 +89,31 @@ public class AdminDashboardController {
     @FXML
     private void handleManageUsers() {
         System.out.println("Manage Users clicked");
-        // TODO: Navigate to user management view
+        loadContentView("/fxml/AdminUserManagement.fxml");
     }
 
     @FXML
     private void handleSystemSettings() {
         System.out.println("System Settings clicked");
-        // TODO: Navigate to system settings view
+        loadContentView("/fxml/AdminSystemSettings.fxml");
     }
 
     @FXML
     private void handleSecurity() {
         System.out.println("Security & Access clicked");
-        // TODO: Navigate to security management view
+        loadContentView("/fxml/AdminSecurity.fxml");
     }
 
     @FXML
     private void handleAuditLogs() {
         System.out.println("Audit Logs clicked");
-        // TODO: Navigate to audit logs view
+        loadContentView("/fxml/AdminAuditLogs.fxml");
     }
 
     @FXML
     private void handleReports() {
         System.out.println("Reports & Analytics clicked");
-        // TODO: Navigate to reports view
+        loadContentView("/fxml/AdminReports.fxml");
     }
 
     // ==================== ACTION HANDLERS ====================
@@ -157,9 +161,18 @@ public class AdminDashboardController {
             Parent loginView = loader.load();
 
             Stage stage = (Stage) logoutButton.getScene().getWindow();
+
+            // Reset window state before switching to login
+            stage.setMaximized(false);
+            stage.setResizable(false);
+
+            // Set login scene
             Scene scene = new Scene(loginView);
             stage.setScene(scene);
-            stage.setTitle("Supply Chain Management - Login");
+            stage.setTitle("Supply Chain Management System - Login");
+
+            // Center the window on screen
+            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
             showError("Logout Error", "Failed to return to login screen");
@@ -167,6 +180,39 @@ public class AdminDashboardController {
     }
 
     // ==================== HELPER METHODS ====================
+
+    /**
+     * Load a content view into the center scroll pane
+     */
+    private void loadContentView(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent content = loader.load();
+
+            // Get the controller and set current user if it has setCurrentUser method
+            Object controller = loader.getController();
+            if (controller instanceof AdminUserManagementController) {
+                ((AdminUserManagementController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof AdminSystemSettingsController) {
+                ((AdminSystemSettingsController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof AdminSecurityController) {
+                ((AdminSecurityController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof AdminAuditLogsController) {
+                ((AdminAuditLogsController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof AdminReportsController) {
+                ((AdminReportsController) controller).setCurrentUser(currentUser);
+            }
+
+            // Replace content in center scroll pane
+            if (centerScrollPane != null) {
+                centerScrollPane.setContent(content);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Navigation Error", "Failed to load page: " + fxmlPath);
+        }
+    }
 
     private void showError(String title, String message) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);

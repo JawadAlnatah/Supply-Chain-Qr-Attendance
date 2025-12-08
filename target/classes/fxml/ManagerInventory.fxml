@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.ManagerInventoryController"
+      spacing="30"
+      style="-fx-background-color: #f8f9fa;">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <!-- Page Header -->
+    <VBox spacing="10">
+        <Label text="Inventory Management" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+            <style>
+                -fx-text-fill: #2c3e50;
+            </style>
+        </Label>
+        <Label text="Monitor stock levels, manage items, and track inventory across all warehouses" styleClass="subtitle-modern">
+            <font>
+                <Font size="14"/>
+            </font>
+            <style>
+                -fx-text-fill: #7f8c8d;
+            </style>
+        </Label>
+    </VBox>
+
+    <!-- Action Buttons -->
+    <HBox spacing="15">
+        <Button fx:id="addItemButton" text="+ Add New Item" onAction="#handleAddItem" styleClass="action-button-primary">
+            <font>
+                <Font name="System Bold" size="13"/>
+            </font>
+            <style>
+                -fx-background-color: linear-gradient(to bottom right, #a78bfa, #8b5cf6);
+                -fx-text-fill: white;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.4), 10, 0, 0, 3);
+            </style>
+        </Button>
+        <Button fx:id="exportButton" text="Export Report" onAction="#handleExport" styleClass="action-button-secondary">
+            <font>
+                <Font name="System Bold" size="13"/>
+            </font>
+            <style>
+                -fx-background-color: white;
+                -fx-text-fill: #a78bfa;
+                -fx-border-color: #a78bfa;
+                -fx-border-width: 2px;
+                -fx-background-radius: 10px;
+                -fx-border-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+        <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
+            <font>
+                <Font size="13"/>
+            </font>
+            <style>
+                -fx-background-color: #e0e0e0;
+                -fx-text-fill: #2c3e50;
+                -fx-background-radius: 10px;
+                -fx-padding: 12px 24px;
+                -fx-cursor: hand;
+            </style>
+        </Button>
+    </HBox>
+
+    <!-- Inventory Stats Cards -->
+    <GridPane hgap="20" vgap="20">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+            <ColumnConstraints percentWidth="25" />
+        </columnConstraints>
+
+        <!-- Total Items Card -->
+        <VBox GridPane.columnIndex="0" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #e0e0e0;
+                -fx-border-width: 1px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
+            </style>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="📦" style="-fx-font-size: 36px;"/>
+                <VBox spacing="5">
+                    <Label text="Total Items" styleClass="stat-label-modern">
+                        <font><Font size="12"/></font>
+                        <style>-fx-text-fill: #7f8c8d;</style>
+                    </Label>
+                    <Label fx:id="totalItemsLabel" text="0" styleClass="stat-value-modern">
+                        <font><Font name="System Bold" size="32"/></font>
+                        <style>-fx-text-fill: #2c3e50;</style>
+                    </Label>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Low Stock Card -->
+        <VBox GridPane.columnIndex="1" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #fbbf24;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3);
+            </style>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="⚠️" style="-fx-font-size: 36px;"/>
+                <VBox spacing="5">
+                    <Label text="Low Stock" styleClass="stat-label-modern">
+                        <font><Font size="12"/></font>
+                        <style>-fx-text-fill: #7f8c8d;</style>
+                    </Label>
+                    <Label fx:id="lowStockLabel" text="0" styleClass="stat-value-modern">
+                        <font><Font name="System Bold" size="32"/></font>
+                        <style>-fx-text-fill: #fbbf24;</style>
+                    </Label>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Out of Stock Card -->
+        <VBox GridPane.columnIndex="2" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #ef4444;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.3), 12, 0, 0, 3);
+            </style>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="❌" style="-fx-font-size: 36px;"/>
+                <VBox spacing="5">
+                    <Label text="Out of Stock" styleClass="stat-label-modern">
+                        <font><Font size="12"/></font>
+                        <style>-fx-text-fill: #7f8c8d;</style>
+                    </Label>
+                    <Label fx:id="outOfStockLabel" text="0" styleClass="stat-value-modern">
+                        <font><Font name="System Bold" size="32"/></font>
+                        <style>-fx-text-fill: #ef4444;</style>
+                    </Label>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Total Value Card -->
+        <VBox GridPane.columnIndex="3" styleClass="stat-card-modern" spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <style>
+                -fx-background-color: white;
+                -fx-background-radius: 15px;
+                -fx-border-color: #a78bfa;
+                -fx-border-width: 2px;
+                -fx-border-radius: 15px;
+                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.3), 12, 0, 0, 3);
+            </style>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="💰" style="-fx-font-size: 36px;"/>
+                <VBox spacing="5">
+                    <Label text="Total Value" styleClass="stat-label-modern">
+                        <font><Font size="12"/></font>
+                        <style>-fx-text-fill: #7f8c8d;</style>
+                    </Label>
+                    <Label fx:id="totalValueLabel" text="0" styleClass="stat-value-modern">
+                        <font><Font name="System Bold" size="28"/></font>
+                        <style>-fx-text-fill: #a78bfa;</style>
+                    </Label>
+                </VBox>
+            </HBox>
+        </VBox>
+    </GridPane>
+
+    <!-- Inventory Table Card -->
+    <VBox spacing="15" styleClass="stat-card-modern">
+        <padding>
+            <Insets top="25" right="25" bottom="25" left="25"/>
+        </padding>
+        <style>
+            -fx-background-color: white;
+            -fx-background-radius: 15px;
+            -fx-border-color: #e0e0e0;
+            -fx-border-width: 1px;
+            -fx-border-radius: 15px;
+            -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
+        </style>
+
+        <!-- Table Header -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="Inventory Items" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="20"/>
+                </font>
+                <style>
+                    -fx-text-fill: #2c3e50;
+                </style>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="categoryFilter" promptText="Filter by Category" styleClass="modern-combobox">
+                <style>
+                    -fx-pref-width: 200px;
+                </style>
+            </ComboBox>
+            <TextField fx:id="searchField" promptText="Search items..." styleClass="search-field">
+                <font><Font size="13"/></font>
+                <style>
+                    -fx-background-color: #f8f9fa;
+                    -fx-background-radius: 10px;
+                    -fx-padding: 10px 15px;
+                    -fx-pref-width: 250px;
+                    -fx-border-color: #e0e0e0;
+                    -fx-border-radius: 10px;
+                    -fx-border-width: 1px;
+                </style>
+            </TextField>
+        </HBox>
+
+        <!-- TableView -->
+        <TableView fx:id="inventoryTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="itemIdColumn" text="ID" prefWidth="80"/>
+                <TableColumn fx:id="itemNameColumn" text="Item Name" prefWidth="250"/>
+                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="150"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100"/>
+                <TableColumn fx:id="reorderLevelColumn" text="Reorder Level" prefWidth="120"/>
+                <TableColumn fx:id="unitPriceColumn" text="Unit Price" prefWidth="100"/>
+                <TableColumn fx:id="totalValueColumn" text="Total Value" prefWidth="120"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+            </columns>
+            <style>
+                -fx-background-color: transparent;
+                -fx-table-cell-border-color: transparent;
+            </style>
+        </TableView>
+    </VBox>
+
+</VBox>

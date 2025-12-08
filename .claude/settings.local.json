@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(mvn javafx:run:*)",
-      "Bash(mvn clean:*)"
+      "Bash(mvn clean:*)",
+      "Bash(cat:*)",
+      "Bash(mvn compile:*)"
     ],
     "deny": [],
     "ask": []

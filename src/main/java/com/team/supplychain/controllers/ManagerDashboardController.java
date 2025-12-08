@@ -9,6 +9,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,6 +25,9 @@ public class ManagerDashboardController {
     @FXML private Label currentUserLabel;
     @FXML private Button notificationsButton;
     @FXML private Button logoutButton;
+
+    // Main content area
+    @FXML private ScrollPane centerScrollPane;
 
     // Metric cards
     @FXML private Label inventorySummaryLabel;
@@ -83,9 +87,18 @@ public class ManagerDashboardController {
             Parent loginView = loader.load();
 
             Stage stage = (Stage) logoutButton.getScene().getWindow();
+
+            // Reset window state before switching to login
+            stage.setMaximized(false);
+            stage.setResizable(false);
+
+            // Set login scene
             Scene scene = new Scene(loginView);
             stage.setScene(scene);
-            stage.setTitle("Fresh Dairy Co. - Login");
+            stage.setTitle("Supply Chain Management System - Login");
+
+            // Center the window on screen
+            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
             showError("Logout Error", "Failed to return to login screen");
@@ -94,59 +107,92 @@ public class ManagerDashboardController {
 
     @FXML
     private void handleViewAttendance() {
-        // TODO: Navigate to attendance view
         System.out.println("View attendance clicked");
+        loadContentView("/fxml/ManagerAttendance.fxml");
     }
 
     @FXML
     private void handleTrackOrders() {
-        // TODO: Navigate to purchase orders tracking view
         System.out.println("Track orders clicked");
+        loadContentView("/fxml/ManagerPurchaseOrders.fxml");
     }
 
     @FXML
     private void handleViewAllActivity() {
-        // TODO: Navigate to full activity log
         System.out.println("View all activity clicked");
+        // TODO: Create activity log page
     }
 
     @FXML
     private void handleCreatePO() {
-        // TODO: Open create purchase order dialog/form
         System.out.println("Create new PO clicked");
+        // TODO: Open create purchase order dialog/form
     }
 
     @FXML
     private void handleInventory() {
-        // TODO: Navigate to inventory view
         System.out.println("Inventory clicked");
+        loadContentView("/fxml/ManagerInventory.fxml");
     }
 
     @FXML
     private void handlePurchaseOrders() {
-        // TODO: Navigate to purchase orders view
         System.out.println("Purchase orders clicked");
+        loadContentView("/fxml/ManagerPurchaseOrders.fxml");
     }
 
     @FXML
     private void handleAttendance() {
-        // TODO: Navigate to attendance management view
         System.out.println("Attendance clicked");
+        loadContentView("/fxml/ManagerAttendance.fxml");
     }
 
     @FXML
     private void handleEmployees() {
-        // TODO: Navigate to employees view
         System.out.println("Employees clicked");
+        loadContentView("/fxml/ManagerEmployees.fxml");
     }
 
     @FXML
     private void handleReports() {
-        // TODO: Navigate to reports view
         System.out.println("Reports clicked");
+        loadContentView("/fxml/ManagerReports.fxml");
     }
 
     // ==================== HELPER METHODS ====================
+
+    /**
+     * Load a content view into the center scroll pane
+     */
+    private void loadContentView(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent content = loader.load();
+
+            // Get the controller and set current user if it has setCurrentUser method
+            Object controller = loader.getController();
+            if (controller instanceof ManagerInventoryController) {
+                ((ManagerInventoryController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof ManagerPurchaseOrdersController) {
+                ((ManagerPurchaseOrdersController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof ManagerAttendanceController) {
+                ((ManagerAttendanceController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof ManagerEmployeesController) {
+                ((ManagerEmployeesController) controller).setCurrentUser(currentUser);
+            } else if (controller instanceof ManagerReportsController) {
+                ((ManagerReportsController) controller).setCurrentUser(currentUser);
+            }
+
+            // Replace content in center scroll pane
+            if (centerScrollPane != null) {
+                centerScrollPane.setContent(content);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Navigation Error", "Failed to load page: " + fxmlPath);
+        }
+    }
 
     private void showError(String title, String message) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
