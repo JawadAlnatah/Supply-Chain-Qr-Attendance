@@ -25,7 +25,7 @@ public class Main extends Application {
             // Set up stage
             primaryStage.setTitle("Supply Chain Management System - Login");
             primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
+            primaryStage.setResizable(true);
             primaryStage.show();
             
             System.out.println("✓ Application started successfully!");

@@ -17,7 +17,7 @@ public class AdminAuditLogsController {
     @FXML private TextField searchField;
     @FXML private Button exportButton, generateReportButton, archiveButton, refreshButton;
     @FXML private TableView<LogRecord> logsTable;
-    @FXML private TableColumn<LogRecord, String> logIdColumn, timestampColumn, userColumn, actionTypeColumn, moduleColumn, descriptionColumn, ipAddressColumn, resultColumn;
+    @FXML private TableColumn<LogRecord, String> logIdColumn, timestampColumn, userColumn, actionTypeColumn, moduleColumn, descriptionColumn, resultColumn;
     @FXML private TableColumn<LogRecord, Void> actionsColumn;
 
     private User currentUser;
@@ -46,8 +46,6 @@ public class AdminAuditLogsController {
         actionTypeColumn.setCellValueFactory(new PropertyValueFactory<>("actionType"));
         moduleColumn.setCellValueFactory(new PropertyValueFactory<>("module"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        ipAddressColumn.setCellValueFactory(new PropertyValueFactory<>("ipAddress"));
-
         resultColumn.setCellValueFactory(new PropertyValueFactory<>("result"));
         resultColumn.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -90,11 +88,11 @@ public class AdminAuditLogsController {
 
     private void setupFilters() {
         if (actionTypeFilter != null) {
-            actionTypeFilter.getItems().addAll("All Actions", "CREATE", "UPDATE", "DELETE", "LOGIN", "BACKUP");
+            actionTypeFilter.getItems().addAll("All Actions", "CREATE", "UPDATE", "DELETE", "LOGIN", "SECURITY_INCIDENT", "BACKUP");
             actionTypeFilter.setValue("All Actions");
         }
         if (moduleFilter != null) {
-            moduleFilter.getItems().addAll("All Modules", "Users", "Inventory", "Settings", "Authentication", "Database");
+            moduleFilter.getItems().addAll("All Modules", "Users", "Inventory", "Settings", "Authentication", "Security", "Database");
             moduleFilter.setValue("All Modules");
         }
         if (resultFilter != null) {
@@ -105,16 +103,16 @@ public class AdminAuditLogsController {
 
     private void loadDummyData() {
         logsData.clear();
-        logsData.add(new LogRecord("LOG0001247", "2025-12-05 14:30:15", "admin", "UPDATE", "Users", "Modified role for user 'employee3' from EMPLOYEE to MANAGER", "192.168.1.10", "Success"));
-        logsData.add(new LogRecord("LOG0001246", "2025-12-05 14:28:42", "manager1", "CREATE", "Inventory", "Added new inventory item 'Industrial Gloves (100 pairs)'", "192.168.1.45", "Success"));
-        logsData.add(new LogRecord("LOG0001245", "2025-12-05 14:25:10", "employee1", "READ", "Reports", "Viewed attendance report for November 2025", "192.168.1.87", "Success"));
-        logsData.add(new LogRecord("LOG0001244", "2025-12-05 14:20:05", "admin", "DELETE", "Settings", "Removed deprecated setting 'legacy_mode_enabled'", "192.168.1.10", "Success"));
-        logsData.add(new LogRecord("LOG0001243", "2025-12-05 14:15:33", "system", "BACKUP", "Database", "Automated backup completed: backup_20251205_141530.sql", "localhost", "Success"));
-        logsData.add(new LogRecord("LOG0001242", "2025-12-05 14:10:22", "supplier1", "LOGIN", "Authentication", "User logged in successfully", "172.16.0.12", "Success"));
-        logsData.add(new LogRecord("LOG0001241", "2025-12-05 14:05:18", "manager2", "UPDATE", "Purchase Orders", "Updated PO-2025-089 status to 'Shipped'", "192.168.1.50", "Success"));
-        logsData.add(new LogRecord("LOG0001240", "2025-12-05 14:00:45", "employee2", "CREATE", "Attendance", "Checked in via QR code", "192.168.1.88", "Success"));
-        logsData.add(new LogRecord("LOG0001239", "2025-12-05 13:55:30", "admin", "UPDATE", "Security", "Changed password policy: min_length=12", "192.168.1.10", "Success"));
-        logsData.add(new LogRecord("LOG0001238", "2025-12-05 13:50:12", "unknown", "LOGIN", "Authentication", "Failed login attempt for username 'hacker'", "185.220.101.45", "Failed"));
+        logsData.add(new LogRecord("LOG0001247", "2025-12-05 14:30:15", "admin", "UPDATE", "Users", "Modified role for user 'employee3' from EMPLOYEE to MANAGER", "Success"));
+        logsData.add(new LogRecord("LOG0001246", "2025-12-05 14:28:42", "manager1", "CREATE", "Inventory", "Added new inventory item 'Industrial Gloves (100 pairs)'", "Success"));
+        logsData.add(new LogRecord("LOG0001245", "2025-12-05 14:25:10", "employee1", "READ", "Reports", "Viewed attendance report for November 2025", "Success"));
+        logsData.add(new LogRecord("LOG0001244", "2025-12-05 14:20:05", "admin", "DELETE", "Settings", "Removed deprecated setting 'legacy_mode_enabled'", "Success"));
+        logsData.add(new LogRecord("LOG0001243", "2025-12-05 14:15:33", "system", "BACKUP", "Database", "Automated backup completed: backup_20251205_141530.sql", "Success"));
+        logsData.add(new LogRecord("LOG0001242", "2025-12-05 14:10:22", "supplier1", "LOGIN", "Authentication", "User logged in successfully", "Success"));
+        logsData.add(new LogRecord("LOG0001241", "2025-12-05 14:05:18", "manager2", "UPDATE", "Purchase Orders", "Updated PO-2025-089 status to 'Shipped'", "Success"));
+        logsData.add(new LogRecord("LOG0001240", "2025-12-05 14:00:45", "employee2", "CREATE", "Attendance", "Checked in via QR code", "Success"));
+        logsData.add(new LogRecord("LOG0001239", "2025-12-05 13:55:30", "admin", "UPDATE", "Security", "Changed password policy: min_length=12", "Success"));
+        logsData.add(new LogRecord("LOG0001238", "2025-12-05 13:50:12", "unknown", "LOGIN", "Authentication", "Failed login attempt for username 'hacker'", "Failed"));
     }
 
     private void updateStats() {
@@ -131,12 +129,16 @@ public class AdminAuditLogsController {
     }
 
     private String getResultBadgeStyle(String result) {
-        return switch (result) {
-            case "Success" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            case "Failed" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "Warning" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (result) {
+            case "Success":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            case "Failed":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            case "Warning":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     @FXML private void handleExport() { showInfo("Export", "Audit log export functionality will be implemented."); }
@@ -152,16 +154,15 @@ public class AdminAuditLogsController {
     }
 
     public static class LogRecord {
-        private final StringProperty logId, timestamp, user, actionType, module, description, ipAddress, result;
+        private final StringProperty logId, timestamp, user, actionType, module, description, result;
 
-        public LogRecord(String logId, String timestamp, String user, String actionType, String module, String description, String ipAddress, String result) {
+        public LogRecord(String logId, String timestamp, String user, String actionType, String module, String description, String result) {
             this.logId = new SimpleStringProperty(logId);
             this.timestamp = new SimpleStringProperty(timestamp);
             this.user = new SimpleStringProperty(user);
             this.actionType = new SimpleStringProperty(actionType);
             this.module = new SimpleStringProperty(module);
             this.description = new SimpleStringProperty(description);
-            this.ipAddress = new SimpleStringProperty(ipAddress);
             this.result = new SimpleStringProperty(result);
         }
 
@@ -171,7 +172,6 @@ public class AdminAuditLogsController {
         public String getActionType() { return actionType.get(); }
         public String getModule() { return module.get(); }
         public String getDescription() { return description.get(); }
-        public String getIpAddress() { return ipAddress.get(); }
         public String getResult() { return result.get(); }
     }
 }

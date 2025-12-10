@@ -154,21 +154,29 @@ public class AdminReportsController {
     }
 
     private String getFormatBadgeStyle(String format) {
-        return switch (format) {
-            case "PDF" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "Excel" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            case "CSV" -> "-fx-background-color: rgba(59,130,246,0.15); -fx-text-fill: #3b82f6;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (format) {
+            case "PDF":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            case "Excel":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            case "CSV":
+                return "-fx-background-color: rgba(59,130,246,0.15); -fx-text-fill: #3b82f6;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     private String getStatusBadgeStyle(String status) {
-        return switch (status) {
-            case "Ready" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            case "Generating" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-            case "Failed" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (status) {
+            case "Ready":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            case "Generating":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            case "Failed":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     @FXML private void handleGenerate() { showInfo("Generate Report", "Report generation dialog will be implemented."); }

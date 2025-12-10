@@ -138,14 +138,20 @@ public class ManagerPurchaseOrdersController {
             }
 
             private String getStatusStyle(String status) {
-                return switch (status) {
-                    case "Pending" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-                    case "Approved" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-                    case "In Transit" -> "-fx-background-color: rgba(59,130,246,0.15); -fx-text-fill: #3b82f6;";
-                    case "Delivered" -> "-fx-background-color: rgba(167,139,250,0.15); -fx-text-fill: #a78bfa;";
-                    case "Rejected" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-                    default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-                };
+                switch (status) {
+                    case "Pending":
+                        return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+                    case "Approved":
+                        return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+                    case "In Transit":
+                        return "-fx-background-color: rgba(59,130,246,0.15); -fx-text-fill: #3b82f6;";
+                    case "Delivered":
+                        return "-fx-background-color: rgba(167,139,250,0.15); -fx-text-fill: #a78bfa;";
+                    case "Rejected":
+                        return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+                    default:
+                        return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+                }
             }
         });
 

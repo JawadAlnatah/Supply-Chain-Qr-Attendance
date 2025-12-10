@@ -135,12 +135,16 @@ public class ManagerInventoryController {
             }
 
             private String getStatusStyle(String status) {
-                return switch (status) {
-                    case "In Stock" -> "-fx-background-color: rgba(34,197,94,0.15); -fx-text-fill: #16a34a;";
-                    case "Low Stock" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-                    case "Out of Stock" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-                    default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-                };
+                switch (status) {
+                    case "In Stock":
+                        return "-fx-background-color: rgba(34,197,94,0.15); -fx-text-fill: #16a34a;";
+                    case "Low Stock":
+                        return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+                    case "Out of Stock":
+                        return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+                    default:
+                        return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+                }
             }
         });
 

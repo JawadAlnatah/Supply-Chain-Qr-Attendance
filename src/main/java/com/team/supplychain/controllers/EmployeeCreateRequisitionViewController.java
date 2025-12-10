@@ -1,5 +1,7 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.RequisitionDAO;
+import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -17,10 +19,13 @@ import javafx.util.converter.IntegerStringConverter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the Employee Create Requisition View
@@ -64,6 +69,7 @@ public class EmployeeCreateRequisitionViewController {
     private Map<String, InventoryItemData> inventoryMap;
     private Map<String, String> supplierCategories;
     private int requisitionCounter = 1;
+    private RequisitionDAO requisitionDAO;
 
     /**
      * Set the current logged-in user
@@ -79,6 +85,9 @@ public class EmployeeCreateRequisitionViewController {
     @FXML
     private void initialize() {
         System.out.println("EmployeeCreateRequisitionViewController initialized");
+
+        // Initialize DAO
+        requisitionDAO = new RequisitionDAO();
 
         // Initialize collections
         itemsList = FXCollections.observableArrayList();
@@ -420,30 +429,82 @@ public class EmployeeCreateRequisitionViewController {
             return;
         }
 
-        // Get requisition details
-        String reqId = requisitionIdLabel.getText();
-        String supplier = supplierCombo.getValue();
-        int totalItems = (int) itemsList.stream()
-            .filter(item -> item.getItemName() != null && !item.getItemName().isEmpty())
-            .count();
-        String totalAmount = totalAmountLabel.getText();
+        try {
+            // Create Requisition object
+            Requisition requisition = new Requisition();
 
-        // Show success message
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Requisition Submitted");
-        alert.setHeaderText("✓ Success!");
-        alert.setContentText("Your requisition has been submitted successfully.\n\n" +
-                            "Requisition ID: " + reqId + "\n" +
-                            "Supplier: " + supplier + "\n" +
-                            "Total Items: " + totalItems + "\n" +
-                            "Total Amount: " + totalAmount + "\n" +
-                            "Status: Pending Approval\n\n" +
-                            "A manager will review your request shortly.");
+            // Generate requisition code
+            String reqCode = requisitionDAO.generateRequisitionCode();
+            requisition.setRequisitionCode(reqCode);
 
-        alert.showAndWait();
+            // Set user info
+            if (currentUser != null) {
+                requisition.setRequestedBy(currentUser.getUserId());
+                requisition.setRequesterName(currentUser.getFirstName() + " " + currentUser.getLastName());
+            }
 
-        // Navigate to My Requisitions page
-        navigateToMyRequisitions();
+            // Set requisition details
+            requisition.setCategory(categoryCombo.getValue());
+            requisition.setDepartment(departmentCombo.getValue());
+            requisition.setPriority(priorityCombo.getValue());
+            requisition.setJustification(justificationArea.getText().trim());
+            requisition.setStatus("Pending");
+            requisition.setRequestDate(LocalDateTime.now());
+
+            // Calculate totals and add items
+            List<com.team.supplychain.models.RequisitionItem> validItems = itemsList.stream()
+                .filter(item -> item.getItemName() != null && !item.getItemName().isEmpty())
+                .map(this::convertToModelItem)
+                .collect(Collectors.toList());
+
+            requisition.setItems(validItems);
+            requisition.setTotalItems(validItems.stream().mapToInt(item -> item.getQuantity()).sum());
+
+            BigDecimal totalAmount = validItems.stream()
+                .map(com.team.supplychain.models.RequisitionItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            requisition.setTotalAmount(totalAmount);
+
+            // Save to database
+            Integer requisitionId = requisitionDAO.createRequisition(requisition);
+
+            if (requisitionId != null) {
+                // Show success message
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Requisition Submitted");
+                alert.setHeaderText("✓ Success!");
+                alert.setContentText("Your requisition has been submitted successfully.\n\n" +
+                                    "Requisition Code: " + reqCode + "\n" +
+                                    "Category: " + requisition.getCategory() + "\n" +
+                                    "Total Items: " + requisition.getTotalItems() + "\n" +
+                                    "Total Amount: SAR " + requisition.getTotalAmount() + "\n" +
+                                    "Status: Pending Approval\n\n" +
+                                    "A manager will review your request shortly.");
+                alert.showAndWait();
+
+                // Navigate to My Requisitions page
+                navigateToMyRequisitions();
+            } else {
+                showError("Submission Error", "Failed to save requisition to database. Please try again.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Submission Error", "An error occurred while submitting the requisition: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Convert controller RequisitionItem to model RequisitionItem
+     */
+    private com.team.supplychain.models.RequisitionItem convertToModelItem(RequisitionItem controllerItem) {
+        com.team.supplychain.models.RequisitionItem modelItem = new com.team.supplychain.models.RequisitionItem();
+        modelItem.setItemName(controllerItem.getItemName());
+        modelItem.setCategory(controllerItem.getCategory());
+        modelItem.setQuantity(controllerItem.getQuantity());
+        modelItem.setUnitPrice(controllerItem.getUnitPrice());
+        modelItem.calculateSubtotal();
+        return modelItem;
     }
 
     /**

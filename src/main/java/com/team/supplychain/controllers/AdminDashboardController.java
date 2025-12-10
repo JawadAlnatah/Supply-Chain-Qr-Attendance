@@ -49,6 +49,7 @@ public class AdminDashboardController {
     @FXML private VBox criticalAlertsContainer;
 
     private User currentUser;
+    private Parent originalDashboardContent;
 
     /**
      * Set the current logged-in admin user
@@ -63,6 +64,11 @@ public class AdminDashboardController {
      */
     @FXML
     private void initialize() {
+        // Save the original dashboard content so we can restore it later
+        if (centerScrollPane != null && centerScrollPane.getContent() != null) {
+            originalDashboardContent = (Parent) centerScrollPane.getContent();
+        }
+
         // TODO: Load real-time data from database
         // TODO: Populate inventory trend chart
         // TODO: Load critical alerts
@@ -82,8 +88,12 @@ public class AdminDashboardController {
 
     @FXML
     private void handleDashboard() {
-        System.out.println("Dashboard navigation clicked");
-        // TODO: Refresh dashboard view
+        System.out.println("Dashboard navigation clicked - restoring main dashboard view");
+
+        // Restore the original dashboard content
+        if (centerScrollPane != null && originalDashboardContent != null) {
+            centerScrollPane.setContent(originalDashboardContent);
+        }
     }
 
     @FXML

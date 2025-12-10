@@ -83,12 +83,16 @@ public class ManagerAttendanceController {
                 }
             }
             private String getStyle(String status) {
-                return switch (status) {
-                    case "Present" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-                    case "Late" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-                    case "Absent" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-                    default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-                };
+                switch (status) {
+                    case "Present":
+                        return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+                    case "Late":
+                        return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+                    case "Absent":
+                        return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+                    default:
+                        return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+                }
             }
         });
 

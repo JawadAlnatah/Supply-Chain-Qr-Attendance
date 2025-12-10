@@ -88,9 +88,9 @@
         </VBox>
 
         <VBox GridPane.columnIndex="2" spacing="12" style="-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: #fbbf24; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-effect: dropshadow(gaussian, rgba(251,191,36,0.3), 12, 0, 0, 3); -fx-padding: 20;">
-            <Label text="🚫" style="-fx-font-size: 36px;"/>
+            <Label text="⚠️" style="-fx-font-size: 36px;"/>
             <VBox spacing="5">
-                <Label text="Blocked IPs"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
+                <Label text="Open Incidents"><font><Font size="12"/></font><style>-fx-text-fill: #7f8c8d;</style></Label>
                 <Label fx:id="blockedIpsLabel" text="0"><font><Font name="System Bold" size="32"/></font><style>-fx-text-fill: #fbbf24;</style></Label>
             </VBox>
         </VBox>
@@ -119,12 +119,10 @@
             <columns>
                 <TableColumn fx:id="incidentIdColumn" text="Incident ID" prefWidth="100"/>
                 <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="140"/>
-                <TableColumn fx:id="eventTypeColumn" text="Event Type" prefWidth="150"/>
-                <TableColumn fx:id="usernameColumn" text="Username" prefWidth="130"/>
-                <TableColumn fx:id="ipAddressColumn" text="IP Address" prefWidth="130"/>
-                <TableColumn fx:id="locationColumn" text="Location" prefWidth="140"/>
-                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="100"/>
-                <TableColumn fx:id="incidentStatusColumn" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="eventTypeColumn" text="Event Type" prefWidth="180"/>
+                <TableColumn fx:id="usernameColumn" text="Username" prefWidth="150"/>
+                <TableColumn fx:id="severityColumn" text="Severity" prefWidth="120"/>
+                <TableColumn fx:id="incidentStatusColumn" text="Status" prefWidth="120"/>
                 <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
             </columns>
         </TableView>

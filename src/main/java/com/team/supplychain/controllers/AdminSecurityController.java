@@ -16,7 +16,7 @@ public class AdminSecurityController {
     @FXML private TextField searchField;
     @FXML private Button exportButton, clearSessionsButton, refreshButton;
     @FXML private TableView<IncidentRecord> incidentsTable;
-    @FXML private TableColumn<IncidentRecord, String> incidentIdColumn, timestampColumn, eventTypeColumn, usernameColumn, ipAddressColumn, locationColumn, severityColumn, incidentStatusColumn;
+    @FXML private TableColumn<IncidentRecord, String> incidentIdColumn, timestampColumn, eventTypeColumn, usernameColumn, severityColumn, incidentStatusColumn;
     @FXML private TableColumn<IncidentRecord, Void> actionsColumn;
 
     private User currentUser;
@@ -42,9 +42,6 @@ public class AdminSecurityController {
         incidentIdColumn.setCellValueFactory(new PropertyValueFactory<>("incidentId"));
         timestampColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        ipAddressColumn.setCellValueFactory(new PropertyValueFactory<>("ipAddress"));
-        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-
         eventTypeColumn.setCellValueFactory(new PropertyValueFactory<>("eventType"));
         eventTypeColumn.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -138,51 +135,66 @@ public class AdminSecurityController {
 
     private void loadDummyData() {
         incidentsData.clear();
-        incidentsData.add(new IncidentRecord("SEC015", "2025-12-05 14:30", "Failed Login", "unknown", "192.168.1.105", "Unknown", "High", "Open"));
-        incidentsData.add(new IncidentRecord("SEC014", "2025-12-05 13:45", "Failed Login", "employee1", "192.168.1.87", "Riyadh, SA", "Low", "Resolved"));
-        incidentsData.add(new IncidentRecord("SEC013", "2025-12-05 12:20", "Unauthorized Access", "guest", "10.0.0.55", "Dammam, SA", "Critical", "Investigating"));
-        incidentsData.add(new IncidentRecord("SEC012", "2025-12-05 11:15", "Suspicious Activity", "manager1", "192.168.1.45", "Riyadh, SA", "Medium", "Investigating"));
-        incidentsData.add(new IncidentRecord("SEC011", "2025-12-05 10:00", "Failed Login", "unknown", "203.45.67.89", "Unknown", "High", "Open"));
-        incidentsData.add(new IncidentRecord("SEC010", "2025-12-05 09:30", "Failed Login", "admin", "192.168.1.10", "Jeddah, SA", "Low", "Resolved"));
-        incidentsData.add(new IncidentRecord("SEC009", "2025-12-05 08:15", "Brute Force", "unknown", "185.220.101.45", "Unknown", "Critical", "Open"));
-        incidentsData.add(new IncidentRecord("SEC008", "2025-12-04 22:45", "Failed Login", "supplier1", "172.16.0.12", "Riyadh, SA", "Low", "Resolved"));
+        incidentsData.add(new IncidentRecord("SEC015", "2025-12-05 14:30", "Failed Login", "unknown", "High", "Open"));
+        incidentsData.add(new IncidentRecord("SEC014", "2025-12-05 13:45", "Failed Login", "employee1", "Low", "Resolved"));
+        incidentsData.add(new IncidentRecord("SEC013", "2025-12-05 12:20", "Unauthorized Access", "guest", "Critical", "Investigating"));
+        incidentsData.add(new IncidentRecord("SEC012", "2025-12-05 11:15", "Suspicious Activity", "manager1", "Medium", "Investigating"));
+        incidentsData.add(new IncidentRecord("SEC011", "2025-12-05 10:00", "Failed Login", "unknown", "High", "Open"));
+        incidentsData.add(new IncidentRecord("SEC010", "2025-12-05 09:30", "Failed Login", "admin", "Low", "Resolved"));
+        incidentsData.add(new IncidentRecord("SEC009", "2025-12-05 08:15", "Brute Force", "unknown", "Critical", "Open"));
+        incidentsData.add(new IncidentRecord("SEC008", "2025-12-04 22:45", "Failed Login", "supplier1", "Low", "Resolved"));
     }
 
     private void updateStats() {
         long failedLogins = incidentsData.stream().filter(i -> "Failed Login".equals(i.getEventType())).count();
+        long openIncidents = incidentsData.stream().filter(i -> "Open".equals(i.getStatus())).count();
         if (failedLoginsLabel != null) failedLoginsLabel.setText(String.valueOf(failedLogins));
         if (activeSessionsLabel != null) activeSessionsLabel.setText("24");
-        if (blockedIpsLabel != null) blockedIpsLabel.setText("3");
+        if (blockedIpsLabel != null) blockedIpsLabel.setText(String.valueOf(openIncidents));
         if (securityScoreLabel != null) securityScoreLabel.setText("87%");
     }
 
     private String getEventTypeBadgeStyle(String eventType) {
-        return switch (eventType) {
-            case "Failed Login" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "Unauthorized Access" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-            case "Suspicious Activity" -> "-fx-background-color: rgba(234,179,8,0.15); -fx-text-fill: #eab308;";
-            case "Brute Force" -> "-fx-background-color: rgba(220,38,38,0.15); -fx-text-fill: #dc2626;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (eventType) {
+            case "Failed Login":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            case "Unauthorized Access":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            case "Suspicious Activity":
+                return "-fx-background-color: rgba(234,179,8,0.15); -fx-text-fill: #eab308;";
+            case "Brute Force":
+                return "-fx-background-color: rgba(220,38,38,0.15); -fx-text-fill: #dc2626;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     private String getSeverityBadgeStyle(String severity) {
-        return switch (severity) {
-            case "Critical" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "High" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-            case "Medium" -> "-fx-background-color: rgba(234,179,8,0.15); -fx-text-fill: #eab308;";
-            case "Low" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (severity) {
+            case "Critical":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            case "High":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            case "Medium":
+                return "-fx-background-color: rgba(234,179,8,0.15); -fx-text-fill: #eab308;";
+            case "Low":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     private String getStatusBadgeStyle(String status) {
-        return switch (status) {
-            case "Open" -> "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "Investigating" -> "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
-            case "Resolved" -> "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            default -> "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
-        };
+        switch (status) {
+            case "Open":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            case "Investigating":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            case "Resolved":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     @FXML private void handleExport() { showInfo("Export", "Security log export functionality will be implemented."); }
@@ -197,15 +209,13 @@ public class AdminSecurityController {
     }
 
     public static class IncidentRecord {
-        private final StringProperty incidentId, timestamp, eventType, username, ipAddress, location, severity, status;
+        private final StringProperty incidentId, timestamp, eventType, username, severity, status;
 
-        public IncidentRecord(String incidentId, String timestamp, String eventType, String username, String ipAddress, String location, String severity, String status) {
+        public IncidentRecord(String incidentId, String timestamp, String eventType, String username, String severity, String status) {
             this.incidentId = new SimpleStringProperty(incidentId);
             this.timestamp = new SimpleStringProperty(timestamp);
             this.eventType = new SimpleStringProperty(eventType);
             this.username = new SimpleStringProperty(username);
-            this.ipAddress = new SimpleStringProperty(ipAddress);
-            this.location = new SimpleStringProperty(location);
             this.severity = new SimpleStringProperty(severity);
             this.status = new SimpleStringProperty(status);
         }
@@ -214,8 +224,6 @@ public class AdminSecurityController {
         public String getTimestamp() { return timestamp.get(); }
         public String getEventType() { return eventType.get(); }
         public String getUsername() { return username.get(); }
-        public String getIpAddress() { return ipAddress.get(); }
-        public String getLocation() { return location.get(); }
         public String getSeverity() { return severity.get(); }
         public String getStatus() { return status.get(); }
     }

@@ -5,10 +5,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.team.supplychain.controllers.EmployeeCreateRequisitionViewController"
-      spacing="30"
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.team.supplychain.controllers.EmployeeCreateRequisitionViewController"
+            fitToWidth="true"
+            style="-fx-background-color: #f8f9fa;">
+
+<VBox spacing="30"
       style="-fx-background-color: #f8f9fa;">
 
     <padding>
@@ -433,8 +436,8 @@
         <!-- Items Table -->
         <TableView fx:id="itemsTable"
                   styleClass="modern-table"
-                  prefHeight="300"
-                  VBox.vgrow="ALWAYS">
+                  prefHeight="400"
+                  minHeight="400">
             <columns>
                 <TableColumn fx:id="itemNameColumn"
                            text="Item Name"
@@ -532,3 +535,5 @@
     </HBox>
 
 </VBox>
+
+</ScrollPane>

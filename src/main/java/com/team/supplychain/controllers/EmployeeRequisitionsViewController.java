@@ -1,10 +1,19 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.RequisitionDAO;
+import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Controller for the Employee Requisitions View
@@ -43,6 +52,10 @@ public class EmployeeRequisitionsViewController {
     @FXML private VBox tableViewPane;
 
     private User currentUser;
+    private RequisitionDAO requisitionDAO;
+    private ObservableList<RequisitionRecord> requisitionsData;
+    private List<Requisition> allRequisitions;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
 
     /**
      * Set the current logged-in user
@@ -57,7 +70,11 @@ public class EmployeeRequisitionsViewController {
      */
     @FXML
     private void initialize() {
-        System.out.println("EmployeeRequisitionsViewController initialized with dummy data");
+        System.out.println("EmployeeRequisitionsViewController initialized");
+
+        // Initialize DAO and data
+        requisitionDAO = new RequisitionDAO();
+        requisitionsData = FXCollections.observableArrayList();
 
         // Initialize filter ComboBoxes
         if (statusFilter != null) {
@@ -70,9 +87,60 @@ public class EmployeeRequisitionsViewController {
             dateFilter.setValue("All Time");
         }
 
-        // TODO: Initialize table columns with cell value factories
-        // TODO: Load dummy data into table
-        // TODO: Set up search listener
+        // Initialize table columns
+        setupTableColumns();
+
+        // Set default view to card view
+        showCardView();
+    }
+
+    /**
+     * Setup table columns with cell value factories
+     */
+    private void setupTableColumns() {
+        if (requisitionsTable == null) return;
+
+        reqIdColumn.setCellValueFactory(new PropertyValueFactory<>("reqId"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        itemsColumn.setCellValueFactory(new PropertyValueFactory<>("items"));
+        dateRequestedColumn.setCellValueFactory(new PropertyValueFactory<>("dateRequested"));
+        reviewerColumn.setCellValueFactory(new PropertyValueFactory<>("reviewer"));
+
+        // Setup status column with badge styling
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusColumn.setCellFactory(column -> new TableCell<RequisitionRecord, String>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setGraphic(null);
+                } else {
+                    Label badge = new Label(status);
+                    badge.setStyle("-fx-background-radius: 12px; -fx-padding: 6px 14px; -fx-font-size: 11px; -fx-font-weight: bold; " +
+                        getStatusBadgeStyle(status));
+                    setGraphic(badge);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        requisitionsTable.setItems(requisitionsData);
+    }
+
+    /**
+     * Get badge style based on status
+     */
+    private String getStatusBadgeStyle(String status) {
+        switch (status) {
+            case "Pending":
+                return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
+            case "Approved":
+                return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
+            case "Rejected":
+                return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
+            default:
+                return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+        }
     }
 
     // ==================== ACTION HANDLERS ====================
@@ -184,11 +252,172 @@ public class EmployeeRequisitionsViewController {
 
     // ==================== HELPER METHODS ====================
 
+    /**
+     * Load requisitions from database for current user
+     */
     private void loadRequisitionsData() {
-        System.out.println("Loading requisitions data for user: " +
-                (currentUser != null ? currentUser.getUsername() : "unknown"));
-        // TODO: Load from RequisitionDAO (to be created)
-        // For now, dummy data is hardcoded in FXML
+        if (currentUser == null) {
+            System.out.println("Cannot load requisitions - no user set");
+            return;
+        }
+
+        System.out.println("Loading requisitions data for user: " + currentUser.getUsername());
+
+        try {
+            // Load requisitions from database
+            allRequisitions = requisitionDAO.getRequisitionsByUser(currentUser.getUserId());
+
+            System.out.println("Loaded " + allRequisitions.size() + " requisitions from database");
+
+            // Update statistics
+            updateStatistics();
+
+            // Populate table view
+            populateTableView(allRequisitions);
+
+            // Populate card view
+            populateCardView(allRequisitions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error loading requisitions: " + e.getMessage());
+            showError("Load Error", "Failed to load requisitions from database.");
+        }
+    }
+
+    /**
+     * Update statistics cards
+     */
+    private void updateStatistics() {
+        if (allRequisitions == null) return;
+
+        int total = allRequisitions.size();
+        long pending = allRequisitions.stream().filter(r -> "Pending".equals(r.getStatus())).count();
+        long approved = allRequisitions.stream().filter(r -> "Approved".equals(r.getStatus())).count();
+        long rejected = allRequisitions.stream().filter(r -> "Rejected".equals(r.getStatus())).count();
+
+        if (totalRequestsValue != null) totalRequestsValue.setText(String.valueOf(total));
+        if (pendingValue != null) pendingValue.setText(String.valueOf(pending));
+        if (approvedValue != null) approvedValue.setText(String.valueOf(approved));
+        if (rejectedValue != null) rejectedValue.setText(String.valueOf(rejected));
+    }
+
+    /**
+     * Populate table view with requisitions
+     */
+    private void populateTableView(List<Requisition> requisitions) {
+        requisitionsData.clear();
+
+        for (Requisition req : requisitions) {
+            String dateStr = req.getRequestDate() != null ?
+                req.getRequestDate().format(DATE_FORMATTER) : "N/A";
+
+            String reviewer = req.getReviewerName() != null ?
+                req.getReviewerName() : "Pending Review";
+
+            RequisitionRecord record = new RequisitionRecord(
+                req.getRequisitionCode(),
+                req.getCategory(),
+                req.getTotalItems(),
+                dateStr,
+                req.getStatus(),
+                reviewer
+            );
+
+            requisitionsData.add(record);
+        }
+
+        if (totalCountLabel != null) {
+            totalCountLabel.setText("Total: " + requisitions.size() + " requisition" +
+                (requisitions.size() != 1 ? "s" : ""));
+        }
+    }
+
+    /**
+     * Populate card view with requisitions
+     */
+    private void populateCardView(List<Requisition> requisitions) {
+        if (requisitionsContainer == null) return;
+
+        requisitionsContainer.getChildren().clear();
+
+        for (Requisition req : requisitions) {
+            VBox card = createRequisitionCard(req);
+            requisitionsContainer.getChildren().add(card);
+        }
+    }
+
+    /**
+     * Create a card for displaying a requisition
+     */
+    private VBox createRequisitionCard(Requisition req) {
+        VBox card = new VBox(12);
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 12px; " +
+                     "-fx-padding: 20px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+        card.setPrefWidth(Double.MAX_VALUE);
+
+        // Header row with requisition code and status
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label codeLabel = new Label(req.getRequisitionCode());
+        codeLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b;");
+
+        Label statusBadge = new Label(req.getStatus());
+        statusBadge.setStyle("-fx-background-radius: 12px; -fx-padding: 6px 14px; " +
+                           "-fx-font-size: 11px; -fx-font-weight: bold; " +
+                           getStatusBadgeStyle(req.getStatus()));
+
+        HBox spacer = new HBox();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        header.getChildren().addAll(codeLabel, spacer, statusBadge);
+
+        // Details grid
+        VBox details = new VBox(8);
+
+        details.getChildren().add(createDetailRow("Category:", req.getCategory()));
+        details.getChildren().add(createDetailRow("Department:", req.getDepartment()));
+        details.getChildren().add(createDetailRow("Total Items:", String.valueOf(req.getTotalItems())));
+        details.getChildren().add(createDetailRow("Total Amount:", "SAR " + req.getTotalAmount()));
+        details.getChildren().add(createDetailRow("Date Requested:",
+            req.getRequestDate() != null ? req.getRequestDate().format(DATE_FORMATTER) : "N/A"));
+
+        if (req.getReviewerName() != null) {
+            details.getChildren().add(createDetailRow("Reviewed By:", req.getReviewerName()));
+        }
+
+        card.getChildren().addAll(header, details);
+
+        return card;
+    }
+
+    /**
+     * Create a detail row for card view
+     */
+    private HBox createDetailRow(String label, String value) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        Label labelNode = new Label(label);
+        labelNode.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b; -fx-min-width: 120px;");
+
+        Label valueNode = new Label(value);
+        valueNode.setStyle("-fx-font-size: 13px; -fx-text-fill: #1e293b; -fx-font-weight: 500;");
+
+        row.getChildren().addAll(labelNode, valueNode);
+        return row;
+    }
+
+    /**
+     * Show error dialog
+     */
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     // ==================== INNER CLASS FOR TABLE ====================

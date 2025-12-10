@@ -133,8 +133,7 @@
                 <TableColumn fx:id="userColumn" text="User" prefWidth="120"/>
                 <TableColumn fx:id="actionTypeColumn" text="Action Type" prefWidth="120"/>
                 <TableColumn fx:id="moduleColumn" text="Module" prefWidth="130"/>
-                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="280"/>
-                <TableColumn fx:id="ipAddressColumn" text="IP Address" prefWidth="130"/>
+                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="410"/>
                 <TableColumn fx:id="resultColumn" text="Result" prefWidth="100"/>
                 <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
             </columns>

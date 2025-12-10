@@ -139,16 +139,81 @@ public class UserDAO {
     
     public boolean deleteUser(int userId) {
         String sql = "DELETE FROM users WHERE user_id = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, userId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Statistics methods for dashboard
+    public int getTotalUserCount() {
+        String sql = "SELECT COUNT(*) as count FROM users";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getActiveUserCount() {
+        String sql = "SELECT COUNT(*) as count FROM users WHERE is_active = true";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getInactiveUserCount() {
+        String sql = "SELECT COUNT(*) as count FROM users WHERE is_active = false";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getDistinctRoleCount() {
+        String sql = "SELECT COUNT(DISTINCT role) as count FROM users";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
     
     private void updateLastLogin(int userId) {

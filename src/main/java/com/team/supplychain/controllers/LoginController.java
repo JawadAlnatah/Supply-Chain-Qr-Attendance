@@ -1,5 +1,6 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.AuditLogDAO;
 import com.team.supplychain.dao.UserDAO;
 import com.team.supplychain.models.User;
 import com.team.supplychain.utils.AlertUtil;
@@ -14,13 +15,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
-    
+
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginButton;
     @FXML private Label errorLabel;
-    
-    private UserDAO userDAO = new UserDAO();
+
+    private final UserDAO userDAO = new UserDAO();
+    private final AuditLogDAO auditLogDAO = new AuditLogDAO();
     
     @FXML
     private void initialize() {
@@ -44,18 +46,41 @@ public class LoginController {
         loginButton.setDisable(true);
 
         try {
-            // TEMPORARY: Hardcoded authentication for testing dashboards
-            User user = createMockUser(username, password);
+            // Authenticate user against database
+            User user = userDAO.authenticate(username, password);
 
             if (user != null) {
-                // Login successful
+                // Login successful - Log to audit
+                auditLogDAO.logSuccess(
+                    user.getUserId(),
+                    user.getUsername(),
+                    "LOGIN",
+                    "Authentication",
+                    String.format("User %s logged in successfully", user.getUsername())
+                );
+
                 errorLabel.setVisible(false);
                 openDashboard(user);
             } else {
+                // Failed login - Log to audit
+                auditLogDAO.logFailure(
+                    null,
+                    username,
+                    "LOGIN",
+                    "Authentication",
+                    String.format("Failed login attempt for username: %s", username)
+                );
                 showError("Invalid username or password");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            auditLogDAO.logFailure(
+                null,
+                username,
+                "LOGIN",
+                "Authentication",
+                String.format("Login error for username %s: %s", username, e.getMessage())
+            );
             showError("An error occurred. Please try again.");
         } finally {
             loginButton.setDisable(false);
@@ -78,53 +103,6 @@ public class LoginController {
         passwordField.setText("password123");
     }
 
-    /**
-     * TEMPORARY METHOD: Create mock users for testing dashboards
-     * Remove this and use userDAO.authenticate() when database is ready
-     */
-    private User createMockUser(String username, String password) {
-        User user = null;
-
-        // Check hardcoded credentials
-        if (username.equalsIgnoreCase("admin") && password.equals("password123")) {
-            user = new User();
-            user.setUserId(1);
-            user.setUsername("admin");
-            user.setFirstName("Abdullah");
-            user.setLastName("Ahmed");
-            user.setEmail("abdullah.ahmed@freshdairy.com");
-            user.setRole(com.team.supplychain.enums.UserRole.ADMIN);
-
-        } else if (username.equalsIgnoreCase("manager") && password.equals("password123")) {
-            user = new User();
-            user.setUserId(2);
-            user.setUsername("manager");
-            user.setFirstName("Mohammed");
-            user.setLastName("Ali");
-            user.setEmail("mohammed.ali@freshdairy.com");
-            user.setRole(com.team.supplychain.enums.UserRole.MANAGER);
-
-        } else if (username.equalsIgnoreCase("employee") && password.equals("password123")) {
-            user = new User();
-            user.setUserId(3);
-            user.setUsername("employee");
-            user.setFirstName("Jawad");
-            user.setLastName("Hassan");
-            user.setEmail("jawad.hassan@freshdairy.com");
-            user.setRole(com.team.supplychain.enums.UserRole.EMPLOYEE);
-
-        } else if (username.equalsIgnoreCase("supplier") && password.equals("password123")) {
-            user = new User();
-            user.setUserId(4);
-            user.setUsername("supplier");
-            user.setFirstName("Supplier");
-            user.setLastName("Account");
-            user.setEmail("supplier@example.com");
-            user.setRole(com.team.supplychain.enums.UserRole.SUPPLIER);
-        }
-
-        return user;
-    }
     
     private void openDashboard(User user) {
         // Declare variables outside try block for error handling
@@ -177,8 +155,9 @@ public class LoginController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle(dashboardTitle);
-            
-            // Make window fullscreen
+
+            // Make window resizable and maximized
+            stage.setResizable(true);
             stage.setMaximized(true);
             stage.setFullScreen(false); // Use maximized instead of true fullscreen for better UX
 

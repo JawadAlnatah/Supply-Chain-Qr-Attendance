@@ -115,72 +115,56 @@ SET @sql = IF(@col_exists = 0,
     'SELECT "Column email already exists" AS msg');
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
--- 1.4 Rename SUPPLY_REQUESTS table to REQUISITIONS
--- Match the terminology used in Employee dashboard UI (conditional)
-SET @table_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES
-    WHERE table_schema = @db_name AND table_name = 'supply_requests');
-SET @sql = IF(@table_exists > 0,
-    'ALTER TABLE supply_requests RENAME TO requisitions',
-    'SELECT "Table supply_requests already renamed or does not exist" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- 1.4 Drop old supply_requests/requisitions table if exists (will recreate with proper structure)
+-- This is necessary because the old structure is incompatible with the new schema
+DROP TABLE IF EXISTS requisition_items;
+DROP TABLE IF EXISTS supply_requests;
+DROP TABLE IF EXISTS requisitions;
 
--- 1.5 Update REQUISITIONS table structure
--- Add columns to match EmployeeRequisitions page
--- Rename request_id to requisition_id (conditional)
-SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND column_name = 'requisition_id');
-SET @sql = IF(@col_exists = 0,
-    'ALTER TABLE requisitions CHANGE request_id requisition_id INT AUTO_INCREMENT',
-    'SELECT "Column requisition_id already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- 1.5 Create REQUISITIONS table with proper structure
+-- Supports multiple items per requisition via requisition_items table
+CREATE TABLE IF NOT EXISTS requisitions (
+    requisition_id INT AUTO_INCREMENT PRIMARY KEY,
+    requisition_code VARCHAR(50) UNIQUE NOT NULL,
+    requested_by INT NOT NULL,
+    supplier_id INT NULL,
+    category VARCHAR(100) NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    priority VARCHAR(50) NOT NULL,
+    justification TEXT,
+    status VARCHAR(50) DEFAULT 'Pending',
+    total_amount DECIMAL(15, 2) DEFAULT 0.00,
+    total_items INT DEFAULT 0,
+    request_date DATETIME NOT NULL,
+    reviewed_by INT NULL,
+    review_date DATETIME NULL,
+    review_notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (requested_by) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) ON DELETE SET NULL,
+    INDEX idx_requested_by (requested_by),
+    INDEX idx_status (status),
+    INDEX idx_request_date (request_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Add requisition_code column (conditional)
-SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND column_name = 'requisition_code');
-SET @sql = IF(@col_exists = 0,
-    'ALTER TABLE requisitions ADD COLUMN requisition_code VARCHAR(20) AFTER requisition_id',
-    'SELECT "Column requisition_code already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Add category column (conditional)
-SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND column_name = 'category');
-SET @sql = IF(@col_exists = 0,
-    'ALTER TABLE requisitions ADD COLUMN category VARCHAR(50) AFTER item_id',
-    'SELECT "Column category already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Add items_count column (conditional)
-SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND column_name = 'items_count');
-SET @sql = IF(@col_exists = 0,
-    'ALTER TABLE requisitions ADD COLUMN items_count INT DEFAULT 1 AFTER quantity_requested',
-    'SELECT "Column items_count already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Add reviewer_id column (conditional)
-SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND column_name = 'reviewer_id');
-SET @sql = IF(@col_exists = 0,
-    'ALTER TABLE requisitions ADD COLUMN reviewer_id INT AFTER approved_by',
-    'SELECT "Column reviewer_id already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Add UNIQUE constraint on requisition_code (conditional)
-SET @idx_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND index_name = 'unique_requisition_code');
-SET @sql = IF(@idx_exists = 0,
-    'ALTER TABLE requisitions ADD UNIQUE KEY unique_requisition_code (requisition_code)',
-    'SELECT "Index unique_requisition_code already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
--- Add FOREIGN KEY constraint (conditional)
-SET @fk_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-    WHERE table_schema = @db_name AND table_name = 'requisitions' AND constraint_name = 'fk_requisition_reviewer');
-SET @sql = IF(@fk_exists = 0,
-    'ALTER TABLE requisitions ADD CONSTRAINT fk_requisition_reviewer FOREIGN KEY (reviewer_id) REFERENCES users(user_id)',
-    'SELECT "Foreign key fk_requisition_reviewer already exists" AS msg');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- 1.6 Create REQUISITION_ITEMS table
+-- Stores multiple items per requisition
+CREATE TABLE IF NOT EXISTS requisition_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    requisition_id INT NOT NULL,
+    inventory_item_id INT NULL,
+    item_name VARCHAR(200) NOT NULL,
+    category VARCHAR(100),
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
+    subtotal DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (requisition_id) REFERENCES requisitions(requisition_id) ON DELETE CASCADE,
+    FOREIGN KEY (inventory_item_id) REFERENCES inventory_items(item_id) ON DELETE SET NULL,
+    INDEX idx_requisition_id (requisition_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
 -- PHASE 2: CREATE NEW TABLES
@@ -369,6 +353,8 @@ UNION ALL
 SELECT 'purchase_order_items', COUNT(*) FROM purchase_order_items
 UNION ALL
 SELECT 'requisitions', COUNT(*) FROM requisitions
+UNION ALL
+SELECT 'requisition_items', COUNT(*) FROM requisition_items
 UNION ALL
 SELECT 'attendance_records', COUNT(*) FROM attendance_records
 UNION ALL
