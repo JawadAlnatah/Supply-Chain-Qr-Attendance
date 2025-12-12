@@ -358,4 +358,24 @@ public class RequisitionDAO {
 
         return 0;
     }
+
+    /**
+     * Get count of pending requisitions (for Admin Dashboard)
+     */
+    public int getPendingRequisitionsCount() {
+        String sql = "SELECT COUNT(*) as count FROM requisitions WHERE status = 'Pending'";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

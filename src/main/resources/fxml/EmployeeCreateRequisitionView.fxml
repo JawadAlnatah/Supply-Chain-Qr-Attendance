@@ -400,100 +400,110 @@
             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
         </style>
 
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="Requisition Items">
-                <font>
-                    <Font name="System Bold" size="16"/>
-                </font>
-                <style>
-                    -fx-text-fill: #2c3e50;
-                </style>
-            </Label>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="addItemButton"
-                   text="+ Add Item"
-                   styleClass="action-button-secondary"
-                   onAction="#handleAddItem">
-                <font>
-                    <Font size="12"/>
-                </font>
-                <style>
-                    -fx-background-radius: 10;
-                    -fx-border-radius: 10;
-                </style>
-            </Button>
-        </HBox>
-
-        <Label text="Select items from inventory and specify quantities">
-            <font>
-                <Font size="11"/>
-            </font>
-            <style>
-                -fx-text-fill: #757575;
-            </style>
-        </Label>
-
-        <!-- Items Table -->
-        <TableView fx:id="itemsTable"
-                  styleClass="modern-table"
-                  prefHeight="400"
-                  minHeight="400">
-            <columns>
-                <TableColumn fx:id="itemNameColumn"
-                           text="Item Name"
-                           prefWidth="250"
-                           minWidth="200"/>
-
-                <TableColumn fx:id="categoryColumn"
-                           text="Category"
-                           prefWidth="150"
-                           minWidth="120"/>
-
-                <TableColumn fx:id="quantityColumn"
-                           text="Quantity"
-                           prefWidth="100"
-                           minWidth="80"/>
-
-                <TableColumn fx:id="unitPriceColumn"
-                           text="Unit Price"
-                           prefWidth="120"
-                           minWidth="100"/>
-
-                <TableColumn fx:id="subtotalColumn"
-                           text="Subtotal"
-                           prefWidth="120"
-                           minWidth="100"/>
-
-                <TableColumn fx:id="actionsColumn"
-                           text="Actions"
-                           prefWidth="100"
-                           minWidth="80"/>
-            </columns>
-
-            <placeholder>
-                <VBox alignment="CENTER" spacing="10">
-                    <padding>
-                        <Insets top="30" right="20" bottom="30" left="20"/>
-                    </padding>
-                    <Label text="No items added yet">
+        <!-- Clean Items Section -->
+        <VBox spacing="0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3); -fx-padding: 25;">
+            <!-- Simple Header -->
+            <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 0 0 20 0;">
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label text="Requisition Items">
                         <font>
-                            <Font name="System Bold" size="14"/>
+                            <Font name="System Bold" size="16"/>
                         </font>
                         <style>
-                            -fx-text-fill: #757575;
+                            -fx-text-fill: #2c3e50;
                         </style>
                     </Label>
-                    <Label text="Click 'Add Item' to start building your requisition">
+                    <Label text="Build your order by selecting items from the filtered inventory">
                         <font>
-                            <Font size="12"/>
+                            <Font size="11"/>
                         </font>
                         <style>
-                            -fx-text-fill: #9e9e9e;
+                            -fx-text-fill: #6c757d;
                         </style>
                     </Label>
                 </VBox>
-            </placeholder>
-        </TableView>
+                <Button fx:id="addItemButton"
+                       text="+ Add Item"
+                       onAction="#handleAddItem"
+                       styleClass="action-button-secondary"
+                       style="-fx-cursor: hand;">
+                    <font>
+                        <Font name="System Bold" size="12"/>
+                    </font>
+                </Button>
+            </HBox>
+
+            <!-- Table with Clean Design -->
+            <TableView fx:id="itemsTable"
+                      styleClass="modern-table"
+                      prefHeight="400"
+                      minHeight="400"
+                      style="-fx-background-color: #fafbfc; -fx-table-cell-border-color: #e1e4e8; -fx-border-color: #d1d5da; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
+                <columns>
+                    <TableColumn fx:id="itemNameColumn"
+                               text="Item Name"
+                               prefWidth="250"
+                               minWidth="200"
+                               style="-fx-alignment: CENTER-LEFT;"/>
+
+                    <TableColumn fx:id="categoryColumn"
+                               text="Category"
+                               prefWidth="150"
+                               minWidth="120"
+                               style="-fx-alignment: CENTER-LEFT;"/>
+
+                    <TableColumn fx:id="quantityColumn"
+                               text="Quantity"
+                               prefWidth="100"
+                               minWidth="80"
+                               style="-fx-alignment: CENTER;"/>
+
+                    <TableColumn fx:id="unitPriceColumn"
+                               text="Unit Price (SAR)"
+                               prefWidth="120"
+                               minWidth="100"
+                               style="-fx-alignment: CENTER-RIGHT;"/>
+
+                    <TableColumn fx:id="subtotalColumn"
+                               text="Subtotal (SAR)"
+                               prefWidth="120"
+                               minWidth="100"
+                               style="-fx-alignment: CENTER-RIGHT;"/>
+
+                    <TableColumn fx:id="actionsColumn"
+                               text="Actions"
+                               prefWidth="100"
+                               minWidth="80"
+                               style="-fx-alignment: CENTER;"/>
+                </columns>
+
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="15" style="-fx-padding: 60 20;">
+                        <StackPane style="-fx-background-color: #f6f8fa; -fx-border-color: #d1d5da; -fx-border-width: 2; -fx-border-style: dashed; -fx-border-radius: 8; -fx-background-radius: 8;" prefWidth="80" prefHeight="80">
+                            <Label text="📋" style="-fx-font-size: 36px; -fx-opacity: 0.5;"/>
+                        </StackPane>
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="No Items Added">
+                                <font>
+                                    <Font name="System Bold" size="15"/>
+                                </font>
+                                <style>
+                                    -fx-text-fill: #2c3e50;
+                                </style>
+                            </Label>
+                            <Label text="Click 'Add Item' to start building your requisition">
+                                <font>
+                                    <Font size="11"/>
+                                </font>
+                                <style>
+                                    -fx-text-fill: #6c757d;
+                                </style>
+                            </Label>
+                        </VBox>
+                    </VBox>
+                </placeholder>
+            </TableView>
+        </VBox>
 
     </VBox>
 

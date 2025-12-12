@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QR Code Attendance Scanner</title>
+
+    <!-- html5-qrcode Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .scanner-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-checkin {
+            background: #43a047;
+            color: white;
+        }
+
+        .btn-checkin.active {
+            background: #2e7d32;
+            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.4);
+        }
+
+        .btn-checkout {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-checkout.active {
+            background: #c0392b;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #reader {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .manual-input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .manual-input-section h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-submit {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-submit:hover {
+            background: #5568d3;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .employee-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .employee-card h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .employee-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 4px 0;
+        }
+
+        .employee-card .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .instructions h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 6px 0;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: auto;
+            padding-top: 20px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .scanner-card {
+                padding: 16px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📱 QR Attendance Scanner</h1>
+            <p>Supply Chain Management System</p>
+        </div>
+
+        <!-- Main Scanner Card -->
+        <div class="scanner-card">
+            <!-- Action Selection -->
+            <div class="action-buttons">
+                <button id="btnCheckIn" class="btn btn-checkin active" onclick="setAction('checkin')">
+                    ✓ Check In
+                </button>
+                <button id="btnCheckOut" class="btn btn-checkout" onclick="setAction('checkout')">
+                    ✗ Check Out
+                </button>
+            </div>
+
+            <!-- QR Code Reader -->
+            <div id="reader"></div>
+
+            <!-- Manual Input (for iOS/camera issues) -->
+            <div class="manual-input-section">
+                <h4>📝 Manual Entry (if camera doesn't work)</h4>
+                <div class="input-group">
+                    <input type="text" id="manualQrInput" placeholder="Enter QR code manually (e.g., EMP-00001-ABC123)" onkeypress="if(event.key==='Enter') handleManualInput()" />
+                    <button class="btn-submit" onclick="handleManualInput()">Submit</button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="spinner" id="spinner"></div>
+
+            <!-- Status Message -->
+            <div id="statusMessage" class="status-message"></div>
+
+            <!-- Employee Info Card -->
+            <div id="employeeCard" class="employee-card"></div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <h4>📋 How to Use:</h4>
+                <ul>
+                    <li>Select <strong>Check In</strong> or <strong>Check Out</strong></li>
+                    <li>Point your camera at the employee's QR code</li>
+                    <li>Wait for automatic scan and confirmation</li>
+                    <li>Attendance will be recorded automatically</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 Supply Chain Management System</p>
+            <p>QR-Based Employee Attendance Tracking</p>
+        </div>
+    </div>
+
+    <script>
+        let html5QrcodeScanner;
+        let currentAction = 'checkin';
+        let isProcessing = false;
+
+        // API endpoint (change this if your server is on a different host/port)
+        const API_ENDPOINT = window.location.origin + '/api/attendance/scan';
+
+        // Initialize scanner on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initScanner();
+        });
+
+        /**
+         * Initialize the QR code scanner
+         */
+        function initScanner() {
+            html5QrcodeScanner = new Html5Qrcode("reader");
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("Camera initialization failed:", err);
+                showMessage('error', 'Failed to access camera. Please allow camera permissions.');
+            });
+        }
+
+        /**
+         * Handle successful QR code scan
+         */
+        function onScanSuccess(decodedText, decodedResult) {
+            if (isProcessing) return; // Prevent multiple scans
+
+            isProcessing = true;
+            console.log("QR Code scanned:", decodedText);
+
+            // Stop scanner temporarily
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.pause(true);
+            }
+
+            // Send to API
+            processAttendance(decodedText);
+        }
+
+        /**
+         * Handle manual QR code input
+         */
+        function handleManualInput() {
+            const input = document.getElementById('manualQrInput');
+            const qrCode = input.value.trim();
+
+            if (!qrCode) {
+                showMessage('error', 'Please enter a QR code');
+                return;
+            }
+
+            if (isProcessing) {
+                showMessage('info', 'Please wait, processing previous request...');
+                return;
+            }
+
+            console.log("Manual QR Code entered:", qrCode);
+
+            // Clear input
+            input.value = '';
+
+            // Process the QR code
+            isProcessing = true;
+            processAttendance(qrCode);
+        }
+
+        /**
+         * Handle scan failure (silent, runs continuously)
+         */
+        function onScanFailure(error) {
+            // This is called every frame when no QR code is detected
+            // We don't show errors here to avoid spam
+        }
+
+        /**
+         * Set check-in or check-out action
+         */
+        function setAction(action) {
+            currentAction = action;
+
+            const btnCheckIn = document.getElementById('btnCheckIn');
+            const btnCheckOut = document.getElementById('btnCheckOut');
+
+            if (action === 'checkin') {
+                btnCheckIn.classList.add('active');
+                btnCheckOut.classList.remove('active');
+            } else {
+                btnCheckOut.classList.add('active');
+                btnCheckIn.classList.remove('active');
+            }
+
+            hideMessage();
+            hideEmployeeCard();
+        }
+
+        /**
+         * Process attendance via API
+         */
+        async function processAttendance(qrCode) {
+            showSpinner();
+
+            const requestData = {
+                qrCode: qrCode,
+                action: currentAction,
+                location: "QR Scanner - Main Entrance"
+            };
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+
+                hideSpinner();
+
+                if (data.success) {
+                    showMessage('success', data.message);
+                    showEmployeeCard(data);
+                    playSuccessSound();
+                } else {
+                    showMessage('error', data.message || 'Operation failed');
+                }
+
+                // Resume scanning after 3 seconds
+                setTimeout(() => {
+                    isProcessing = false;
+                    if (html5QrcodeScanner) {
+                        html5QrcodeScanner.resume();
+                    }
+                }, 3000);
+
+            } catch (error) {
+                hideSpinner();
+                console.error('API Error:', error);
+                showMessage('error', 'Connection failed. Please check if the server is running.');
+
+                // Resume scanning after error
+                setTimeout(() => {
+                    isProcessing = false;
+                    if (html5QrcodeScanner) {
+                        html5QrcodeScanner.resume();
+                    }
+                }, 3000);
+            }
+        }
+
+        /**
+         * Display status message
+         */
+        function showMessage(type, text) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'status-message status-' + type;
+            statusDiv.textContent = text;
+            statusDiv.style.display = 'block';
+        }
+
+        /**
+         * Hide status message
+         */
+        function hideMessage() {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.style.display = 'none';
+        }
+
+        /**
+         * Display employee information card
+         */
+        function showEmployeeCard(data) {
+            const cardDiv = document.getElementById('employeeCard');
+
+            let html = `
+                <h3>${data.employeeName}</h3>
+                <p>👤 ID: ${data.employeeId}</p>
+                <p>🏢 ${data.department || 'N/A'}</p>
+                <p>💼 ${data.position || 'N/A'}</p>
+            `;
+
+            if (currentAction === 'checkin') {
+                html += `<p>🕐 Check-in: ${data.checkInTime}</p>`;
+                html += `<span class="badge">${data.status || 'PRESENT'}</span>`;
+            } else {
+                html += `<p>🕐 In: ${data.checkInTime} | Out: ${data.checkOutTime}</p>`;
+                html += `<p>⏱️ Hours Worked: ${data.hoursWorked}</p>`;
+            }
+
+            cardDiv.innerHTML = html;
+            cardDiv.style.display = 'block';
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                hideEmployeeCard();
+            }, 5000);
+        }
+
+        /**
+         * Hide employee card
+         */
+        function hideEmployeeCard() {
+            const cardDiv = document.getElementById('employeeCard');
+            cardDiv.style.display = 'none';
+        }
+
+        /**
+         * Show loading spinner
+         */
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'block';
+        }
+
+        /**
+         * Hide loading spinner
+         */
+        function hideSpinner() {
+            document.getElementById('spinner').style.display = 'none';
+        }
+
+        /**
+         * Play success sound (optional)
+         */
+        function playSuccessSound() {
+            // Create a simple beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+    </script>
+</body>
+</html>

@@ -1,14 +1,24 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.AuditLogDAO;
+import com.team.supplychain.models.AuditLog;
 import com.team.supplychain.models.User;
-import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class AdminAuditLogsController {
 
@@ -16,12 +26,16 @@ public class AdminAuditLogsController {
     @FXML private ComboBox<String> actionTypeFilter, moduleFilter, resultFilter;
     @FXML private TextField searchField;
     @FXML private Button exportButton, generateReportButton, archiveButton, refreshButton;
-    @FXML private TableView<LogRecord> logsTable;
-    @FXML private TableColumn<LogRecord, String> logIdColumn, timestampColumn, userColumn, actionTypeColumn, moduleColumn, descriptionColumn, resultColumn;
-    @FXML private TableColumn<LogRecord, Void> actionsColumn;
+    @FXML private TableView<AuditLog> logsTable;
+    @FXML private TableColumn<AuditLog, String> logIdColumn, timestampColumn, userColumn, actionTypeColumn, moduleColumn, descriptionColumn, resultColumn;
+    @FXML private TableColumn<AuditLog, Void> actionsColumn;
 
     private User currentUser;
-    private ObservableList<LogRecord> logsData;
+    private ObservableList<AuditLog> logsData;
+    private AuditLogDAO auditLogDAO;
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final int PAGE_SIZE = 100;
+    private int currentOffset = 0;
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
@@ -30,31 +44,50 @@ public class AdminAuditLogsController {
     @FXML
     private void initialize() {
         System.out.println("AdminAuditLogsController initialized");
+        auditLogDAO = new AuditLogDAO();
         logsData = FXCollections.observableArrayList();
         setupTable();
         setupFilters();
-        loadDummyData();
+        setupSearchAndFilters();
+        loadLogsFromDatabase();
         updateStats();
     }
 
     private void setupTable() {
         if (logsTable == null) return;
 
-        logIdColumn.setCellValueFactory(new PropertyValueFactory<>("logId"));
-        timestampColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
-        userColumn.setCellValueFactory(new PropertyValueFactory<>("user"));
-        actionTypeColumn.setCellValueFactory(new PropertyValueFactory<>("actionType"));
-        moduleColumn.setCellValueFactory(new PropertyValueFactory<>("module"));
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        resultColumn.setCellValueFactory(new PropertyValueFactory<>("result"));
-        resultColumn.setCellFactory(column -> new TableCell<>() {
+        // Set cell value factories with proper field names from AuditLog model
+        logIdColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getLogCode()));
+
+        timestampColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getTimestamp().format(dateFormatter)));
+
+        userColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUsername()));
+
+        actionTypeColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getActionType()));
+
+        moduleColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getModule()));
+
+        descriptionColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescription()));
+
+        resultColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getResult()));
+
+        // Custom cell factory for result column with badges
+        resultColumn.setCellFactory(column -> new TableCell<AuditLog, String>() {
             @Override
             protected void updateItem(String result, boolean empty) {
                 super.updateItem(result, empty);
                 if (empty || result == null) {
                     setGraphic(null);
                 } else {
-                    Label badge = new Label(result);
+                    Label badge = new Label(result.toUpperCase());
                     badge.setStyle("-fx-background-radius: 12px; -fx-padding: 6px 14px; -fx-font-size: 11px; -fx-font-weight: bold; " +
                         getResultBadgeStyle(result));
                     setGraphic(badge);
@@ -63,14 +96,14 @@ public class AdminAuditLogsController {
             }
         });
 
-        actionsColumn.setCellFactory(param -> new TableCell<>() {
+        // Actions column with View button
+        actionsColumn.setCellFactory(param -> new TableCell<AuditLog, Void>() {
             private final Button viewBtn = new Button("View");
             {
                 viewBtn.setStyle("-fx-background-color: #22d3ee; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 5px 12px; -fx-font-size: 11px; -fx-cursor: hand;");
                 viewBtn.setOnAction(e -> {
-                    if (getIndex() < getTableView().getItems().size()) {
-                        System.out.println("View: " + getTableView().getItems().get(getIndex()).getLogId());
-                    }
+                    AuditLog log = getTableView().getItems().get(getIndex());
+                    showLogDetailsDialog(log);
                 });
             }
             @Override
@@ -88,90 +121,369 @@ public class AdminAuditLogsController {
 
     private void setupFilters() {
         if (actionTypeFilter != null) {
-            actionTypeFilter.getItems().addAll("All Actions", "CREATE", "UPDATE", "DELETE", "LOGIN", "SECURITY_INCIDENT", "BACKUP");
+            actionTypeFilter.getItems().addAll("All Actions", "CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT", "SECURITY_INCIDENT", "BACKUP", "READ");
             actionTypeFilter.setValue("All Actions");
         }
         if (moduleFilter != null) {
-            moduleFilter.getItems().addAll("All Modules", "Users", "Inventory", "Settings", "Authentication", "Security", "Database");
+            moduleFilter.getItems().addAll("All Modules", "Users", "Inventory", "Settings", "Authentication", "Security", "Database", "Purchase Orders", "Requisitions", "Attendance", "Reports");
             moduleFilter.setValue("All Modules");
         }
         if (resultFilter != null) {
-            resultFilter.getItems().addAll("All Results", "Success", "Failed", "Warning");
+            resultFilter.getItems().addAll("All Results", "SUCCESS", "FAILED", "WARNING");
             resultFilter.setValue("All Results");
         }
     }
 
-    private void loadDummyData() {
-        logsData.clear();
-        logsData.add(new LogRecord("LOG0001247", "2025-12-05 14:30:15", "admin", "UPDATE", "Users", "Modified role for user 'employee3' from EMPLOYEE to MANAGER", "Success"));
-        logsData.add(new LogRecord("LOG0001246", "2025-12-05 14:28:42", "manager1", "CREATE", "Inventory", "Added new inventory item 'Industrial Gloves (100 pairs)'", "Success"));
-        logsData.add(new LogRecord("LOG0001245", "2025-12-05 14:25:10", "employee1", "READ", "Reports", "Viewed attendance report for November 2025", "Success"));
-        logsData.add(new LogRecord("LOG0001244", "2025-12-05 14:20:05", "admin", "DELETE", "Settings", "Removed deprecated setting 'legacy_mode_enabled'", "Success"));
-        logsData.add(new LogRecord("LOG0001243", "2025-12-05 14:15:33", "system", "BACKUP", "Database", "Automated backup completed: backup_20251205_141530.sql", "Success"));
-        logsData.add(new LogRecord("LOG0001242", "2025-12-05 14:10:22", "supplier1", "LOGIN", "Authentication", "User logged in successfully", "Success"));
-        logsData.add(new LogRecord("LOG0001241", "2025-12-05 14:05:18", "manager2", "UPDATE", "Purchase Orders", "Updated PO-2025-089 status to 'Shipped'", "Success"));
-        logsData.add(new LogRecord("LOG0001240", "2025-12-05 14:00:45", "employee2", "CREATE", "Attendance", "Checked in via QR code", "Success"));
-        logsData.add(new LogRecord("LOG0001239", "2025-12-05 13:55:30", "admin", "UPDATE", "Security", "Changed password policy: min_length=12", "Success"));
-        logsData.add(new LogRecord("LOG0001238", "2025-12-05 13:50:12", "unknown", "LOGIN", "Authentication", "Failed login attempt for username 'hacker'", "Failed"));
+    /**
+     * Setup listeners for search and filter fields
+     */
+    private void setupSearchAndFilters() {
+        // Add listeners to filters - reload data when filter changes
+        if (actionTypeFilter != null) {
+            actionTypeFilter.valueProperty().addListener((obs, oldVal, newVal) -> {
+                currentOffset = 0;
+                loadLogsFromDatabase();
+                updateStats();
+            });
+        }
+        if (moduleFilter != null) {
+            moduleFilter.valueProperty().addListener((obs, oldVal, newVal) -> {
+                currentOffset = 0;
+                loadLogsFromDatabase();
+                updateStats();
+            });
+        }
+        if (resultFilter != null) {
+            resultFilter.valueProperty().addListener((obs, oldVal, newVal) -> {
+                currentOffset = 0;
+                loadLogsFromDatabase();
+                updateStats();
+            });
+        }
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+                currentOffset = 0;
+                loadLogsFromDatabase();
+                updateStats();
+            });
+        }
     }
 
+    /**
+     * Load audit logs from database with current filters
+     */
+    private void loadLogsFromDatabase() {
+        if (logsData == null) return;
+
+        logsData.clear();
+
+        try {
+            // Get current filter values
+            String actionType = actionTypeFilter != null ? actionTypeFilter.getValue() : "All Actions";
+            String module = moduleFilter != null ? moduleFilter.getValue() : "All Modules";
+            String result = resultFilter != null ? resultFilter.getValue() : "All Results";
+            String searchText = searchField != null ? searchField.getText() : "";
+
+            // Convert "All X" to null for DAO
+            if ("All Actions".equals(actionType)) actionType = null;
+            if ("All Modules".equals(module)) module = null;
+            if ("All Results".equals(result)) result = null;
+            if (searchText != null && searchText.trim().isEmpty()) searchText = null;
+
+            // Fetch filtered logs from database
+            List<AuditLog> logs = auditLogDAO.getFilteredAuditLogs(
+                actionType, module, result, searchText, PAGE_SIZE, currentOffset);
+
+            // Add to observable list
+            logsData.addAll(logs);
+
+            System.out.println("Loaded " + logs.size() + " audit logs from database");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Database Error", "Failed to load audit logs: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Update statistics cards from database
+     */
     private void updateStats() {
-        if (todayActivitiesLabel != null) todayActivitiesLabel.setText("1,247");
+        try {
+            // Today's Activities
+            int todayCount = auditLogDAO.getTodayActivityCount();
+            if (todayActivitiesLabel != null) {
+                todayActivitiesLabel.setText(String.format("%,d", todayCount));
+            }
 
-        long dbChanges = logsData.stream().filter(l -> "Database".equals(l.getModule()) || "Settings".equals(l.getModule())).count();
-        if (dbChangesLabel != null) dbChangesLabel.setText(String.valueOf(dbChanges));
+            // Database Changes (Database + Settings + Inventory modules)
+            int dbChanges = auditLogDAO.getCountByModule("Database") +
+                           auditLogDAO.getCountByModule("Settings") +
+                           auditLogDAO.getCountByModule("Inventory");
+            if (dbChangesLabel != null) {
+                dbChangesLabel.setText(String.format("%,d", dbChanges));
+            }
 
-        long userActions = logsData.stream().filter(l -> !"system".equals(l.getUser())).count();
-        if (userActionsLabel != null) userActionsLabel.setText(String.valueOf(userActions));
+            // User Actions (non-system users)
+            int userActions = auditLogDAO.getCountByUserType(false);
+            if (userActionsLabel != null) {
+                userActionsLabel.setText(String.format("%,d", userActions));
+            }
 
-        long systemEvents = logsData.stream().filter(l -> "system".equals(l.getUser())).count();
-        if (systemEventsLabel != null) systemEventsLabel.setText(String.valueOf(systemEvents));
+            // System Events (system user logs)
+            int systemEvents = auditLogDAO.getCountByUserType(true);
+            if (systemEventsLabel != null) {
+                systemEventsLabel.setText(String.format("%,d", systemEvents));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to update statistics: " + e.getMessage());
+        }
     }
 
     private String getResultBadgeStyle(String result) {
-        switch (result) {
-            case "Success":
+        if (result == null) return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
+
+        switch (result.toUpperCase()) {
+            case "SUCCESS":
                 return "-fx-background-color: rgba(16,185,129,0.15); -fx-text-fill: #10b981;";
-            case "Failed":
+            case "FAILED":
                 return "-fx-background-color: rgba(239,68,68,0.15); -fx-text-fill: #ef4444;";
-            case "Warning":
+            case "WARNING":
                 return "-fx-background-color: rgba(251,191,36,0.15); -fx-text-fill: #fbbf24;";
             default:
                 return "-fx-background-color: #e0e0e0; -fx-text-fill: #6b7280;";
         }
     }
 
-    @FXML private void handleExport() { showInfo("Export", "Audit log export functionality will be implemented."); }
-    @FXML private void handleGenerateReport() { showInfo("Generate Report", "Report generation functionality will be implemented."); }
-    @FXML private void handleArchive() { showInfo("Archive", "Old logs archiving functionality will be implemented."); }
-    @FXML private void handleRefresh() { loadDummyData(); updateStats(); }
+    /**
+     * Show detailed dialog for a single audit log
+     */
+    private void showLogDetailsDialog(AuditLog log) {
+        if (log == null) return;
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Audit Log Details");
+        dialog.setHeaderText("Log Code: " + log.getLogCode());
+
+        // Create grid for log details
+        GridPane grid = new GridPane();
+        grid.setHgap(15);
+        grid.setVgap(12);
+        grid.setPadding(new Insets(20, 30, 20, 30));
+
+        int row = 0;
+
+        // Timestamp
+        grid.add(createLabel("Timestamp:", true), 0, row);
+        grid.add(createLabel(log.getTimestamp().format(dateFormatter), false), 1, row++);
+
+        // User
+        String userText = log.getUsername();
+        if (log.getUserId() != null) {
+            userText += " (ID: " + log.getUserId() + ")";
+        }
+        grid.add(createLabel("User:", true), 0, row);
+        grid.add(createLabel(userText, false), 1, row++);
+
+        // Action Type
+        grid.add(createLabel("Action Type:", true), 0, row);
+        grid.add(createLabel(log.getActionType(), false), 1, row++);
+
+        // Module
+        grid.add(createLabel("Module:", true), 0, row);
+        grid.add(createLabel(log.getModule(), false), 1, row++);
+
+        // Result with badge
+        grid.add(createLabel("Result:", true), 0, row);
+        Label resultBadge = new Label(log.getResult().toUpperCase());
+        resultBadge.setStyle("-fx-background-radius: 12px; -fx-padding: 6px 14px; -fx-font-size: 11px; -fx-font-weight: bold; " +
+            getResultBadgeStyle(log.getResult()));
+        grid.add(resultBadge, 1, row++);
+
+        // Description (multi-line)
+        grid.add(createLabel("Description:", true), 0, row);
+        TextArea descArea = new TextArea(log.getDescription());
+        descArea.setWrapText(true);
+        descArea.setEditable(false);
+        descArea.setPrefRowCount(3);
+        descArea.setMaxWidth(400);
+        grid.add(descArea, 1, row++);
+
+        // IP Address (if available)
+        if (log.getIpAddress() != null && !log.getIpAddress().isEmpty()) {
+            grid.add(createLabel("IP Address:", true), 0, row);
+            grid.add(createLabel(log.getIpAddress(), false), 1, row++);
+        }
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.showAndWait();
+    }
+
+    private Label createLabel(String text, boolean bold) {
+        Label label = new Label(text);
+        if (bold) {
+            label.setStyle("-fx-font-weight: bold; -fx-text-fill: #4b5563;");
+        } else {
+            label.setStyle("-fx-text-fill: #6b7280;");
+        }
+        return label;
+    }
+
+    @FXML
+    private void handleExport() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Audit Logs");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+            new FileChooser.ExtensionFilter("Excel Files", "*.xlsx")
+        );
+        fileChooser.setInitialFileName("audit_logs_" + java.time.LocalDate.now());
+
+        File file = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+        if (file != null) {
+            try {
+                if (file.getName().endsWith(".csv")) {
+                    exportToCSV(file);
+                } else {
+                    exportToExcel(file);
+                }
+
+                // Log the export action (using READ action type)
+                if (currentUser != null) {
+                    auditLogDAO.logSuccess(currentUser.getUserId(), currentUser.getUsername(),
+                        "READ", "Audit Logs", "Exported audit logs to " + file.getName());
+                }
+
+                showInfo("Export Successful", "Audit logs exported to:\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Export Failed", "Failed to export audit logs: " + e.getMessage());
+            }
+        }
+    }
+
+    private void exportToCSV(File file) throws Exception {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            // Write header
+            writer.write("Log Code,Timestamp,User,Action Type,Module,Description,Result");
+            writer.newLine();
+
+            // Write data
+            for (AuditLog log : logsData) {
+                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s",
+                    escapeCsv(log.getLogCode()),
+                    escapeCsv(log.getTimestamp().format(dateFormatter)),
+                    escapeCsv(log.getUsername()),
+                    escapeCsv(log.getActionType()),
+                    escapeCsv(log.getModule()),
+                    escapeCsv(log.getDescription()),
+                    escapeCsv(log.getResult())
+                ));
+                writer.newLine();
+            }
+        }
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
+    }
+
+    private void exportToExcel(File file) throws Exception {
+        showError("Not Implemented", "Excel export requires Apache POI library.\nPlease use CSV export for now.");
+    }
+
+    @FXML
+    private void handleGenerateReport() {
+        showInfo("Generate Report", "PDF report generation functionality requires iText library.\nThis feature will be implemented in the next update.");
+    }
+
+    @FXML
+    private void handleArchive() {
+        // Create custom dialog with spinner for days
+        Dialog<Integer> dialog = new Dialog<>();
+        dialog.setTitle("Archive Old Logs");
+        dialog.setHeaderText("Delete old successful audit logs");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        Spinner<Integer> daysSpinner = new Spinner<>(30, 365, 90, 1);
+        daysSpinner.setEditable(true);
+
+        grid.add(new Label("Delete logs older than:"), 0, 0);
+        grid.add(daysSpinner, 1, 0);
+        grid.add(new Label("days"), 2, 0);
+        grid.add(new Label("(Only SUCCESS logs will be deleted)"), 0, 1, 3, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return daysSpinner.getValue();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(days -> {
+            // Confirmation dialog
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirm Archive");
+            confirm.setHeaderText("Archive logs older than " + days + " days?");
+            confirm.setContentText("This will permanently delete old SUCCESS logs.\nFAILED and WARNING logs will be preserved.");
+
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        int deletedCount = auditLogDAO.archiveOldLogs(days);
+
+                        // Log the archive action (using DELETE action type)
+                        if (currentUser != null) {
+                            auditLogDAO.logSuccess(currentUser.getUserId(), currentUser.getUsername(),
+                                "DELETE", "Audit Logs", "Archived " + deletedCount + " logs older than " + days + " days");
+                        }
+
+                        showInfo("Archive Complete", deletedCount + " old audit logs were deleted.");
+                        handleRefresh();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showError("Archive Failed", "Failed to archive logs: " + e.getMessage());
+                    }
+                }
+            });
+        });
+    }
+
+    @FXML
+    private void handleRefresh() {
+        currentOffset = 0;
+        loadLogsFromDatabase();
+        updateStats();
+        showInfo("Refreshed", "Audit logs have been refreshed from the database.");
+    }
 
     private void showInfo(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
 
-    public static class LogRecord {
-        private final StringProperty logId, timestamp, user, actionType, module, description, result;
-
-        public LogRecord(String logId, String timestamp, String user, String actionType, String module, String description, String result) {
-            this.logId = new SimpleStringProperty(logId);
-            this.timestamp = new SimpleStringProperty(timestamp);
-            this.user = new SimpleStringProperty(user);
-            this.actionType = new SimpleStringProperty(actionType);
-            this.module = new SimpleStringProperty(module);
-            this.description = new SimpleStringProperty(description);
-            this.result = new SimpleStringProperty(result);
-        }
-
-        public String getLogId() { return logId.get(); }
-        public String getTimestamp() { return timestamp.get(); }
-        public String getUser() { return user.get(); }
-        public String getActionType() { return actionType.get(); }
-        public String getModule() { return module.get(); }
-        public String getDescription() { return description.get(); }
-        public String getResult() { return result.get(); }
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

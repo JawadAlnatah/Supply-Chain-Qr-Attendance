@@ -1,5 +1,9 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.AuditLogDAO;
+import com.team.supplychain.dao.InventoryDAO;
+import com.team.supplychain.dao.RequisitionDAO;
+import com.team.supplychain.dao.UserDAO;
 import com.team.supplychain.models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,6 +55,12 @@ public class AdminDashboardController {
     private User currentUser;
     private Parent originalDashboardContent;
 
+    // ==================== DAOs ====================
+    private UserDAO userDAO;
+    private InventoryDAO inventoryDAO;
+    private RequisitionDAO requisitionDAO;
+    private AuditLogDAO auditLogDAO;
+
     /**
      * Set the current logged-in admin user
      */
@@ -69,10 +79,17 @@ public class AdminDashboardController {
             originalDashboardContent = (Parent) centerScrollPane.getContent();
         }
 
-        // TODO: Load real-time data from database
-        // TODO: Populate inventory trend chart
-        // TODO: Load critical alerts
-        System.out.println("AdminDashboardController initialized with dummy data");
+        // Initialize DAOs
+        userDAO = new UserDAO();
+        inventoryDAO = new InventoryDAO();
+        requisitionDAO = new RequisitionDAO();
+        auditLogDAO = new AuditLogDAO();
+
+        // Load real-time data from database
+        loadDashboardMetrics();
+        loadCriticalAlerts();
+
+        System.out.println("AdminDashboardController initialized with database data");
     }
 
     /**
@@ -81,6 +98,182 @@ public class AdminDashboardController {
     private void updateUserInterface() {
         if (currentUser != null && userNameLabel != null) {
             userNameLabel.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+        }
+    }
+
+    /**
+     * Load dashboard metrics from database
+     */
+    private void loadDashboardMetrics() {
+        try {
+            // Active Users Count
+            int activeUsers = userDAO.getActiveUserCount();
+            if (activeUsersLabel != null) {
+                activeUsersLabel.setText(String.valueOf(activeUsers));
+            }
+
+            // Total Inventory Items
+            int totalItems = inventoryDAO.getTotalItemsCount();
+            if (totalItemsLabel != null) {
+                totalItemsLabel.setText(String.valueOf(totalItems));
+            }
+
+            // Low Stock Count
+            int lowStockCount = inventoryDAO.getLowStockCount();
+            if (lowStockCountLabel != null) {
+                lowStockCountLabel.setText(String.valueOf(lowStockCount));
+            }
+
+            // Pending Tasks (Requisitions)
+            int pendingTasks = requisitionDAO.getPendingRequisitionsCount();
+            if (pendingTasksLabel != null) {
+                pendingTasksLabel.setText(String.valueOf(pendingTasks));
+            }
+
+            // Security Incidents (count from audit logs)
+            int securityIncidents = auditLogDAO.getRecentAuditLogCount();
+            if (securityIncidentsLabel != null) {
+                securityIncidentsLabel.setText(String.valueOf(securityIncidents));
+            }
+
+            // System Health - based on low stock and other metrics
+            String systemHealth = calculateSystemHealth(lowStockCount, activeUsers, totalItems);
+            if (systemHealthLabel != null) {
+                systemHealthLabel.setText(systemHealth);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error loading dashboard metrics: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Calculate system health based on various metrics
+     */
+    private String calculateSystemHealth(int lowStockCount, int activeUsers, int totalItems) {
+        // Calculate health percentage based on multiple factors
+        int healthScore = 100;
+
+        // Deduct points for low stock issues
+        if (totalItems > 0) {
+            double lowStockPercentage = (lowStockCount * 100.0) / totalItems;
+            if (lowStockPercentage > 30) {
+                healthScore -= 40; // Critical
+            } else if (lowStockPercentage > 15) {
+                healthScore -= 20; // Warning
+            } else if (lowStockPercentage > 5) {
+                healthScore -= 10; // Minor
+            }
+        }
+
+        // Deduct points for low active users
+        if (activeUsers < 5) {
+            healthScore -= 10;
+        }
+
+        // Return health status
+        if (healthScore >= 90) {
+            return "Excellent";
+        } else if (healthScore >= 75) {
+            return "Good";
+        } else if (healthScore >= 60) {
+            return "Fair";
+        } else if (healthScore >= 40) {
+            return "Poor";
+        } else {
+            return "Critical";
+        }
+    }
+
+    /**
+     * Load critical alerts from database
+     */
+    private void loadCriticalAlerts() {
+        try {
+            if (criticalAlertsContainer != null) {
+                // Clear existing alerts
+                criticalAlertsContainer.getChildren().clear();
+
+                // Check for low stock items
+                int lowStockCount = inventoryDAO.getLowStockCount();
+                if (lowStockCount > 0) {
+                    addAlertToContainer(
+                        "Low Stock Alert",
+                        lowStockCount + " items are below reorder level",
+                        "warning"
+                    );
+                }
+
+                // Check for out of stock items
+                int outOfStockCount = inventoryDAO.getOutOfStockCount();
+                if (outOfStockCount > 0) {
+                    addAlertToContainer(
+                        "Out of Stock",
+                        outOfStockCount + " items are completely out of stock",
+                        "critical"
+                    );
+                }
+
+                // Check for pending requisitions
+                int pendingRequisitions = requisitionDAO.getPendingRequisitionsCount();
+                if (pendingRequisitions > 5) {
+                    addAlertToContainer(
+                        "Pending Requisitions",
+                        pendingRequisitions + " requisitions awaiting review",
+                        "info"
+                    );
+                }
+
+                // If no alerts, show a positive message
+                if (criticalAlertsContainer.getChildren().isEmpty()) {
+                    addAlertToContainer(
+                        "All Systems Normal",
+                        "No critical alerts at this time",
+                        "success"
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error loading critical alerts: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Add an alert to the alerts container
+     */
+    private void addAlertToContainer(String title, String message, String type) {
+        Label alertLabel = new Label(title + ": " + message);
+        alertLabel.setWrapText(true);
+        alertLabel.setMaxWidth(Double.MAX_VALUE);
+        alertLabel.setStyle(getAlertStyle(type));
+        criticalAlertsContainer.getChildren().add(alertLabel);
+    }
+
+    /**
+     * Get CSS style for alert type
+     */
+    private String getAlertStyle(String type) {
+        switch (type.toLowerCase()) {
+            case "critical":
+                return "-fx-background-color: #fee; -fx-padding: 10; -fx-background-radius: 5; " +
+                       "-fx-border-color: #f88; -fx-border-width: 1; -fx-border-radius: 5; " +
+                       "-fx-text-fill: #c00; -fx-font-weight: bold;";
+            case "warning":
+                return "-fx-background-color: #ffc; -fx-padding: 10; -fx-background-radius: 5; " +
+                       "-fx-border-color: #fc0; -fx-border-width: 1; -fx-border-radius: 5; " +
+                       "-fx-text-fill: #840;";
+            case "info":
+                return "-fx-background-color: #def; -fx-padding: 10; -fx-background-radius: 5; " +
+                       "-fx-border-color: #8cf; -fx-border-width: 1; -fx-border-radius: 5; " +
+                       "-fx-text-fill: #048;";
+            case "success":
+                return "-fx-background-color: #dfd; -fx-padding: 10; -fx-background-radius: 5; " +
+                       "-fx-border-color: #8d8; -fx-border-width: 1; -fx-border-radius: 5; " +
+                       "-fx-text-fill: #040;";
+            default:
+                return "-fx-background-color: #eee; -fx-padding: 10; -fx-background-radius: 5;";
         }
     }
 

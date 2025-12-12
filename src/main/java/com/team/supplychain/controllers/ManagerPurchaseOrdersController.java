@@ -1,5 +1,7 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.RequisitionDAO;
+import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -14,6 +16,9 @@ import javafx.scene.layout.HBox;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller for the Manager Purchase Orders View
@@ -52,6 +57,9 @@ public class ManagerPurchaseOrdersController {
 
     private User currentUser;
     private ObservableList<PurchaseOrder> poData;
+    private RequisitionDAO requisitionDAO;
+    // Map to track requisition ID for each PO number
+    private Map<String, Integer> poNumberToRequisitionId;
 
     /**
      * Set the current logged-in user
@@ -67,14 +75,16 @@ public class ManagerPurchaseOrdersController {
     private void initialize() {
         System.out.println("ManagerPurchaseOrdersController initialized");
 
-        // Initialize data
+        // Initialize DAO and data
+        requisitionDAO = new RequisitionDAO();
         poData = FXCollections.observableArrayList();
+        poNumberToRequisitionId = new HashMap<>();
 
         // Setup table
         setupPOTable();
 
-        // Load dummy data
-        loadDummyPOData();
+        // Load data from database
+        loadRequisitionsFromDatabase();
 
         // Setup filters
         setupFilters();
@@ -225,22 +235,77 @@ public class ManagerPurchaseOrdersController {
         if (statusFilter != null) {
             statusFilter.getItems().addAll("All Status", "Pending", "Approved", "In Transit", "Delivered", "Rejected");
             statusFilter.setValue("All Status");
+
+            // Add listener for filter changes
+            statusFilter.setOnAction(event -> {
+                String selectedStatus = statusFilter.getValue();
+                loadRequisitionsFromDatabase(selectedStatus);
+                updateStats();
+            });
         }
     }
 
     /**
-     * Load dummy purchase order data
+     * Load requisitions from database
      */
-    private void loadDummyPOData() {
+    private void loadRequisitionsFromDatabase() {
+        loadRequisitionsFromDatabase(null);
+    }
+
+    /**
+     * Load requisitions from database with optional status filter
+     */
+    private void loadRequisitionsFromDatabase(String statusFilter) {
         poData.clear();
-        poData.add(new PurchaseOrder("PO-2024-001", "Al-Safi Dairy Farm - Riyadh", "John Smith", LocalDate.now().minusDays(2), 5, new BigDecimal("12500.00"), "Pending"));
-        poData.add(new PurchaseOrder("PO-2024-002", "Gulf Packaging Supplies", "Sarah Johnson", LocalDate.now().minusDays(5), 8, new BigDecimal("8450.00"), "Approved"));
-        poData.add(new PurchaseOrder("PO-2024-003", "Nadec Dairy Farm - Kharj", "Mike Wilson", LocalDate.now().minusDays(7), 3, new BigDecimal("5600.00"), "In Transit"));
-        poData.add(new PurchaseOrder("PO-2024-004", "Modern Office Equipment", "Emily Brown", LocalDate.now().minusDays(10), 12, new BigDecimal("3200.00"), "Delivered"));
-        poData.add(new PurchaseOrder("PO-2024-005", "Saudi Paper & Plastic Co.", "James Davis", LocalDate.now().minusDays(1), 6, new BigDecimal("7800.00"), "Pending"));
-        poData.add(new PurchaseOrder("PO-2024-006", "Almarai Farm - Eastern Province", "Lisa Anderson", LocalDate.now().minusDays(3), 4, new BigDecimal("9200.00"), "Pending"));
-        poData.add(new PurchaseOrder("PO-2024-007", "Gulf Packaging Supplies", "Tom Martinez", LocalDate.now().minusDays(6), 7, new BigDecimal("6500.00"), "Approved"));
-        poData.add(new PurchaseOrder("PO-2024-008", "Al-Safi Dairy Farm - Riyadh", "Anna Taylor", LocalDate.now().minusDays(8), 5, new BigDecimal("11200.00"), "In Transit"));
+        poNumberToRequisitionId.clear();
+
+        try {
+            // Fetch requisitions from database
+            List<Requisition> requisitions;
+            if (statusFilter == null || "All Status".equals(statusFilter)) {
+                // Load all requisitions (pending, approved, rejected)
+                List<Requisition> pending = requisitionDAO.getRequisitionsByStatus("Pending");
+                List<Requisition> approved = requisitionDAO.getRequisitionsByStatus("Approved");
+                List<Requisition> rejected = requisitionDAO.getRequisitionsByStatus("Rejected");
+
+                requisitions = new java.util.ArrayList<>();
+                requisitions.addAll(pending);
+                requisitions.addAll(approved);
+                requisitions.addAll(rejected);
+            } else {
+                requisitions = requisitionDAO.getRequisitionsByStatus(statusFilter);
+            }
+
+            // Convert to PurchaseOrder objects
+            for (Requisition req : requisitions) {
+                PurchaseOrder po = mapRequisitionToPurchaseOrder(req);
+                poData.add(po);
+
+                // Track requisition ID for database updates
+                poNumberToRequisitionId.put(req.getRequisitionCode(), req.getRequisitionId());
+            }
+
+            System.out.println("Loaded " + poData.size() + " requisitions from database");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Database Error", "Failed to load requisitions from database: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Map Requisition model to PurchaseOrder table model
+     */
+    private PurchaseOrder mapRequisitionToPurchaseOrder(Requisition req) {
+        String poNumber = req.getRequisitionCode();
+        String supplier = req.getSupplierName() != null ? req.getSupplierName() : "N/A";
+        String requestedBy = req.getRequesterName();
+        LocalDate date = req.getRequestDate().toLocalDate();
+        int itemsCount = req.getTotalItems();
+        BigDecimal totalAmount = req.getTotalAmount();
+        String status = req.getStatus();
+
+        return new PurchaseOrder(poNumber, supplier, requestedBy, date, itemsCount, totalAmount, status);
     }
 
     /**
@@ -273,44 +338,108 @@ public class ManagerPurchaseOrdersController {
 
     @FXML
     private void handleApprove() {
-        long selectedCount = poData.stream().filter(PurchaseOrder::isSelected).count();
-        if (selectedCount == 0) {
+        List<PurchaseOrder> selectedPOs = poData.stream()
+            .filter(PurchaseOrder::isSelected)
+            .collect(java.util.stream.Collectors.toList());
+
+        if (selectedPOs.isEmpty()) {
             showError("No Selection", "Please select at least one purchase order to approve.");
             return;
         }
-        System.out.println("Approve selected clicked - " + selectedCount + " POs");
-        showInfo("Approve", selectedCount + " purchase order(s) approved successfully.");
-        poData.stream().filter(PurchaseOrder::isSelected).forEach(po -> {
-            po.setStatus("Approved");
-            po.setSelected(false);
-        });
+
+        // Prompt for approval notes
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Approve Selected Requisitions");
+        dialog.setHeaderText("Approve " + selectedPOs.size() + " requisition(s)");
+        dialog.setContentText("Approval notes (optional):");
+        String notes = dialog.showAndWait().orElse("Approved by manager");
+
+        int successCount = 0;
+        for (PurchaseOrder po : selectedPOs) {
+            Integer requisitionId = poNumberToRequisitionId.get(po.getPoNumber());
+            if (requisitionId != null) {
+                try {
+                    boolean success = requisitionDAO.updateRequisitionStatus(
+                        requisitionId,
+                        "Approved",
+                        currentUser != null ? currentUser.getUserId() : null,
+                        notes
+                    );
+
+                    if (success) {
+                        po.setStatus("Approved");
+                        po.setSelected(false);
+                        successCount++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         purchaseOrdersTable.refresh();
         updateStats();
+        showInfo("Approve", successCount + " purchase order(s) approved successfully.");
     }
 
     @FXML
     private void handleReject() {
-        long selectedCount = poData.stream().filter(PurchaseOrder::isSelected).count();
-        if (selectedCount == 0) {
+        List<PurchaseOrder> selectedPOs = poData.stream()
+            .filter(PurchaseOrder::isSelected)
+            .collect(java.util.stream.Collectors.toList());
+
+        if (selectedPOs.isEmpty()) {
             showError("No Selection", "Please select at least one purchase order to reject.");
             return;
         }
-        System.out.println("Reject selected clicked - " + selectedCount + " POs");
-        showInfo("Reject", selectedCount + " purchase order(s) rejected.");
-        poData.stream().filter(PurchaseOrder::isSelected).forEach(po -> {
-            po.setStatus("Rejected");
-            po.setSelected(false);
-        });
+
+        // Prompt for rejection reason
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Reject Selected Requisitions");
+        dialog.setHeaderText("Reject " + selectedPOs.size() + " requisition(s)");
+        dialog.setContentText("Rejection reason:");
+        String notes = dialog.showAndWait().orElse("");
+
+        if (notes.isEmpty()) {
+            showError("Rejection Reason Required", "Please provide a reason for rejection.");
+            return;
+        }
+
+        int successCount = 0;
+        for (PurchaseOrder po : selectedPOs) {
+            Integer requisitionId = poNumberToRequisitionId.get(po.getPoNumber());
+            if (requisitionId != null) {
+                try {
+                    boolean success = requisitionDAO.updateRequisitionStatus(
+                        requisitionId,
+                        "Rejected",
+                        currentUser != null ? currentUser.getUserId() : null,
+                        notes
+                    );
+
+                    if (success) {
+                        po.setStatus("Rejected");
+                        po.setSelected(false);
+                        successCount++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         purchaseOrdersTable.refresh();
         updateStats();
+        showInfo("Reject", successCount + " purchase order(s) rejected.");
     }
 
     @FXML
     private void handleRefresh() {
         System.out.println("Refresh clicked");
-        loadDummyPOData();
+        String currentFilter = statusFilter != null ? statusFilter.getValue() : null;
+        loadRequisitionsFromDatabase(currentFilter);
         updateStats();
-        showInfo("Refreshed", "Purchase orders have been refreshed.");
+        showInfo("Refreshed", "Purchase orders have been refreshed from database.");
     }
 
     private void handleViewPO(PurchaseOrder po) {
@@ -319,17 +448,86 @@ public class ManagerPurchaseOrdersController {
     }
 
     private void handleApprovePO(PurchaseOrder po) {
-        po.setStatus("Approved");
-        purchaseOrdersTable.refresh();
-        updateStats();
-        showInfo("Approved", po.getPoNumber() + " has been approved.");
+        // Get requisition ID from map
+        Integer requisitionId = poNumberToRequisitionId.get(po.getPoNumber());
+        if (requisitionId == null) {
+            showError("Error", "Could not find requisition ID for " + po.getPoNumber());
+            return;
+        }
+
+        // Prompt for approval notes
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Approve Requisition");
+        dialog.setHeaderText("Approve " + po.getPoNumber());
+        dialog.setContentText("Approval notes (optional):");
+        String notes = dialog.showAndWait().orElse("Approved by manager");
+
+        try {
+            // Update database
+            boolean success = requisitionDAO.updateRequisitionStatus(
+                requisitionId,
+                "Approved",
+                currentUser != null ? currentUser.getUserId() : null,
+                notes
+            );
+
+            if (success) {
+                // Update UI
+                po.setStatus("Approved");
+                purchaseOrdersTable.refresh();
+                updateStats();
+                showInfo("Approved", po.getPoNumber() + " has been approved.");
+            } else {
+                showError("Error", "Failed to approve requisition in database.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error", "Failed to approve requisition: " + e.getMessage());
+        }
     }
 
     private void handleRejectPO(PurchaseOrder po) {
-        po.setStatus("Rejected");
-        purchaseOrdersTable.refresh();
-        updateStats();
-        showInfo("Rejected", po.getPoNumber() + " has been rejected.");
+        // Get requisition ID from map
+        Integer requisitionId = poNumberToRequisitionId.get(po.getPoNumber());
+        if (requisitionId == null) {
+            showError("Error", "Could not find requisition ID for " + po.getPoNumber());
+            return;
+        }
+
+        // Prompt for rejection reason
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Reject Requisition");
+        dialog.setHeaderText("Reject " + po.getPoNumber());
+        dialog.setContentText("Rejection reason:");
+        String notes = dialog.showAndWait().orElse("");
+
+        if (notes.isEmpty()) {
+            showError("Rejection Reason Required", "Please provide a reason for rejection.");
+            return;
+        }
+
+        try {
+            // Update database
+            boolean success = requisitionDAO.updateRequisitionStatus(
+                requisitionId,
+                "Rejected",
+                currentUser != null ? currentUser.getUserId() : null,
+                notes
+            );
+
+            if (success) {
+                // Update UI
+                po.setStatus("Rejected");
+                purchaseOrdersTable.refresh();
+                updateStats();
+                showInfo("Rejected", po.getPoNumber() + " has been rejected.");
+            } else {
+                showError("Error", "Failed to reject requisition in database.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error", "Failed to reject requisition: " + e.getMessage());
+        }
     }
 
     private void showInfo(String title, String message) {

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.team.supplychain.controllers.EmployeeProfileViewController"
+      spacing="30" stylesheets="@../css/styles.css, @../css/dashboard-employee.css">
+    <padding>
+        <Insets top="35" right="35" bottom="35" left="35"/>
+    </padding>
+
+    <!-- Page Header -->
+    <VBox spacing="8">
+        <Label text="My Profile" styleClass="page-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+        </Label>
+        <Label text="View your personal information and attendance QR code"
+               styleClass="page-subtitle" textFill="#808080">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Label>
+    </VBox>
+
+    <!-- Profile Header Card -->
+    <VBox styleClass="stat-card-modern" spacing="15" alignment="CENTER">
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <!-- Profile Avatar -->
+        <StackPane styleClass="user-avatar-large">
+            <Label text="👤" style="-fx-font-size: 50px; -fx-text-fill: white;"/>
+        </StackPane>
+
+        <!-- Name and Role -->
+        <VBox spacing="5" alignment="CENTER">
+            <Label fx:id="profileNameLabel" text="Loading..." styleClass="profile-name">
+                <font>
+                    <Font name="System Bold" size="24"/>
+                </font>
+            </Label>
+            <HBox spacing="10" alignment="CENTER">
+                <Label fx:id="profileRoleLabel" text="EMPLOYEE"
+                       styleClass="profile-role-badge"
+                       style="-fx-background-color: #43a047; -fx-text-fill: white;
+                              -fx-padding: 6 16; -fx-background-radius: 20; -fx-font-size: 11px;">
+                    <font>
+                        <Font name="System Bold" size="11"/>
+                    </font>
+                </Label>
+                <Label text="•" style="-fx-text-fill: #bdbdbd;"/>
+                <Label fx:id="profileDepartmentLabel" text="Department"
+                       style="-fx-text-fill: #757575; -fx-font-size: 13px;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <!-- Main Content: Personal Info + QR Code -->
+    <HBox spacing="25" alignment="TOP_CENTER">
+
+        <!-- LEFT: Personal Information Card -->
+        <VBox styleClass="stat-card-modern" spacing="20" HBox.hgrow="ALWAYS"
+              prefWidth="600" maxWidth="650">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
+
+            <Label text="Personal Information" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="18"/>
+                </font>
+            </Label>
+
+            <VBox spacing="18">
+
+                <!-- Employee ID -->
+                <VBox spacing="6">
+                    <Label text="Employee ID" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="employeeIdValue" text="EMP-00000" styleClass="info-value">
+                        <font>
+                            <Font name="System Bold" size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Email -->
+                <VBox spacing="6">
+                    <Label text="Email Address" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="emailValue" text="email@example.com" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Phone -->
+                <VBox spacing="6">
+                    <Label text="Phone Number" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="phoneValue" text="+1 234 567 8900" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Position -->
+                <VBox spacing="6">
+                    <Label text="Position" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="positionValue" text="Inventory Specialist" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Department -->
+                <VBox spacing="6">
+                    <Label text="Department" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="departmentValue" text="Warehouse Operations" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Hire Date -->
+                <VBox spacing="6">
+                    <Label text="Hire Date" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="hireDateValue" text="January 01, 2024" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                    <Separator/>
+                </VBox>
+
+                <!-- Username -->
+                <VBox spacing="6">
+                    <Label text="Username" styleClass="info-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="usernameValue" text="employee1" styleClass="info-value">
+                        <font>
+                            <Font size="15"/>
+                        </font>
+                    </Label>
+                </VBox>
+
+            </VBox>
+        </VBox>
+
+        <!-- RIGHT: QR Code Card -->
+        <VBox fx:id="qrCodeContainer" styleClass="stat-card-modern" spacing="20"
+              alignment="TOP_CENTER" prefWidth="400" maxWidth="450">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
+
+            <Label text="Attendance QR Code" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="18"/>
+                </font>
+            </Label>
+
+            <VBox spacing="15" alignment="CENTER">
+
+                <!-- QR Code Image -->
+                <VBox styleClass="qr-code-frame" alignment="CENTER"
+                      style="-fx-background-color: white; -fx-padding: 15;
+                             -fx-background-radius: 12; -fx-border-color: #e0e0e0;
+                             -fx-border-width: 2; -fx-border-radius: 12;">
+                    <ImageView fx:id="qrCodeImageView" fitWidth="300" fitHeight="300"
+                               preserveRatio="true"/>
+                </VBox>
+
+                <!-- QR Code Status/Instructions -->
+                <Label fx:id="qrCodeStatusLabel" text="Scan this code for attendance check-in"
+                       textAlignment="CENTER" wrapText="true"
+                       style="-fx-text-fill: #43a047; -fx-font-size: 13px; -fx-font-weight: bold;">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </Label>
+
+                <!-- QR Code Text Display -->
+                <VBox spacing="6" alignment="CENTER"
+                      style="-fx-background-color: #fff3e0; -fx-padding: 12;
+                             -fx-background-radius: 8; -fx-border-color: #ff9800;
+                             -fx-border-width: 1; -fx-border-radius: 8;">
+                    <Label text="QR Code Value (for manual entry):"
+                           style="-fx-text-fill: #e65100; -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                    <Label fx:id="qrCodeTextLabel" text="—"
+                           textAlignment="CENTER" wrapText="true"
+                           style="-fx-text-fill: #424242; -fx-font-size: 13px; -fx-font-family: 'Courier New';"/>
+                </VBox>
+
+                <!-- Instructions -->
+                <VBox spacing="8" alignment="CENTER_LEFT"
+                      style="-fx-background-color: #e8f5e9; -fx-padding: 15;
+                             -fx-background-radius: 8;">
+                    <Label text="How to use:" style="-fx-text-fill: #2e7d32;
+                                 -fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    <Label text="1. Open the attendance scanner"
+                           style="-fx-text-fill: #424242; -fx-font-size: 11px;"/>
+                    <Label text="2. Point camera at this QR code"
+                           style="-fx-text-fill: #424242; -fx-font-size: 11px;"/>
+                    <Label text="3. Confirm your check-in/check-out"
+                           style="-fx-text-fill: #424242; -fx-font-size: 11px;"/>
+                </VBox>
+
+            </VBox>
+        </VBox>
+
+    </HBox>
+
+</VBox>

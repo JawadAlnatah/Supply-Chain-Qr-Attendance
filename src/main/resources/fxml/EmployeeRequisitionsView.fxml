@@ -400,22 +400,64 @@
             </ScrollPane>
 
             <!-- Table View (Initially Hidden) -->
-            <VBox fx:id="tableViewPane" visible="false" managed="false">
-                <TableView fx:id="requisitionsTable" styleClass="modern-table">
+            <VBox fx:id="tableViewPane" visible="false" managed="false" spacing="0">
+                <padding>
+                    <Insets top="10"/>
+                </padding>
+                <TableView fx:id="requisitionsTable"
+                          styleClass="modern-table"
+                          style="-fx-background-radius: 10; -fx-border-radius: 10;">
                     <columns>
-                        <TableColumn fx:id="reqIdColumn" text="Req ID" prefWidth="120" style="-fx-alignment: CENTER-LEFT;"/>
-                        <TableColumn fx:id="categoryColumn" text="Category" prefWidth="150" style="-fx-alignment: CENTER-LEFT;"/>
-                        <TableColumn fx:id="itemsColumn" text="Items" prefWidth="80" style="-fx-alignment: CENTER;"/>
-                        <TableColumn fx:id="dateRequestedColumn" text="Date Requested" prefWidth="180" style="-fx-alignment: CENTER;"/>
-                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="120" style="-fx-alignment: CENTER;"/>
-                        <TableColumn fx:id="reviewerColumn" text="Reviewer" prefWidth="150" style="-fx-alignment: CENTER-LEFT;"/>
+                        <TableColumn fx:id="reqIdColumn"
+                                   text="Req ID"
+                                   prefWidth="120"
+                                   style="-fx-alignment: CENTER-LEFT;"/>
+                        <TableColumn fx:id="categoryColumn"
+                                   text="Category"
+                                   prefWidth="150"
+                                   style="-fx-alignment: CENTER-LEFT;"/>
+                        <TableColumn fx:id="itemsColumn"
+                                   text="Total Items"
+                                   prefWidth="100"
+                                   style="-fx-alignment: CENTER;"/>
+                        <TableColumn fx:id="dateRequestedColumn"
+                                   text="Date Requested"
+                                   prefWidth="180"
+                                   style="-fx-alignment: CENTER;"/>
+                        <TableColumn fx:id="statusColumn"
+                                   text="Status"
+                                   prefWidth="120"
+                                   style="-fx-alignment: CENTER;"/>
+                        <TableColumn fx:id="reviewerColumn"
+                                   text="Reviewed By"
+                                   prefWidth="150"
+                                   style="-fx-alignment: CENTER-LEFT;"/>
                     </columns>
                     <placeholder>
-                        <Label text="No requisitions found" textFill="#bdc3c7">
-                            <font>
-                                <Font size="14"/>
-                            </font>
-                        </Label>
+                        <VBox alignment="CENTER" spacing="12">
+                            <padding>
+                                <Insets top="40" right="20" bottom="40" left="20"/>
+                            </padding>
+                            <StackPane styleClass="stat-icon-blue" prefWidth="50" prefHeight="50" style="-fx-opacity: 0.5;">
+                                <Label text="📋" style="-fx-font-size: 24px;"/>
+                            </StackPane>
+                            <Label text="No requisitions found">
+                                <font>
+                                    <Font name="System Bold" size="14"/>
+                                </font>
+                                <style>
+                                    -fx-text-fill: #757575;
+                                </style>
+                            </Label>
+                            <Label text="Create your first requisition to see it here">
+                                <font>
+                                    <Font size="12"/>
+                                </font>
+                                <style>
+                                    -fx-text-fill: #9e9e9e;
+                                </style>
+                            </Label>
+                        </VBox>
                     </placeholder>
                 </TableView>
             </VBox>

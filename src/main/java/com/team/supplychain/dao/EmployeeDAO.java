@@ -64,13 +64,13 @@ public class EmployeeDAO {
                     "FROM employees e " +
                     "JOIN users u ON e.user_id = u.user_id " +
                     "WHERE e.qr_code = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setString(1, qrCode);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return extractEmployeeFromResultSet(rs);
             }
@@ -79,7 +79,28 @@ public class EmployeeDAO {
         }
         return null;
     }
-    
+
+    public Employee getEmployeeByUserId(int userId) {
+        String sql = "SELECT e.*, u.first_name, u.last_name, u.email " +
+                    "FROM employees e " +
+                    "JOIN users u ON e.user_id = u.user_id " +
+                    "WHERE e.user_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return extractEmployeeFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
         String sql = "SELECT e.*, u.first_name, u.last_name, u.email " +

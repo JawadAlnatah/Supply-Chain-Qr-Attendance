@@ -723,3 +723,44 @@
 .modern-textarea .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
+
+/* ============================================
+   EMPLOYEE PROFILE VIEW STYLES
+   ============================================ */
+
+/* Profile Name Header */
+.profile-name {
+    -fx-text-fill: #2c3e50;
+}
+
+/* Large Avatar Circle with Gradient */
+.user-avatar-large {
+    -fx-background-color: linear-gradient(to bottom right, #43a047, #66bb6a);
+    -fx-background-radius: 60;
+    -fx-pref-width: 120;
+    -fx-pref-height: 120;
+    -fx-effect: dropshadow(gaussian, rgba(67,160,71,0.4), 15, 0, 0, 3);
+}
+
+/* Info Labels (field names) */
+.info-label {
+    -fx-text-fill: #757575;
+    -fx-font-weight: normal;
+}
+
+/* Info Values (actual data) */
+.info-value {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: 500;
+}
+
+/* QR Code Frame Container */
+.qr-code-frame {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+/* QR Code Frame Hover Effect */
+.qr-code-frame:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 3);
+    -fx-cursor: hand;
+}

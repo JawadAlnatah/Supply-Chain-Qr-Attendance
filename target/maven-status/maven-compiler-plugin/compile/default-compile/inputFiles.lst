@@ -10,6 +10,7 @@ C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AttendanceController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\InventoryItem.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AdminSecurityController.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\AuditLog.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\Requisition.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\InventoryController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerEmployeesController.java
@@ -26,6 +27,7 @@ C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AdminDashboardController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\EmployeeDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerDashboardController.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\Attendance.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AdminAuditLogsController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerInventoryController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\models\Supplier.java
@@ -40,6 +42,7 @@ C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\LoginController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\AttendanceDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\SupplierDAO.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\EmployeeProfileViewController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\InventoryDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerAttendanceController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\ManagerPurchaseOrdersController.java
@@ -47,5 +50,7 @@ C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\AdminUserManagementController.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\LoginScreen.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\controllers\SupplierController.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\api\AttendanceServlet.java
+C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\api\WebServerLauncher.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\dao\PurchaseOrderDAO.java
 C:\Users\jawad\Desktop\Supply-Chain\Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-\src\main\java\com\team\supplychain\utils\ValidationUtil.java

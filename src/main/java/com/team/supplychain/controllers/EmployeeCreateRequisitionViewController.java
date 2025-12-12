@@ -22,9 +22,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +73,12 @@ public class EmployeeCreateRequisitionViewController {
     private int requisitionCounter = 1;
     private RequisitionDAO requisitionDAO;
 
+    // Filtering data structures
+    private Map<String, Set<String>> supplierToCategories; // supplier → categories
+    private ObservableList<String> filteredItems; // Items filtered by supplier+category
+    private String currentSelectedSupplier;
+    private String currentSelectedCategory;
+
     /**
      * Set the current logged-in user
      */
@@ -95,6 +103,8 @@ public class EmployeeCreateRequisitionViewController {
         inventoryMap = new HashMap<>();
         suppliers = FXCollections.observableArrayList();
         supplierCategories = new HashMap<>();
+        supplierToCategories = new HashMap<>();
+        filteredItems = FXCollections.observableArrayList();
 
         // Load dummy data
         loadDummySuppliers();
@@ -105,6 +115,9 @@ public class EmployeeCreateRequisitionViewController {
 
         // Set up supplier combo listener
         setupSupplierListener();
+
+        // Set up category combo listener
+        setupCategoryListener();
 
         // Set up table
         setupItemsTable();
@@ -152,17 +165,102 @@ public class EmployeeCreateRequisitionViewController {
     }
 
     /**
-     * Setup listener for supplier selection to update summary card
+     * Setup listener for supplier selection to filter categories and update UI
      */
     private void setupSupplierListener() {
         if (supplierCombo != null) {
             supplierCombo.setOnAction(event -> {
                 String selectedSupplier = supplierCombo.getValue();
-                if (selectedSupplier != null && supplierNameLabel != null) {
-                    supplierNameLabel.setText(selectedSupplier);
+
+                if (selectedSupplier != null) {
+                    currentSelectedSupplier = selectedSupplier;
+
+                    // Update summary card
+                    if (supplierNameLabel != null) {
+                        supplierNameLabel.setText(selectedSupplier);
+                    }
+
+                    // Filter and update categories for this supplier
+                    Set<String> availableCategories = supplierToCategories.get(selectedSupplier);
+                    if (availableCategories != null && categoryCombo != null) {
+                        categoryCombo.getItems().clear();
+                        categoryCombo.getItems().addAll(availableCategories);
+                        categoryCombo.setValue(null); // Clear selection
+
+                        // Enable category dropdown now that supplier is selected
+                        categoryCombo.setDisable(false);
+                        categoryCombo.setPromptText("Select category...");
+                    }
+
+                    // Clear current category and items
+                    currentSelectedCategory = null;
+                    clearRequisitionItems();
                 }
             });
         }
+    }
+
+    /**
+     * Setup listener for category selection to filter items
+     */
+    private void setupCategoryListener() {
+        if (categoryCombo != null) {
+            categoryCombo.setOnAction(event -> {
+                String selectedCategory = categoryCombo.getValue();
+
+                if (selectedCategory != null && currentSelectedSupplier != null) {
+                    currentSelectedCategory = selectedCategory;
+
+                    // Filter items by supplier AND category
+                    filterItemsBySupplierAndCategory();
+                }
+            });
+        }
+    }
+
+    /**
+     * Filter items by selected supplier AND category
+     */
+    private void filterItemsBySupplierAndCategory() {
+        filteredItems.clear();
+
+        if (currentSelectedSupplier == null || currentSelectedCategory == null) {
+            return;
+        }
+
+        // Filter inventory items by supplier AND category
+        for (Map.Entry<String, InventoryItemData> entry : inventoryMap.entrySet()) {
+            String itemName = entry.getKey();
+            InventoryItemData data = entry.getValue();
+
+            if (data.supplier.equals(currentSelectedSupplier) &&
+                data.category.equals(currentSelectedCategory)) {
+                filteredItems.add(itemName);
+            }
+        }
+
+        // Sort filtered items
+        filteredItems.sort(String::compareTo);
+
+        // Refresh table to update ComboBoxes
+        if (itemsTable != null) {
+            itemsTable.refresh();
+        }
+    }
+
+    /**
+     * Clear all requisition items from the table
+     */
+    private void clearRequisitionItems() {
+        // Clear all items from the table
+        itemsList.clear();
+
+        // Add fresh empty rows
+        for (int i = 0; i < 5; i++) {
+            itemsList.add(new RequisitionItem());
+        }
+
+        updateTotals();
     }
 
     /**
@@ -214,19 +312,27 @@ public class EmployeeCreateRequisitionViewController {
 
         inventoryItems.addAll(inventoryMap.keySet());
         inventoryItems.sort(String::compareTo);
+
+        // Build supplier → categories reverse lookup for filtering
+        for (Map.Entry<String, InventoryItemData> entry : inventoryMap.entrySet()) {
+            String supplier = entry.getValue().supplier;
+            String category = entry.getValue().category;
+
+            supplierToCategories
+                .computeIfAbsent(supplier, k -> new HashSet<>())
+                .add(category);
+        }
     }
 
     /**
      * Load category options for dairy company
+     * Categories will be dynamically populated based on selected supplier
      */
     private void loadCategories() {
         if (categoryCombo != null) {
-            categoryCombo.getItems().addAll(
-                "Raw Materials",
-                "Packaging",
-                "Office Supplies",
-                "Equipment"
-            );
+            // Don't pre-populate - categories will be loaded when supplier is selected
+            categoryCombo.setPromptText("Select supplier first...");
+            categoryCombo.setDisable(true); // Disabled until supplier selected
         }
     }
 
@@ -268,11 +374,24 @@ public class EmployeeCreateRequisitionViewController {
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         itemNameColumn.setCellFactory(column -> {
             return new TableCell<RequisitionItem, String>() {
-                private final ComboBox<String> comboBox = new ComboBox<>(inventoryItems);
+                private final ComboBox<String> comboBox = new ComboBox<>(filteredItems);
 
                 {
                     comboBox.setPromptText("Select item...");
                     comboBox.setPrefWidth(250);
+
+                    // Clean, professional ComboBox styling
+                    comboBox.setStyle(
+                        "-fx-background-color: white;" +
+                        "-fx-border-color: #d1d5da;" +
+                        "-fx-border-width: 1;" +
+                        "-fx-border-radius: 6;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-padding: 6 12;" +
+                        "-fx-font-size: 12px;" +
+                        "-fx-cursor: hand;"
+                    );
+
                     comboBox.setOnAction(event -> {
                         String selected = comboBox.getValue();
                         if (selected != null && !selected.isEmpty()) {
