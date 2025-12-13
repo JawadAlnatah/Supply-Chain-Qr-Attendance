@@ -5,6 +5,7 @@ import com.team.supplychain.dao.InventoryDAO;
 import com.team.supplychain.dao.RequisitionDAO;
 import com.team.supplychain.dao.UserDAO;
 import com.team.supplychain.models.User;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -62,6 +63,61 @@ public class AdminDashboardController {
     private AuditLogDAO auditLogDAO;
 
     /**
+     * Helper class to hold all dashboard metrics loaded in background
+     */
+    private static class DashboardMetrics {
+        int activeUsers;
+        int totalItems;
+        int lowStockCount;
+        int outOfStockCount;
+        int pendingRequisitions;
+        int securityIncidents;
+        String systemHealth;
+
+        DashboardMetrics(int activeUsers, int totalItems, int lowStockCount,
+                        int outOfStockCount, int pendingRequisitions, int securityIncidents) {
+            this.activeUsers = activeUsers;
+            this.totalItems = totalItems;
+            this.lowStockCount = lowStockCount;
+            this.outOfStockCount = outOfStockCount;
+            this.pendingRequisitions = pendingRequisitions;
+            this.securityIncidents = securityIncidents;
+            this.systemHealth = calculateSystemHealth(lowStockCount, activeUsers, totalItems);
+        }
+
+        private static String calculateSystemHealth(int lowStockCount, int activeUsers, int totalItems) {
+            int healthScore = 100;
+
+            if (totalItems > 0) {
+                double lowStockPercentage = (lowStockCount * 100.0) / totalItems;
+                if (lowStockPercentage > 30) {
+                    healthScore -= 40;
+                } else if (lowStockPercentage > 15) {
+                    healthScore -= 20;
+                } else if (lowStockPercentage > 5) {
+                    healthScore -= 10;
+                }
+            }
+
+            if (activeUsers < 5) {
+                healthScore -= 10;
+            }
+
+            if (healthScore >= 90) {
+                return "Excellent";
+            } else if (healthScore >= 75) {
+                return "Good";
+            } else if (healthScore >= 60) {
+                return "Fair";
+            } else if (healthScore >= 40) {
+                return "Poor";
+            } else {
+                return "Critical";
+            }
+        }
+    }
+
+    /**
      * Set the current logged-in admin user
      */
     public void setCurrentUser(User user) {
@@ -70,7 +126,7 @@ public class AdminDashboardController {
     }
 
     /**
-     * Initialize the controller
+     * Initialize the controller - loads all data asynchronously
      */
     @FXML
     private void initialize() {
@@ -85,11 +141,74 @@ public class AdminDashboardController {
         requisitionDAO = new RequisitionDAO();
         auditLogDAO = new AuditLogDAO();
 
-        // Load real-time data from database
-        loadDashboardMetrics();
-        loadCriticalAlerts();
+        // Load all data asynchronously
+        loadDashboardDataAsync();
 
-        System.out.println("AdminDashboardController initialized with database data");
+        System.out.println("AdminDashboardController initialized - loading data in background");
+    }
+
+    /**
+     * Load all dashboard data in a single background task
+     */
+    private void loadDashboardDataAsync() {
+        Task<DashboardMetrics> loadTask = new Task<>() {
+            @Override
+            protected DashboardMetrics call() throws Exception {
+                // Load all metrics in background thread
+                // Note: Each query is called ONCE (no duplicates)
+                int activeUsers = userDAO.getActiveUserCount();
+                int totalItems = inventoryDAO.getTotalItemsCount();
+                int lowStockCount = inventoryDAO.getLowStockCount();
+                int outOfStockCount = inventoryDAO.getOutOfStockCount();
+                int pendingRequisitions = requisitionDAO.getPendingRequisitionsCount();
+                int securityIncidents = auditLogDAO.getRecentAuditLogCount();
+
+                return new DashboardMetrics(
+                    activeUsers, totalItems, lowStockCount,
+                    outOfStockCount, pendingRequisitions, securityIncidents
+                );
+            }
+        };
+
+        // Update UI when data is loaded
+        loadTask.setOnSucceeded(e -> {
+            DashboardMetrics metrics = loadTask.getValue();
+
+            // Update metric cards
+            if (activeUsersLabel != null) {
+                activeUsersLabel.setText(String.valueOf(metrics.activeUsers));
+            }
+            if (totalItemsLabel != null) {
+                totalItemsLabel.setText(String.valueOf(metrics.totalItems));
+            }
+            if (lowStockCountLabel != null) {
+                lowStockCountLabel.setText(String.valueOf(metrics.lowStockCount));
+            }
+            if (pendingTasksLabel != null) {
+                pendingTasksLabel.setText(String.valueOf(metrics.pendingRequisitions));
+            }
+            if (securityIncidentsLabel != null) {
+                securityIncidentsLabel.setText(String.valueOf(metrics.securityIncidents));
+            }
+            if (systemHealthLabel != null) {
+                systemHealthLabel.setText(metrics.systemHealth);
+            }
+
+            // Update critical alerts using already-loaded metrics
+            updateCriticalAlerts(metrics);
+
+            System.out.println("Dashboard data loaded successfully");
+        });
+
+        // Handle errors
+        loadTask.setOnFailed(e -> {
+            Throwable exception = loadTask.getException();
+            exception.printStackTrace();
+            System.err.println("Error loading dashboard metrics: " + exception.getMessage());
+        });
+
+        // Start background task
+        new Thread(loadTask).start();
     }
 
     /**
@@ -187,8 +306,57 @@ public class AdminDashboardController {
     }
 
     /**
-     * Load critical alerts from database
+     * Update critical alerts using already-loaded metrics (no duplicate queries)
      */
+    private void updateCriticalAlerts(DashboardMetrics metrics) {
+        if (criticalAlertsContainer == null) {
+            return;
+        }
+
+        // Clear existing alerts
+        criticalAlertsContainer.getChildren().clear();
+
+        // Check for low stock items
+        if (metrics.lowStockCount > 0) {
+            addAlertToContainer(
+                "Low Stock Alert",
+                metrics.lowStockCount + " items are below reorder level",
+                "warning"
+            );
+        }
+
+        // Check for out of stock items
+        if (metrics.outOfStockCount > 0) {
+            addAlertToContainer(
+                "Out of Stock",
+                metrics.outOfStockCount + " items are completely out of stock",
+                "critical"
+            );
+        }
+
+        // Check for pending requisitions
+        if (metrics.pendingRequisitions > 5) {
+            addAlertToContainer(
+                "Pending Requisitions",
+                metrics.pendingRequisitions + " requisitions awaiting review",
+                "info"
+            );
+        }
+
+        // If no alerts, show a positive message
+        if (criticalAlertsContainer.getChildren().isEmpty()) {
+            addAlertToContainer(
+                "All Systems Normal",
+                "No critical alerts at this time",
+                "success"
+            );
+        }
+    }
+
+    /**
+     * Load critical alerts from database (deprecated - use updateCriticalAlerts instead)
+     */
+    @Deprecated
     private void loadCriticalAlerts() {
         try {
             if (criticalAlertsContainer != null) {

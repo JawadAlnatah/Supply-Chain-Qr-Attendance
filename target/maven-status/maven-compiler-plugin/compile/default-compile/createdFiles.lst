@@ -25,6 +25,7 @@ com\team\supplychain\services\InventoryService.class
 com\team\supplychain\utils\ValidationUtil.class
 com\team\supplychain\controllers\ManagerReportsController$1.class
 com\team\supplychain\utils\PasswordUtil.class
+com\team\supplychain\controllers\LoginController$2.class
 com\team\supplychain\models\RequisitionItem.class
 com\team\supplychain\controllers\EmployeeCreateRequisitionViewController$1.class
 com\team\supplychain\controllers\EmployeeRequisitionsViewController.class
@@ -57,6 +58,7 @@ com\team\supplychain\enums\UserRole.class
 com\team\supplychain\api\AttendanceServlet.class
 com\team\supplychain\controllers\EmployeeCreateRequisitionViewController$2.class
 com\team\supplychain\controllers\AdminUserManagementController$2.class
+com\team\supplychain\controllers\EmployeeAttendanceViewController$AttendanceData.class
 com\team\supplychain\controllers\AttendanceController.class
 com\team\supplychain\controllers\EmployeeController.class
 com\team\supplychain\controllers\AdminSecurityController$4.class
@@ -66,7 +68,9 @@ com\team\supplychain\controllers\ManagerPurchaseOrdersController$1.class
 com\team\supplychain\controllers\DashboardController$1.class
 com\team\supplychain\controllers\ManagerEmployeesController$1.class
 com\team\supplychain\controllers\ManagerPurchaseOrdersController$PurchaseOrder.class
+com\team\supplychain\controllers\EmployeeAttendanceViewController$1.class
 com\team\supplychain\controllers\EmployeeRequisitionsViewController$1.class
+com\team\supplychain\controllers\EmployeeDashboardController$DashboardData.class
 com\team\supplychain\controllers\AdminReportsController$2.class
 com\team\supplychain\controllers\ManagerDashboardController.class
 com\team\supplychain\controllers\ManagerEmployeesController.class
@@ -84,14 +88,17 @@ com\team\supplychain\dao\EmployeeDAO.class
 com\team\supplychain\controllers\ManagerReportsController$ReportRecord.class
 com\team\supplychain\controllers\AdminSecurityController.class
 com\team\supplychain\controllers\LoginController$1.class
+com\team\supplychain\controllers\AdminDashboardController$DashboardMetrics.class
 com\team\supplychain\controllers\ManagerAttendanceController$1.class
 com\team\supplychain\models\Employee.class
 com\team\supplychain\controllers\AdminDashboardController.class
 com\team\supplychain\services\AuthenticationService.class
+com\team\supplychain\controllers\AdminDashboardController$1.class
 com\team\supplychain\controllers\EmployeeAttendanceViewController$AttendanceRecord.class
 com\team\supplychain\controllers\EmployeeRequisitionsViewController$RequisitionRecord.class
 com\team\supplychain\utils\DatabasePasswordUpdater.class
 com\team\supplychain\controllers\AdminAuditLogsController$2.class
 com\team\supplychain\models\AuditLog.class
+com\team\supplychain\controllers\EmployeeDashboardController$1.class
 com\team\supplychain\controllers\AdminSecurityController$2.class
 com\team\supplychain\controllers\AdminSystemSettingsController$SettingRecord.class

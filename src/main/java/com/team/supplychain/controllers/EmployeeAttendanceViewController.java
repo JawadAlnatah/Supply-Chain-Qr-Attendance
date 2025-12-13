@@ -7,6 +7,7 @@ import com.team.supplychain.models.Employee;
 import com.team.supplychain.models.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -70,6 +71,21 @@ public class EmployeeAttendanceViewController {
     // Current viewing period
     private LocalDate currentWeekStart;
     private LocalDate currentMonthStart;
+
+    /**
+     * Helper class to hold attendance data loaded in background
+     */
+    private static class AttendanceData {
+        Employee employee;
+        List<Attendance> weekAttendance;
+        List<Attendance> monthAttendance;
+
+        AttendanceData(Employee employee, List<Attendance> weekAttendance, List<Attendance> monthAttendance) {
+            this.employee = employee;
+            this.weekAttendance = weekAttendance;
+            this.monthAttendance = monthAttendance;
+        }
+    }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
     private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("EEEE");
@@ -232,7 +248,7 @@ public class EmployeeAttendanceViewController {
     }
 
     /**
-     * Load attendance data from database and update UI
+     * Load attendance data from database asynchronously and update UI
      */
     private void loadAttendanceData() {
         if (currentUser == null) {
@@ -240,44 +256,63 @@ public class EmployeeAttendanceViewController {
             return;
         }
 
-        try {
-            // Fetch employee record
-            currentEmployee = employeeDAO.getEmployeeByUserId(currentUser.getUserId());
-            if (currentEmployee == null) {
-                System.out.println("No employee profile found for user: " + currentUser.getUsername());
-                return;
+        // Update calendar labels immediately (no database needed)
+        updateCalendarLabels();
+
+        // Load data in background thread
+        Task<AttendanceData> loadTask = new Task<>() {
+            @Override
+            protected AttendanceData call() throws Exception {
+                // Fetch employee record
+                Employee employee = employeeDAO.getEmployeeByUserId(currentUser.getUserId());
+                if (employee == null) {
+                    throw new Exception("No employee profile found for user: " + currentUser.getUsername());
+                }
+
+                int employeeId = employee.getEmployeeId();
+                System.out.println("Loading attendance data for employee: " + employee.getFullName());
+
+                // Get current month's attendance for table and statistics
+                LocalDate today = LocalDate.now();
+                LocalDate monthStart = today.withDayOfMonth(1);
+                LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
+                List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, monthStart, monthEnd);
+
+                // Get current week's attendance
+                List<Attendance> weekAttendance = attendanceDAO.getWeekAttendance(employeeId, currentWeekStart);
+
+                return new AttendanceData(employee, weekAttendance, monthAttendance);
             }
+        };
 
-            int employeeId = currentEmployee.getEmployeeId();
-            System.out.println("Loading attendance data for employee: " + currentEmployee.getFullName());
+        // Update UI when data is loaded
+        loadTask.setOnSucceeded(e -> {
+            AttendanceData data = loadTask.getValue();
 
-            // Get current month's attendance for table and statistics
-            LocalDate today = LocalDate.now();
-            LocalDate monthStart = today.withDayOfMonth(1);
-            LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
-            List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, monthStart, monthEnd);
-
-            // Get current week's attendance
-            List<Attendance> weekAttendance = attendanceDAO.getWeekAttendance(employeeId, currentWeekStart);
+            // Update current employee
+            currentEmployee = data.employee;
 
             // Update statistics cards
-            updateStatistics(weekAttendance, monthAttendance);
-
-            // Update calendar labels
-            updateCalendarLabels();
+            updateStatistics(data.weekAttendance, data.monthAttendance);
 
             // Update weekly calendar visual
-            updateWeeklyCalendarView(weekAttendance);
+            updateWeeklyCalendarView(data.weekAttendance);
 
             // Populate attendance history table
-            populateAttendanceTable(monthAttendance);
+            populateAttendanceTable(data.monthAttendance);
 
-            System.out.println("Loaded " + monthAttendance.size() + " attendance records");
+            System.out.println("Loaded " + data.monthAttendance.size() + " attendance records");
+        });
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to load attendance data: " + e.getMessage());
-        }
+        // Handle errors
+        loadTask.setOnFailed(e -> {
+            Throwable exception = loadTask.getException();
+            exception.printStackTrace();
+            System.err.println("Failed to load attendance data: " + exception.getMessage());
+        });
+
+        // Start background task
+        new Thread(loadTask).start();
     }
 
     /**

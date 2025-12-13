@@ -8,6 +8,7 @@ import com.team.supplychain.models.Attendance;
 import com.team.supplychain.models.Employee;
 import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -83,14 +84,93 @@ public class EmployeeDashboardController {
     private EmployeeDAO employeeDAO;
 
     /**
-     * Set the current logged-in employee user
+     * Helper class to hold all dashboard data loaded in background
+     */
+    private static class DashboardData {
+        Employee employee;
+        Attendance todayAttendance;
+        List<Attendance> weekAttendance;
+        List<Attendance> monthAttendance;
+        List<Requisition> recentRequisitions;
+
+        DashboardData(Employee employee, Attendance todayAttendance,
+                     List<Attendance> weekAttendance, List<Attendance> monthAttendance,
+                     List<Requisition> recentRequisitions) {
+            this.employee = employee;
+            this.todayAttendance = todayAttendance;
+            this.weekAttendance = weekAttendance;
+            this.monthAttendance = monthAttendance;
+            this.recentRequisitions = recentRequisitions;
+        }
+    }
+
+    /**
+     * Set the current logged-in employee user and load dashboard data asynchronously
      */
     public void setCurrentUser(User user) {
         this.currentUser = user;
-        loadEmployeeProfile();
-        updateUserInterface();
-        loadAttendanceData();
-        loadRecentRequisitions();
+        updateUserInterface(); // Update UI labels immediately
+
+        // Load all data in background thread
+        Task<DashboardData> loadTask = new Task<>() {
+            @Override
+            protected DashboardData call() throws Exception {
+                // Load employee profile
+                Employee employee = employeeDAO.getEmployeeByUserId(user.getUserId());
+
+                if (employee == null) {
+                    throw new Exception("No employee record found for user: " + user.getUsername());
+                }
+
+                int employeeId = employee.getEmployeeId();
+
+                // Load today's attendance
+                Attendance todayAttendance = attendanceDAO.getTodayAttendance(employeeId);
+
+                // Load week's attendance
+                LocalDate today = LocalDate.now();
+                LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+                List<Attendance> weekAttendance = attendanceDAO.getWeekAttendance(employeeId, weekStart);
+
+                // Load month's attendance
+                LocalDate monthStart = today.withDayOfMonth(1);
+                LocalDate monthEnd = today.with(TemporalAdjusters.lastDayOfMonth());
+                List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, monthStart, monthEnd);
+
+                // Load recent requisitions
+                List<Requisition> requisitions = requisitionDAO.getRequisitionsByUser(user.getUserId());
+
+                return new DashboardData(employee, todayAttendance, weekAttendance, monthAttendance, requisitions);
+            }
+        };
+
+        // Handle successful data loading
+        loadTask.setOnSucceeded(e -> {
+            DashboardData data = loadTask.getValue();
+
+            // Update current employee
+            currentEmployee = data.employee;
+            System.out.println("Employee profile loaded: " + currentEmployee.getFullName());
+
+            // Update UI with loaded data
+            updateTodayStatus(data.todayAttendance);
+            updateWeekStatistics(data.weekAttendance);
+            updateMonthStatistics(data.monthAttendance);
+            updateRecentRequisitionsUI(data.recentRequisitions);
+
+            System.out.println("Dashboard data loaded successfully");
+        });
+
+        // Handle errors
+        loadTask.setOnFailed(e -> {
+            Throwable exception = loadTask.getException();
+            exception.printStackTrace();
+            System.err.println("Failed to load dashboard data: " + exception.getMessage());
+            showError("Loading Error", "Failed to load dashboard data. Please try again.");
+        });
+
+        // Start background task
+        new Thread(loadTask).start();
     }
 
     /**
@@ -555,27 +635,40 @@ public class EmployeeDashboardController {
         try {
             // Fetch user's requisitions from database
             List<Requisition> requisitions = requisitionDAO.getRequisitionsByUser(currentUser.getUserId());
-
-            if (requisitions == null || requisitions.isEmpty()) {
-                // Show empty state
-                showEmptyRequisitionsState();
-                return;
-            }
-
-            // Limit to 5 most recent
-            List<Requisition> recentReqs = requisitions.stream()
-                    .limit(5)
-                    .collect(Collectors.toList());
-
-            // Create UI for each requisition
-            for (Requisition req : recentReqs) {
-                HBox reqCard = createRequisitionCard(req);
-                recentRequisitionsContainer.getChildren().add(reqCard);
-            }
+            updateRecentRequisitionsUI(requisitions);
 
         } catch (Exception e) {
             e.printStackTrace();
             showErrorState();
+        }
+    }
+
+    /**
+     * Update recent requisitions UI with provided data
+     */
+    private void updateRecentRequisitionsUI(List<Requisition> requisitions) {
+        if (recentRequisitionsContainer == null) {
+            return;
+        }
+
+        // Clear container
+        recentRequisitionsContainer.getChildren().clear();
+
+        if (requisitions == null || requisitions.isEmpty()) {
+            // Show empty state
+            showEmptyRequisitionsState();
+            return;
+        }
+
+        // Limit to 5 most recent
+        List<Requisition> recentReqs = requisitions.stream()
+                .limit(5)
+                .collect(Collectors.toList());
+
+        // Create UI for each requisition
+        for (Requisition req : recentReqs) {
+            HBox reqCard = createRequisitionCard(req);
+            recentRequisitionsContainer.getChildren().add(reqCard);
         }
     }
 
