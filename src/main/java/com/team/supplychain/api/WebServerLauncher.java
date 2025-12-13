@@ -1,10 +1,16 @@
 package com.team.supplychain.api;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.net.InetAddress;
 
@@ -26,13 +32,44 @@ import java.net.InetAddress;
 public class WebServerLauncher {
 
     private static final int PORT = 8080;
+    private static final int HTTPS_PORT = 8443;
     private Server server;
 
     /**
      * Start the embedded web server
      */
     public void start() throws Exception {
-        server = new Server(PORT);
+        server = new Server();
+
+        // HTTP Configuration
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setSecureScheme("https");
+        httpConfig.setSecurePort(HTTPS_PORT);
+
+        // HTTPS Configuration
+        HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
+        httpsConfig.addCustomizer(new SecureRequestCustomizer());
+
+        // SSL Context Factory
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+        sslContextFactory.setKeyStorePath("keystore.p12");
+        sslContextFactory.setKeyStorePassword("changeit");
+        sslContextFactory.setKeyManagerPassword("changeit");
+
+        // HTTP Connector (port 8080) - keep for backward compatibility
+        ServerConnector httpConnector = new ServerConnector(server,
+            new HttpConnectionFactory(httpConfig));
+        httpConnector.setPort(PORT);
+
+        // HTTPS Connector (port 8443) - main connector for mobile camera access
+        ServerConnector httpsConnector = new ServerConnector(server,
+            new SslConnectionFactory(sslContextFactory, "http/1.1"),
+            new HttpConnectionFactory(httpsConfig));
+        httpsConnector.setPort(HTTPS_PORT);
+
+        // Add both connectors to server
+        server.addConnector(httpConnector);
+        server.addConnector(httpsConnector);
 
         // Create servlet context
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -111,29 +148,33 @@ public class WebServerLauncher {
             System.out.println("  QR CODE ATTENDANCE SCANNER - WEB SERVER STARTED");
             System.out.println("=".repeat(70));
             System.out.println();
-            System.out.println("  Server is running on port: " + PORT);
+            System.out.println("  Server is running on ports: " + PORT + " (HTTP) & " + HTTPS_PORT + " (HTTPS)");
             System.out.println();
             System.out.println("  📱 Access the QR Scanner:");
-            System.out.println("     Local:   http://localhost:" + PORT + "/scanner.html");
-            System.out.println("     Network: http://" + hostname + ":" + PORT + "/scanner.html");
+            System.out.println("     Local HTTP:    http://localhost:" + PORT + "/scanner.html");
+            System.out.println("     Local HTTPS:   https://localhost:" + HTTPS_PORT + "/scanner.html");
+            System.out.println("     Network HTTPS: https://" + hostname + ":" + HTTPS_PORT + "/scanner.html");
             System.out.println();
-            System.out.println("  🔌 API Endpoint:");
+            System.out.println("  🔌 API Endpoints:");
+            System.out.println("     POST https://localhost:" + HTTPS_PORT + "/api/attendance/scan");
             System.out.println("     POST http://localhost:" + PORT + "/api/attendance/scan");
             System.out.println();
-            System.out.println("  📋 Test API:");
-            System.out.println("     GET http://localhost:" + PORT + "/api/attendance/scan");
+            System.out.println("  ⚠️  MOBILE DEVICE USERS:");
+            System.out.println("     - Use HTTPS URL for camera access: https://" + hostname + ":" + HTTPS_PORT + "/scanner.html");
+            System.out.println("     - Accept the security warning (self-signed certificate)");
+            System.out.println("     - Camera permissions will then work correctly");
             System.out.println();
             System.out.println("  💡 Tips:");
-            System.out.println("     - Use the network URL to access from mobile devices");
             System.out.println("     - Make sure your phone and PC are on the same WiFi");
+            System.out.println("     - HTTP works for desktop, but camera needs HTTPS on mobile");
             System.out.println("     - Press Ctrl+C to stop the server");
             System.out.println();
             System.out.println("=".repeat(70));
             System.out.println();
 
         } catch (Exception e) {
-            System.out.println("Server started on port: " + PORT);
-            System.out.println("Access at: http://localhost:" + PORT + "/scanner.html");
+            System.out.println("Server started on ports: " + PORT + " (HTTP) & " + HTTPS_PORT + " (HTTPS)");
+            System.out.println("Access at: https://localhost:" + HTTPS_PORT + "/scanner.html");
         }
     }
 

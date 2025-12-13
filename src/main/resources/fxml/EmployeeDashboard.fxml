@@ -36,6 +36,14 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- Refresh Button -->
+            <Button fx:id="refreshButton" styleClass="notification-icon" onAction="#handleRefreshDashboard"
+                    style="-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8 12;">
+                <graphic>
+                    <Label text="🔄" style="-fx-font-size: 18px;"/>
+                </graphic>
+            </Button>
+
             <!-- Notification Icon -->
             <StackPane styleClass="notification-icon">
                 <Label text="🔔" style="-fx-font-size: 18px;"/>

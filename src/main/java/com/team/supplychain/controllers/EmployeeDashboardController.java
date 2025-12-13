@@ -8,6 +8,9 @@ import com.team.supplychain.models.Attendance;
 import com.team.supplychain.models.Employee;
 import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -49,6 +53,7 @@ public class EmployeeDashboardController {
 
     // ==================== HEADER ELEMENTS ====================
     @FXML private Label userNameLabel;
+    @FXML private Button refreshButton;
     @FXML private Button logoutButton;
 
     // ==================== SIDEBAR NAVIGATION ====================
@@ -82,6 +87,7 @@ public class EmployeeDashboardController {
     private RequisitionDAO requisitionDAO;
     private AttendanceDAO attendanceDAO;
     private EmployeeDAO employeeDAO;
+    private Timeline autoRefreshTimeline;
 
     /**
      * Helper class to hold all dashboard data loaded in background
@@ -174,6 +180,83 @@ public class EmployeeDashboardController {
     }
 
     /**
+     * Refresh dashboard data manually (triggered by refresh button)
+     */
+    @FXML
+    private void handleRefreshDashboard() {
+        System.out.println("Manual dashboard refresh triggered");
+
+        if (currentUser == null || currentEmployee == null) {
+            System.err.println("Cannot refresh: User or employee not loaded");
+            return;
+        }
+
+        // Show visual feedback - rotate the refresh icon
+        if (refreshButton != null) {
+            refreshButton.setDisable(true);
+        }
+
+        // Load all data in background thread
+        Task<DashboardData> refreshTask = new Task<>() {
+            @Override
+            protected DashboardData call() throws Exception {
+                int employeeId = currentEmployee.getEmployeeId();
+
+                // Load today's attendance
+                Attendance todayAttendance = attendanceDAO.getTodayAttendance(employeeId);
+
+                // Load week's attendance
+                LocalDate today = LocalDate.now();
+                LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+                List<Attendance> weekAttendance = attendanceDAO.getWeekAttendance(employeeId, weekStart);
+
+                // Load month's attendance
+                LocalDate monthStart = today.withDayOfMonth(1);
+                LocalDate monthEnd = today.with(TemporalAdjusters.lastDayOfMonth());
+                List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, monthStart, monthEnd);
+
+                // Load recent requisitions
+                List<Requisition> requisitions = requisitionDAO.getRequisitionsByUser(currentUser.getUserId());
+
+                return new DashboardData(currentEmployee, todayAttendance, weekAttendance, monthAttendance, requisitions);
+            }
+        };
+
+        // Handle successful data loading
+        refreshTask.setOnSucceeded(e -> {
+            DashboardData data = refreshTask.getValue();
+
+            // Update UI with loaded data
+            updateTodayStatus(data.todayAttendance);
+            updateWeekStatistics(data.weekAttendance);
+            updateMonthStatistics(data.monthAttendance);
+            updateRecentRequisitionsUI(data.recentRequisitions);
+
+            // Re-enable refresh button
+            if (refreshButton != null) {
+                refreshButton.setDisable(false);
+            }
+
+            System.out.println("Dashboard refreshed successfully");
+        });
+
+        // Handle errors
+        refreshTask.setOnFailed(e -> {
+            Throwable exception = refreshTask.getException();
+            exception.printStackTrace();
+            System.err.println("Failed to refresh dashboard: " + exception.getMessage());
+
+            // Re-enable refresh button
+            if (refreshButton != null) {
+                refreshButton.setDisable(false);
+            }
+        });
+
+        // Start background task
+        new Thread(refreshTask).start();
+    }
+
+    /**
      * Initialize the controller
      */
     @FXML
@@ -191,7 +274,39 @@ public class EmployeeDashboardController {
         // Set dashboard button as active by default
         setActiveMenuButton(dashboardButton);
 
+        // Start auto-refresh timer (refresh every 30 seconds)
+        startAutoRefresh();
+
         System.out.println("EmployeeDashboardController initialized");
+    }
+
+    /**
+     * Start automatic dashboard refresh every 30 seconds
+     */
+    private void startAutoRefresh() {
+        // Create timeline that runs every 30 seconds
+        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(30), event -> {
+            System.out.println("Auto-refresh triggered");
+            handleRefreshDashboard();
+        }));
+
+        // Set to repeat indefinitely
+        autoRefreshTimeline.setCycleCount(Animation.INDEFINITE);
+
+        // Start the timeline
+        autoRefreshTimeline.play();
+
+        System.out.println("Auto-refresh started (every 30 seconds)");
+    }
+
+    /**
+     * Stop automatic dashboard refresh
+     */
+    private void stopAutoRefresh() {
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+            System.out.println("Auto-refresh stopped");
+        }
     }
 
     /**
@@ -533,6 +648,9 @@ public class EmployeeDashboardController {
     @FXML
     private void handleLogout() {
         try {
+            // Stop auto-refresh to prevent memory leaks
+            stopAutoRefresh();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
             Parent loginView = loader.load();
 
