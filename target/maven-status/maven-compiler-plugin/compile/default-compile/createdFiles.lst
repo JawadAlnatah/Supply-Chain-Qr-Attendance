@@ -13,6 +13,7 @@ com\team\supplychain\controllers\AdminReportsController$3.class
 com\team\supplychain\controllers\EmployeeAttendanceViewController.class
 com\team\supplychain\api\WebServerLauncher.class
 com\team\supplychain\controllers\AdminSecurityController$IncidentRecord.class
+com\team\supplychain\controllers\EmployeeDashboardController$2.class
 com\team\supplychain\utils\DatabaseConnection.class
 com\team\supplychain\controllers\AdminReportsController$ReportRecord.class
 com\team\supplychain\models\Supplier.class

@@ -387,7 +387,26 @@
                 onScanFailure
             ).catch(err => {
                 console.error("Camera initialization failed:", err);
-                showMessage('error', 'Failed to access camera. Please allow camera permissions.');
+
+                // Check if this is an HTTPS issue
+                const isInsecure = window.location.protocol === 'http:' &&
+                                   window.location.hostname !== 'localhost' &&
+                                   window.location.hostname !== '127.0.0.1';
+
+                if (isInsecure) {
+                    showMessage('error',
+                        '⚠️ Camera requires HTTPS connection.<br><br>' +
+                        '📱 <strong>Mobile Users:</strong> Please use the HTTPS URL provided when the server started.<br>' +
+                        'It should look like: https://192.168.x.x:8443/scanner.html<br><br>' +
+                        '🔒 Accept the security warning to proceed.<br><br>' +
+                        '💡 Or use Manual Entry below.');
+                } else {
+                    showMessage('error',
+                        'Failed to access camera. Please:<br>' +
+                        '1. Allow camera permissions when prompted<br>' +
+                        '2. Check browser settings if no prompt appears<br>' +
+                        '3. Use Manual Entry as fallback');
+                }
             });
         }
 
