@@ -39,7 +39,6 @@ public class ManagerInventoryController {
     @FXML private TextField searchField;
 
     // ==================== BUTTONS ====================
-    @FXML private Button addItemButton;
     @FXML private Button exportButton;
     @FXML private Button refreshButton;
 
@@ -381,21 +380,86 @@ public class ManagerInventoryController {
     // ==================== EVENT HANDLERS ====================
 
     /**
-     * Handle add item button (disabled for view-only mode)
-     */
-    @FXML
-    private void handleAddItem() {
-        System.out.println("Add Item clicked");
-        showInfo("View Only Mode", "Inventory is in view-only mode. Adding items is not available.");
-    }
-
-    /**
-     * Handle export button
+     * Handle export button - Export inventory data to CSV file
      */
     @FXML
     private void handleExport() {
         System.out.println("Export clicked");
-        showInfo("Export Report", "Export functionality will be implemented in a future update.");
+
+        // Create file chooser dialog
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Save Inventory Report");
+        fileChooser.setInitialFileName("inventory_report_" + java.time.LocalDate.now() + ".csv");
+        fileChooser.getExtensionFilters().add(
+            new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv")
+        );
+
+        // Show save dialog
+        java.io.File file = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                exportToCSV(file);
+                showInfo("Export Successful", "Inventory report has been exported to:\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Export Failed", "Failed to export inventory report:\n" + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Export inventory data to CSV file
+     */
+    private void exportToCSV(java.io.File file) throws Exception {
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {
+            // Write CSV header
+            writer.write("ID,Item Name,Category,Quantity,Reorder Level,Unit Price,Total Value,Status");
+            writer.newLine();
+
+            // Write data rows
+            for (InventoryItem item : inventoryData) {
+                // Calculate total value
+                BigDecimal totalValue = item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
+
+                // Determine status
+                String status;
+                if (item.getQuantity() == 0) {
+                    status = "Out of Stock";
+                } else if (item.getQuantity() <= item.getReorderLevel()) {
+                    status = "Low Stock";
+                } else {
+                    status = "In Stock";
+                }
+
+                // Escape and write fields
+                writer.write(String.format("%d,%s,%s,%d,%d,%s,%s,%s",
+                    item.getItemId(),
+                    escapeCSV(item.getItemName()),
+                    escapeCSV(item.getCategory()),
+                    item.getQuantity(),
+                    item.getReorderLevel(),
+                    item.getUnitPrice().toString(),
+                    totalValue.toString(),
+                    status
+                ));
+                writer.newLine();
+            }
+        }
+    }
+
+    /**
+     * Escape special characters in CSV fields
+     */
+    private String escapeCSV(String value) {
+        if (value == null) {
+            return "";
+        }
+        // If the value contains comma, quote, or newline, wrap it in quotes and escape quotes
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 
     /**

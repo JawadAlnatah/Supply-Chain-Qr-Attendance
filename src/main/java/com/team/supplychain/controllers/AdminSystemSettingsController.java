@@ -15,10 +15,9 @@ public class AdminSystemSettingsController {
     @FXML private Label uptimeLabel, dbSizeLabel, lastBackupLabel, configFilesLabel;
     @FXML private ComboBox<String> categoryFilter;
     @FXML private TextField searchField;
-    @FXML private Button backupButton, restoreButton, restartButton, refreshButton;
+    @FXML private Button refreshButton;
     @FXML private TableView<SettingRecord> settingsTable;
     @FXML private TableColumn<SettingRecord, String> categoryColumn, settingNameColumn, currentValueColumn, defaultValueColumn, modifiedByColumn, modifiedDateColumn;
-    @FXML private TableColumn<SettingRecord, Void> actionsColumn;
 
     private User currentUser;
     private ObservableList<SettingRecord> settingsData;
@@ -46,32 +45,6 @@ public class AdminSystemSettingsController {
         defaultValueColumn.setCellValueFactory(new PropertyValueFactory<>("defaultValue"));
         modifiedByColumn.setCellValueFactory(new PropertyValueFactory<>("modifiedBy"));
         modifiedDateColumn.setCellValueFactory(new PropertyValueFactory<>("modifiedDate"));
-
-        actionsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button editBtn = new Button("Edit");
-            private final Button resetBtn = new Button("Reset");
-            private final HBox container = new HBox(6, editBtn, resetBtn);
-            {
-                editBtn.setStyle("-fx-background-color: #22d3ee; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 5px 12px; -fx-font-size: 11px; -fx-cursor: hand;");
-                resetBtn.setStyle("-fx-background-color: #6b7280; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 5px 12px; -fx-font-size: 11px; -fx-cursor: hand;");
-                editBtn.setOnAction(e -> {
-                    if (getIndex() < getTableView().getItems().size()) {
-                        System.out.println("Edit: " + getTableView().getItems().get(getIndex()).getSettingName());
-                    }
-                });
-                resetBtn.setOnAction(e -> {
-                    if (getIndex() < getTableView().getItems().size()) {
-                        System.out.println("Reset: " + getTableView().getItems().get(getIndex()).getSettingName());
-                    }
-                });
-                container.setAlignment(Pos.CENTER);
-            }
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : container);
-            }
-        });
 
         settingsTable.setItems(settingsData);
     }
@@ -106,17 +79,7 @@ public class AdminSystemSettingsController {
         if (configFilesLabel != null) configFilesLabel.setText(String.valueOf(settingsData.size()));
     }
 
-    @FXML private void handleBackup() { showInfo("Backup", "System backup will be initiated."); }
-    @FXML private void handleRestore() { showInfo("Restore", "Backup restoration functionality will be implemented."); }
-    @FXML private void handleRestart() { showInfo("Restart", "System restart functionality will be implemented."); }
     @FXML private void handleRefresh() { loadDummyData(); updateStats(); }
-
-    private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
     public static class SettingRecord {
         private final StringProperty category, settingName, currentValue, defaultValue, modifiedBy, modifiedDate;

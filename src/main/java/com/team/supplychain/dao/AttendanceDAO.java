@@ -39,7 +39,7 @@ public class AttendanceDAO {
 
             LocalDateTime now = LocalDateTime.now();
             LocalDate today = LocalDate.now();
-
+            
             // Determine status: LATE if after 8:30 AM, otherwise PRESENT
             LocalTime checkInTime = now.toLocalTime();
             AttendanceStatus status = checkInTime.isAfter(WORK_START_TIME) ?

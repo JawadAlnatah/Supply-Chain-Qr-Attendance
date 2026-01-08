@@ -38,19 +38,6 @@
 
     <!-- Action Buttons -->
     <HBox spacing="15">
-        <Button fx:id="addItemButton" text="+ Add New Item" onAction="#handleAddItem" styleClass="action-button-primary">
-            <font>
-                <Font name="System Bold" size="13"/>
-            </font>
-            <style>
-                -fx-background-color: linear-gradient(to bottom right, #a78bfa, #8b5cf6);
-                -fx-text-fill: white;
-                -fx-background-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.4), 10, 0, 0, 3);
-            </style>
-        </Button>
         <Button fx:id="exportButton" text="Export Report" onAction="#handleExport" styleClass="action-button-secondary">
             <font>
                 <Font name="System Bold" size="13"/>

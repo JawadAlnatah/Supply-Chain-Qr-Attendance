@@ -1099,10 +1099,3 @@ CREATE TABLE audit_logs (
 |---------|------|--------|---------|
 | 1.0 | 2025-12-12 | Team 6 | Initial SDD following IEEE 1016 template |
 
-**Approval Signatures**
-
-| Role | Name | Signature | Date |
-|------|------|-----------|------|
-| Team Leader | Jawad Ali Alnatah | ______________ | ______ |
-| Advisor | Saeed Matar Alshahrani | ______________ | ______ |
-| Instructor | Dr. Rahma Ahmed | ______________ | ______ |
