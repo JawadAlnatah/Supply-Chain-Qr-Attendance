@@ -211,6 +211,34 @@ mvn clean install
 mvn javafx:run
 ```
 
+### Database Configuration
+
+**IMPORTANT:** This project uses TiDB Cloud (MySQL-compatible database). You need to configure your own database credentials.
+
+**Step 1: Copy the example configuration file**
+```bash
+cp src/main/resources/config.properties.example src/main/resources/config.properties
+```
+
+**Step 2: Edit `config.properties` with your database credentials**
+
+Open `src/main/resources/config.properties` and replace the placeholder values:
+```properties
+db.url=jdbc:mysql://YOUR_TIDB_HOST:4000/supply_chain_qr?sslMode=VERIFY_IDENTITY&useSSL=true
+db.username=YOUR_USERNAME
+db.password=YOUR_PASSWORD
+```
+
+**Step 3: Get TiDB Cloud Credentials** (Free Tier Available)
+1. Sign up at [TiDB Cloud](https://tidbcloud.com/)
+2. Create a new cluster (free tier available)
+3. Use the database setup scripts in `/db/` directory to create tables
+4. Copy connection details to `config.properties`
+
+**Note:** The `config.properties` file is gitignored to protect your credentials. Never commit this file to GitHub.
+
+For detailed setup instructions, see [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md).
+
 ### Login Credentials
 
 Test the application with these pre-configured accounts:

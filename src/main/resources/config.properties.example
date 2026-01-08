@@ -1,0 +1,12 @@
+# TiDB Cloud Configuration
+# Copy this file to config.properties and fill in your actual credentials
+
+db.url=jdbc:mysql://YOUR_TIDB_HOST:4000/supply_chain_qr?sslMode=VERIFY_IDENTITY&useSSL=true&requireSSL=true
+db.username=YOUR_USERNAME
+db.password=YOUR_PASSWORD
+db.driver=com.mysql.cj.jdbc.Driver
+
+# Connection pool settings
+db.maxConnections=10
+db.minConnections=2
+db.connectionTimeout=30000
