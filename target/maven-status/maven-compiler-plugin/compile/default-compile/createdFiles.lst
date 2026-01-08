@@ -80,7 +80,6 @@ com\team\supplychain\controllers\ManagerEmployeesController.class
 com\team\supplychain\models\Requisition.class
 com\team\supplychain\controllers\AdminSecurityController$3.class
 com\team\supplychain\controllers\InventoryController.class
-com\team\supplychain\controllers\AdminSystemSettingsController$1.class
 com\team\supplychain\controllers\ManagerPurchaseOrdersController.class
 com\team\supplychain\test\java\com\supplychain\test\TestConnection.class
 com\team\supplychain\controllers\AdminReportsController$1.class

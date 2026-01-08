@@ -38,19 +38,6 @@
                 -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.4), 10, 0, 0, 3);
             </style>
         </Button>
-        <Button fx:id="generateReportButton" text="Generate Report" onAction="#handleGenerateReport">
-            <font><Font name="System Bold" size="13"/></font>
-            <style>
-                -fx-background-color: white;
-                -fx-text-fill: #22d3ee;
-                -fx-border-color: #22d3ee;
-                -fx-border-width: 2px;
-                -fx-background-radius: 10px;
-                -fx-border-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-            </style>
-        </Button>
         <Button fx:id="archiveButton" text="🗑️ Archive Old Logs" onAction="#handleArchive">
             <font><Font name="System Bold" size="13"/></font>
             <style>
@@ -120,9 +107,9 @@
         <HBox alignment="CENTER_LEFT" spacing="20">
             <Label text="Activity Logs"><font><Font name="System Bold" size="20"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
             <Region HBox.hgrow="ALWAYS"/>
-            <ComboBox fx:id="actionTypeFilter" promptText="Action Type" styleClass="modern-combobox" style="-fx-pref-width: 150px;"/>
-            <ComboBox fx:id="moduleFilter" promptText="Module" styleClass="modern-combobox" style="-fx-pref-width: 150px;"/>
-            <ComboBox fx:id="resultFilter" promptText="Result" styleClass="modern-combobox" style="-fx-pref-width: 130px;"/>
+            <ComboBox fx:id="actionTypeFilter" promptText="Action Type" styleClass="modern-combobox" style="-fx-min-width: 150px;"/>
+            <ComboBox fx:id="moduleFilter" promptText="Module" styleClass="modern-combobox" style="-fx-min-width: 150px;"/>
+            <ComboBox fx:id="resultFilter" promptText="Result" styleClass="modern-combobox" style="-fx-min-width: 130px;"/>
             <TextField fx:id="searchField" promptText="Search..." style="-fx-background-color: #f8f9fa; -fx-background-radius: 10px; -fx-padding: 10px 15px; -fx-pref-width: 200px; -fx-border-color: #e0e0e0; -fx-border-radius: 10px; -fx-border-width: 1px;"><font><Font size="13"/></font></TextField>
         </HBox>
 

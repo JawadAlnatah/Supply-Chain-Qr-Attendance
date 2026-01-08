@@ -29,41 +29,6 @@
 
     <!-- Action Buttons -->
     <HBox spacing="15">
-        <Button fx:id="backupButton" text="💾 Backup Now" onAction="#handleBackup">
-            <font><Font name="System Bold" size="13"/></font>
-            <style>
-                -fx-background-color: linear-gradient(to bottom right, #22d3ee, #06b6d4);
-                -fx-text-fill: white;
-                -fx-background-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-                -fx-effect: dropshadow(gaussian, rgba(34,211,238,0.4), 10, 0, 0, 3);
-            </style>
-        </Button>
-        <Button fx:id="restoreButton" text="↻ Restore Backup" onAction="#handleRestore">
-            <font><Font name="System Bold" size="13"/></font>
-            <style>
-                -fx-background-color: white;
-                -fx-text-fill: #22d3ee;
-                -fx-border-color: #22d3ee;
-                -fx-border-width: 2px;
-                -fx-background-radius: 10px;
-                -fx-border-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-            </style>
-        </Button>
-        <Button fx:id="restartButton" text="🔄 Restart System" onAction="#handleRestart">
-            <font><Font name="System Bold" size="13"/></font>
-            <style>
-                -fx-background-color: #ef4444;
-                -fx-text-fill: white;
-                -fx-background-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-            </style>
-        </Button>
-        <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="refreshButton" text="↻ Refresh" onAction="#handleRefresh">
             <font><Font size="13"/></font>
             <style>
@@ -136,7 +101,6 @@
                 <TableColumn fx:id="defaultValueColumn" text="Default" prefWidth="150"/>
                 <TableColumn fx:id="modifiedByColumn" text="Modified By" prefWidth="150"/>
                 <TableColumn fx:id="modifiedDateColumn" text="Modified Date" prefWidth="140"/>
-                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
             </columns>
         </TableView>
     </VBox>

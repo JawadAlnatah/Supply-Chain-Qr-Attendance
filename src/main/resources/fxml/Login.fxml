@@ -124,21 +124,6 @@
                         </HBox>
                     </VBox>
 
-                    <!-- Remember Me and Forgot Password -->
-                    <HBox alignment="CENTER" spacing="100" maxWidth="400">
-                        <CheckBox text="Remember me" styleClass="remember-checkbox-dark">
-                            <font>
-                                <Font size="13.0" />
-                            </font>
-                        </CheckBox>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Hyperlink text="Forgot password?" styleClass="forgot-link-dark">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Hyperlink>
-                    </HBox>
-
                     <!-- Login Button (Dark Mode) -->
                     <Button fx:id="loginButton"
                            text="Sign In"
@@ -161,82 +146,6 @@
                         </font>
                     </Label>
                 </VBox>
-
-                <!-- Divider -->
-                <HBox alignment="CENTER" spacing="15" maxWidth="400">
-                    <Separator styleClass="divider-dark" HBox.hgrow="ALWAYS"/>
-                    <Label text="Test Credentials" styleClass="divider-text-dark">
-                        <font>
-                            <Font name="System Bold" size="11.0" />
-                        </font>
-                    </Label>
-                    <Separator styleClass="divider-dark" HBox.hgrow="ALWAYS"/>
-                </HBox>
-
-                <!-- Test Credentials Info (Dark Mode) -->
-                <HBox spacing="15" alignment="CENTER">
-                    <VBox spacing="8" styleClass="test-credentials-dark" alignment="CENTER" HBox.hgrow="ALWAYS">
-                        <padding>
-                            <Insets top="15" right="20" bottom="15" left="20"/>
-                        </padding>
-                        <Label text="👨‍💼 Admin" styleClass="credential-role-dark">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <Button fx:id="adminCredentialButton"
-                                text="admin / password123"
-                                styleClass="credential-text-dark transparent-button"
-                                onAction="#handleAdminCredentialsClick"
-                                HBox.hgrow="ALWAYS"
-                                maxWidth="Infinity">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Button>
-                    </VBox>
-                    <VBox spacing="8" styleClass="test-credentials-dark" alignment="CENTER" HBox.hgrow="ALWAYS">
-                        <padding>
-                            <Insets top="15" right="20" bottom="15" left="20"/>
-                        </padding>
-                        <Label text="👔 Manager" styleClass="credential-role-dark">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <Button fx:id="managerCredentialButton"
-                                text="manager / password123" 
-                                styleClass="credential-text-dark"
-                                onAction="#handleManagerCredentialsClick"
-                                HBox.hgrow="ALWAYS"
-                                maxWidth="Infinity">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Button>
-                       
-                    </VBox>
-                    <VBox spacing="8" styleClass="test-credentials-dark" alignment="CENTER" HBox.hgrow="ALWAYS">
-                        <padding>
-                            <Insets top="15" right="20" bottom="15" left="20"/>
-                        </padding>
-                        <Label text="👔 Employee" styleClass="credential-role-dark">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <Button fx:id="employeeCredentialButton"
-                                text="employee / password123" 
-                                styleClass="credential-text-dark"
-                                onAction="#handleEmployeeCredentialsClick"
-                                HBox.hgrow="ALWAYS"
-                                maxWidth="Infinity">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Button>
-                    </VBox>
-                </HBox>
             </VBox>
         </VBox>
     </HBox>

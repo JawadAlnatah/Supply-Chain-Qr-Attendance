@@ -342,8 +342,8 @@ public class LoginController {
 │    fx:id="username  │──┐
 │    Field"/>         │  │
 └─────────────────────┘  │
-                          │ JavaFX automatically connects these
-                          │
+                         │ JavaFX automatically connects these
+                         │
 ┌─────────────────────┐  │
 │ LoginController     │  │
 │                     │  │
@@ -1984,7 +1984,8 @@ public class SupplierDAO {
 
 #### Step 4: Create Controller
 
-**File:** `src/main/java/com/team/supplychain/controllers/SupplierController.java`
+**File:** `src/main/java/com/team/supplychain/controllers/SupplierController.java` 
+
 
 ```java
 package com.team.supplychain.controllers;

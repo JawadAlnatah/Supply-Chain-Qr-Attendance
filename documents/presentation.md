@@ -157,9 +157,9 @@
 
 | Role | Persona | Primary Responsibilities |
 |------|---------|-------------------------|
-| 🔐 **Admin** | Sarah (IT Manager) | System oversight, user management, audit logs |
+| 🔐 **Admin** | ali (IT Manager) | System oversight, user management, audit logs |
 | 📊 **Manager** | Ahmed (Operations) | Inventory management, requisition approvals, reporting |
-| 👤 **Employee** | Fatima (Warehouse) | Attendance tracking, create requisitions, view personal data |
+| 👤 **Employee** | Hassan (Warehouse) | Attendance tracking, create requisitions, view personal data |
 | 🏢 **Supplier** | Khaled (Vendor) | Data-only access (no dashboard) |
 
 ### Key Use Cases

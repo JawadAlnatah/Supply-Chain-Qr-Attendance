@@ -25,7 +25,7 @@ public class AdminAuditLogsController {
     @FXML private Label todayActivitiesLabel, dbChangesLabel, userActionsLabel, systemEventsLabel;
     @FXML private ComboBox<String> actionTypeFilter, moduleFilter, resultFilter;
     @FXML private TextField searchField;
-    @FXML private Button exportButton, generateReportButton, archiveButton, refreshButton;
+    @FXML private Button exportButton, archiveButton, refreshButton;
     @FXML private TableView<AuditLog> logsTable;
     @FXML private TableColumn<AuditLog, String> logIdColumn, timestampColumn, userColumn, actionTypeColumn, moduleColumn, descriptionColumn, resultColumn;
     @FXML private TableColumn<AuditLog, Void> actionsColumn;
@@ -397,11 +397,6 @@ public class AdminAuditLogsController {
 
     private void exportToExcel(File file) throws Exception {
         showError("Not Implemented", "Excel export requires Apache POI library.\nPlease use CSV export for now.");
-    }
-
-    @FXML
-    private void handleGenerateReport() {
-        showInfo("Generate Report", "PDF report generation functionality requires iText library.\nThis feature will be implemented in the next update.");
     }
 
     @FXML

@@ -176,28 +176,6 @@ public class LoginController {
         new Thread(loginTask).start();
     }
 
-    // ========== TEST CREDENTIAL BUTTONS ==========
-    // These buttons auto-fill login credentials for testing
-    // Should be removed or hidden in production builds
-
-    @FXML
-    private void handleAdminCredentialsClick(ActionEvent event) {
-        usernameField.setText("admin");
-        passwordField.setText("password123");
-    }
-
-    @FXML
-    private void handleManagerCredentialsClick(ActionEvent event) {
-        usernameField.setText("manager");
-        passwordField.setText("password123");
-    }
-
-    @FXML
-    private void handleEmployeeCredentialsClick(ActionEvent event) {
-        usernameField.setText("employee");
-        passwordField.setText("password123");
-    }
-
     /**
      * Open the appropriate dashboard based on user's role.
      *
