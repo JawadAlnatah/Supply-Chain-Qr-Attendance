@@ -41,7 +41,6 @@ public class ManagerPurchaseOrdersController {
     @FXML private TextField searchField;
 
     // ==================== BUTTONS ====================
-    @FXML private Button createPOButton;
     @FXML private Button approveButton;
     @FXML private Button rejectButton;
     @FXML private Button refreshButton;
@@ -256,44 +255,80 @@ public class ManagerPurchaseOrdersController {
     }
 
     /**
-     * Load requisitions from database with optional status filter
+     * Load requisitions from database with optional status filter (asynchronously)
      */
     private void loadRequisitionsFromDatabase(String statusFilter) {
         poData.clear();
         poNumberToRequisitionId.clear();
 
-        try {
-            // Fetch requisitions from database
-            List<Requisition> requisitions;
-            if (statusFilter == null || "All Status".equals(statusFilter)) {
-                // Load all requisitions (pending, approved, rejected)
-                List<Requisition> pending = requisitionDAO.getRequisitionsByStatus("Pending");
-                List<Requisition> approved = requisitionDAO.getRequisitionsByStatus("Approved");
-                List<Requisition> rejected = requisitionDAO.getRequisitionsByStatus("Rejected");
-
-                requisitions = new java.util.ArrayList<>();
-                requisitions.addAll(pending);
-                requisitions.addAll(approved);
-                requisitions.addAll(rejected);
-            } else {
-                requisitions = requisitionDAO.getRequisitionsByStatus(statusFilter);
-            }
-
-            // Convert to PurchaseOrder objects
-            for (Requisition req : requisitions) {
-                PurchaseOrder po = mapRequisitionToPurchaseOrder(req);
-                poData.add(po);
-
-                // Track requisition ID for database updates
-                poNumberToRequisitionId.put(req.getRequisitionCode(), req.getRequisitionId());
-            }
-
-            System.out.println("Loaded " + poData.size() + " requisitions from database");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Database Error", "Failed to load requisitions from database: " + e.getMessage());
+        // Show loading indicator
+        if (purchaseOrdersTable != null) {
+            purchaseOrdersTable.setPlaceholder(new Label("Loading purchase orders..."));
         }
+
+        // Load data in background thread
+        javafx.concurrent.Task<List<Requisition>> loadTask = new javafx.concurrent.Task<>() {
+            @Override
+            protected List<Requisition> call() throws Exception {
+                // Fetch requisitions from database
+                if (statusFilter == null || "All Status".equals(statusFilter)) {
+                    // Load all requisitions (pending, approved, rejected)
+                    List<Requisition> pending = requisitionDAO.getRequisitionsByStatus("Pending");
+                    List<Requisition> approved = requisitionDAO.getRequisitionsByStatus("Approved");
+                    List<Requisition> rejected = requisitionDAO.getRequisitionsByStatus("Rejected");
+
+                    List<Requisition> all = new java.util.ArrayList<>();
+                    all.addAll(pending);
+                    all.addAll(approved);
+                    all.addAll(rejected);
+                    return all;
+                } else {
+                    return requisitionDAO.getRequisitionsByStatus(statusFilter);
+                }
+            }
+        };
+
+        loadTask.setOnSucceeded(event -> {
+            try {
+                List<Requisition> requisitions = loadTask.getValue();
+
+                // Convert to PurchaseOrder objects on UI thread
+                for (Requisition req : requisitions) {
+                    PurchaseOrder po = mapRequisitionToPurchaseOrder(req);
+                    poData.add(po);
+
+                    // Track requisition ID for database updates
+                    poNumberToRequisitionId.put(req.getRequisitionCode(), req.getRequisitionId());
+                }
+
+                System.out.println("Loaded " + poData.size() + " requisitions from database");
+
+                // Reset placeholder
+                if (purchaseOrdersTable != null) {
+                    purchaseOrdersTable.setPlaceholder(new Label("No purchase orders found"));
+                }
+
+                updateStats();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Loading Error", "Failed to process requisitions: " + e.getMessage());
+            }
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable ex = loadTask.getException();
+            ex.printStackTrace();
+            showError("Database Error", "Failed to load requisitions from database: " + ex.getMessage());
+
+            if (purchaseOrdersTable != null) {
+                purchaseOrdersTable.setPlaceholder(new Label("Failed to load data"));
+            }
+        });
+
+        // Start background thread
+        Thread thread = new Thread(loadTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -332,12 +367,6 @@ public class ManagerPurchaseOrdersController {
     }
 
     // ==================== EVENT HANDLERS ====================
-
-    @FXML
-    private void handleCreatePO() {
-        System.out.println("Create PO clicked");
-        showInfo("Create Purchase Order", "Create new PO functionality will be implemented here.");
-    }
 
     @FXML
     private void handleApprove() {
@@ -450,7 +479,70 @@ public class ManagerPurchaseOrdersController {
 
     private void handleViewPO(PurchaseOrder po) {
         System.out.println("View PO: " + po.getPoNumber());
-        showInfo("View PO", "Viewing details for " + po.getPoNumber());
+
+        // Get requisition ID from map
+        Integer requisitionId = poNumberToRequisitionId.get(po.getPoNumber());
+        if (requisitionId == null) {
+            showError("Error", "Could not find requisition details for " + po.getPoNumber());
+            return;
+        }
+
+        try {
+            // Fetch full requisition details from database
+            Requisition requisition = requisitionDAO.getRequisitionById(requisitionId);
+            if (requisition == null) {
+                showError("Error", "Could not load requisition details.");
+                return;
+            }
+
+            // Build detailed message
+            StringBuilder details = new StringBuilder();
+            details.append("PO Number: ").append(po.getPoNumber()).append("\n");
+            details.append("Status: ").append(po.getStatus()).append("\n");
+            details.append("Requested By: ").append(po.getRequestedBy()).append("\n");
+            details.append("Date: ").append(po.getDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))).append("\n");
+            details.append("Category: ").append(requisition.getCategory() != null ? requisition.getCategory() : "N/A").append("\n");
+            details.append("Priority: ").append(requisition.getPriority() != null ? requisition.getPriority() : "N/A").append("\n");
+            details.append("Department: ").append(requisition.getDepartment() != null ? requisition.getDepartment() : "N/A").append("\n\n");
+
+            details.append("Items (" + po.getItemsCount() + "):\n");
+            details.append("─".repeat(50)).append("\n");
+
+            if (requisition.getItems() != null && !requisition.getItems().isEmpty()) {
+                for (RequisitionItem item : requisition.getItems()) {
+                    details.append(String.format("• %s\n", item.getItemName()));
+                    details.append(String.format("  Qty: %d | Unit Price: $%.2f | Total: $%.2f\n",
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getSubtotal()));
+                }
+            } else {
+                details.append("No items found.\n");
+            }
+
+            details.append("─".repeat(50)).append("\n");
+            details.append(String.format("Total Amount: $%,.2f", po.getTotalAmount()));
+
+            if (requisition.getJustification() != null && !requisition.getJustification().isEmpty()) {
+                details.append("\n\nJustification:\n").append(requisition.getJustification());
+            }
+
+            if (requisition.getReviewNotes() != null && !requisition.getReviewNotes().isEmpty()) {
+                details.append("\n\nReview Notes:\n").append(requisition.getReviewNotes());
+            }
+
+            // Show in alert dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Purchase Order Details");
+            alert.setHeaderText(po.getPoNumber() + " - Details");
+            alert.setContentText(details.toString());
+            alert.getDialogPane().setMinWidth(600);
+            alert.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error", "Failed to load PO details: " + e.getMessage());
+        }
     }
 
     private void handleApprovePO(PurchaseOrder po) {

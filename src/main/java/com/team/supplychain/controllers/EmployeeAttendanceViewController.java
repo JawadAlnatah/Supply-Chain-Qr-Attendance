@@ -48,6 +48,7 @@ public class EmployeeAttendanceViewController {
     // ==================== CALENDAR VIEWS ====================
     @FXML private HBox weeklyCalendarPane;
     @FXML private VBox monthlyCalendarPane;
+    @FXML private javafx.scene.layout.GridPane monthlyCalendarGrid;
     @FXML private Label weekRangeLabel;
     @FXML private Label monthLabel;
 
@@ -79,11 +80,13 @@ public class EmployeeAttendanceViewController {
         Employee employee;
         List<Attendance> weekAttendance;
         List<Attendance> monthAttendance;
+        List<Attendance> statsMonthAttendance;
 
-        AttendanceData(Employee employee, List<Attendance> weekAttendance, List<Attendance> monthAttendance) {
+        AttendanceData(Employee employee, List<Attendance> weekAttendance, List<Attendance> monthAttendance, List<Attendance> statsMonthAttendance) {
             this.employee = employee;
             this.weekAttendance = weekAttendance;
             this.monthAttendance = monthAttendance;
+            this.statsMonthAttendance = statsMonthAttendance;
         }
     }
 
@@ -272,16 +275,20 @@ public class EmployeeAttendanceViewController {
                 int employeeId = employee.getEmployeeId();
                 System.out.println("Loading attendance data for employee: " + employee.getFullName());
 
-                // Get current month's attendance for table and statistics
+                // Get current viewing month's attendance for calendar and table
+                LocalDate monthEnd = currentMonthStart.withDayOfMonth(currentMonthStart.lengthOfMonth());
+                List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, currentMonthStart, monthEnd);
+
+                // Get current month (today's month) for statistics
                 LocalDate today = LocalDate.now();
-                LocalDate monthStart = today.withDayOfMonth(1);
-                LocalDate monthEnd = today.withDayOfMonth(today.lengthOfMonth());
-                List<Attendance> monthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, monthStart, monthEnd);
+                LocalDate statsMonthStart = today.withDayOfMonth(1);
+                LocalDate statsMonthEnd = today.withDayOfMonth(today.lengthOfMonth());
+                List<Attendance> statsMonthAttendance = attendanceDAO.getAttendanceByDateRange(employeeId, statsMonthStart, statsMonthEnd);
 
                 // Get current week's attendance
                 List<Attendance> weekAttendance = attendanceDAO.getWeekAttendance(employeeId, currentWeekStart);
 
-                return new AttendanceData(employee, weekAttendance, monthAttendance);
+                return new AttendanceData(employee, weekAttendance, monthAttendance, statsMonthAttendance);
             }
         };
 
@@ -292,13 +299,16 @@ public class EmployeeAttendanceViewController {
             // Update current employee
             currentEmployee = data.employee;
 
-            // Update statistics cards
-            updateStatistics(data.weekAttendance, data.monthAttendance);
+            // Update statistics cards (use current month stats, not viewing month)
+            updateStatistics(data.weekAttendance, data.statsMonthAttendance);
 
             // Update weekly calendar visual
             updateWeeklyCalendarView(data.weekAttendance);
 
-            // Populate attendance history table
+            // Update monthly calendar visual
+            updateMonthlyCalendarView(data.monthAttendance);
+
+            // Populate attendance history table (use viewing month data)
             populateAttendanceTable(data.monthAttendance);
 
             System.out.println("Loaded " + data.monthAttendance.size() + " attendance records");
@@ -494,6 +504,111 @@ public class EmployeeAttendanceViewController {
             }
 
             weeklyCalendarPane.getChildren().add(dayBox);
+        }
+    }
+
+    /**
+     * Update monthly calendar visual with real attendance data
+     */
+    private void updateMonthlyCalendarView(List<Attendance> monthAttendance) {
+        if (monthlyCalendarGrid == null) {
+            return;
+        }
+
+        // Create map of attendance by date for quick lookup
+        Map<LocalDate, Attendance> attendanceMap = new HashMap<>();
+        if (monthAttendance != null) {
+            for (Attendance attendance : monthAttendance) {
+                attendanceMap.put(attendance.getDate(), attendance);
+            }
+        }
+
+        // Clear existing date cells (keep header row with day names)
+        monthlyCalendarGrid.getChildren().removeIf(node -> {
+            Integer rowIndex = javafx.scene.layout.GridPane.getRowIndex(node);
+            return rowIndex != null && rowIndex > 0;
+        });
+
+        LocalDate today = LocalDate.now();
+
+        // Calculate first day of month and its day of week
+        LocalDate firstDayOfMonth = currentMonthStart;
+        DayOfWeek firstDayOfWeek = firstDayOfMonth.getDayOfWeek();
+
+        // Calculate starting date (may be from previous month)
+        // Sunday = 0, Monday = 1, ..., Saturday = 6
+        int daysFromSunday = firstDayOfWeek.getValue() % 7; // Convert to Sunday-based (0-6)
+        LocalDate startDate = firstDayOfMonth.minusDays(daysFromSunday);
+
+        // Generate 6 weeks (42 days) of calendar cells
+        for (int week = 0; week < 6; week++) {
+            for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                LocalDate date = startDate.plusDays(week * 7 + dayOfWeek);
+                Attendance attendance = attendanceMap.get(date);
+
+                boolean isToday = date.equals(today);
+                boolean isFuture = date.isAfter(today);
+                boolean isCurrentMonth = date.getMonth() == currentMonthStart.getMonth() &&
+                                        date.getYear() == currentMonthStart.getYear();
+
+                // Create day cell
+                VBox dayCell = new VBox(5);
+                dayCell.setAlignment(Pos.TOP_CENTER);
+                dayCell.setPadding(new Insets(10, 5, 10, 5));
+                dayCell.setPrefHeight(80);
+
+                // Date number label
+                Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));
+                dateLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+                // Determine style and content based on status
+                if (!isCurrentMonth) {
+                    // Days from previous/next month - lighter/grayed out
+                    dayCell.getStyleClass().add("day-empty");
+                    dateLabel.setStyle("-fx-font-weight: normal; -fx-font-size: 12px; -fx-text-fill: #bdc3c7;");
+                    dayCell.getChildren().add(dateLabel);
+                } else if (isToday) {
+                    // Today - highlight
+                    dayCell.getStyleClass().add("day-today");
+                    dateLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #ffffff;");
+
+                    if (attendance != null && attendance.getCheckInTime() != null) {
+                        Label statusIcon = new Label("✓");
+                        statusIcon.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 18px;");
+                        Label timeLabel = new Label(attendance.getFormattedCheckInTime());
+                        timeLabel.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 10px;");
+                        dayCell.getChildren().addAll(dateLabel, statusIcon, timeLabel);
+                    } else {
+                        dayCell.getChildren().add(dateLabel);
+                    }
+                } else if (attendance != null && attendance.getCheckInTime() != null) {
+                    // Past day with attendance
+                    boolean isLate = attendance.getStatus() == com.team.supplychain.enums.AttendanceStatus.LATE;
+                    dayCell.getStyleClass().add(isLate ? "day-late" : "day-present");
+
+                    Label statusIcon = new Label(isLate ? "⚠" : "✓");
+                    String iconColor = isLate ? "#ff9800" : "#43a047";
+                    statusIcon.setStyle("-fx-text-fill: " + iconColor + "; -fx-font-size: 18px;");
+
+                    Label timeLabel = new Label(attendance.getFormattedCheckInTime());
+                    timeLabel.setStyle("-fx-text-fill: " + iconColor + "; -fx-font-size: 10px;");
+
+                    dayCell.getChildren().addAll(dateLabel, statusIcon, timeLabel);
+                } else if (isFuture) {
+                    // Future day
+                    dayCell.getStyleClass().add("day-future");
+                    dayCell.getChildren().add(dateLabel);
+                } else {
+                    // Past day absent
+                    dayCell.getStyleClass().add("day-absent");
+                    Label statusIcon = new Label("✗");
+                    statusIcon.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 18px;");
+                    dayCell.getChildren().addAll(dateLabel, statusIcon);
+                }
+
+                // Add cell to grid (row index is week + 1 because row 0 is headers)
+                monthlyCalendarGrid.add(dayCell, dayOfWeek, week + 1);
+            }
         }
     }
 

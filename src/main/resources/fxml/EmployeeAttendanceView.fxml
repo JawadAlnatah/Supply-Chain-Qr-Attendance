@@ -142,25 +142,25 @@
             <VBox fx:id="monthlyCalendarPane" spacing="15" visible="false" managed="false">
                 <!-- Month Header -->
                 <HBox alignment="CENTER" spacing="10">
-                    <Button text="◀" styleClass="action-button-secondary">
+                    <Button text="◀" styleClass="action-button-secondary" onAction="#handlePreviousMonth">
                         <padding>
                             <Insets top="8" right="15" bottom="8" left="15"/>
                         </padding>
                     </Button>
-                    <Label text="December 2024" textFill="#2c3e50">
+                    <Label fx:id="monthLabel" text="December 2024" textFill="#2c3e50">
                         <font>
                             <Font name="System Bold" size="18"/>
                         </font>
                     </Label>
-                    <Button text="▶" styleClass="action-button-secondary">
+                    <Button text="▶" styleClass="action-button-secondary" onAction="#handleNextMonth">
                         <padding>
                             <Insets top="8" right="15" bottom="8" left="15"/>
                         </padding>
                     </Button>
                 </HBox>
 
-                <!-- Day Headers -->
-                <GridPane hgap="5" vgap="5">
+                <!-- Monthly Calendar Grid (Dynamically Populated) -->
+                <GridPane fx:id="monthlyCalendarGrid" hgap="5" vgap="5">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
                         <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
@@ -171,7 +171,7 @@
                         <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
                     </columnConstraints>
 
-                    <!-- Day Names -->
+                    <!-- Day Names (Header Row) -->
                     <Label text="SUN" styleClass="calendar-day-header" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                     <Label text="MON" styleClass="calendar-day-header" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                     <Label text="TUE" styleClass="calendar-day-header" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
@@ -179,191 +179,7 @@
                     <Label text="THU" styleClass="calendar-day-header" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
                     <Label text="FRI" styleClass="calendar-day-header" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
                     <Label text="SAT" styleClass="calendar-day-header" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
-
-                    <!-- Week 1 (Nov 26-Dec 2) -->
-                    <VBox styleClass="day-empty" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="26" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-present" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="27" textFill="#2c3e50"><font><Font name="System Bold" size="11"/></font></Label>
-                        <Label text="✓" style="-fx-text-fill: #43a047; -fx-font-size: 18px;"/>
-                    </VBox>
-                    <VBox styleClass="day-present" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="28" textFill="#2c3e50"><font><Font name="System Bold" size="11"/></font></Label>
-                        <Label text="✓" style="-fx-text-fill: #43a047; -fx-font-size: 18px;"/>
-                    </VBox>
-                    <VBox styleClass="day-late" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="29" textFill="#2c3e50"><font><Font name="System Bold" size="11"/></font></Label>
-                        <Label text="⚠" style="-fx-text-fill: #ff9800; -fx-font-size: 18px;"/>
-                    </VBox>
-                    <VBox styleClass="day-present" GridPane.columnIndex="4" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="30" textFill="#2c3e50"><font><Font name="System Bold" size="11"/></font></Label>
-                        <Label text="✓" style="-fx-text-fill: #43a047; -fx-font-size: 18px;"/>
-                    </VBox>
-                    <VBox styleClass="day-today" GridPane.columnIndex="5" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="1" textFill="#ffffff"><font><Font name="System Bold" size="11"/></font></Label>
-                        <Label text="✓" style="-fx-text-fill: #ffffff; -fx-font-size: 18px;"/>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="6" GridPane.rowIndex="1">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="2" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-
-                    <!-- Week 2 (Dec 3-9) -->
-                    <VBox styleClass="day-future" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="3" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="4" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="5" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="6" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="4" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="7" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="5" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="8" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="6" GridPane.rowIndex="2">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="9" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-
-                    <!-- Week 3 (Dec 10-16) -->
-                    <VBox styleClass="day-future" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="10" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="11" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="12" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="3" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="13" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="4" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="14" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="5" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="15" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="6" GridPane.rowIndex="3">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="16" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-
-                    <!-- Week 4 (Dec 17-23) -->
-                    <VBox styleClass="day-future" GridPane.columnIndex="0" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="17" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="18" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="19" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="3" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="20" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="4" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="21" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="5" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="22" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="6" GridPane.rowIndex="4">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="23" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-
-                    <!-- Week 5 (Dec 24-30) -->
-                    <VBox styleClass="day-future" GridPane.columnIndex="0" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="24" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="25" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="26" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="3" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="27" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="4" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="28" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="5" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="29" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-future" GridPane.columnIndex="6" GridPane.rowIndex="5">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="30" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-
-                    <!-- Week 6 (Dec 31 - Jan 6) -->
-                    <VBox styleClass="day-future" GridPane.columnIndex="0" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="31" textFill="#2c3e50"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="1" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="2" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="3" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="3" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="4" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="4" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="5" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="5" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
-                    <VBox styleClass="day-empty" GridPane.columnIndex="6" GridPane.rowIndex="6">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <Label text="6" textFill="#bdc3c7"><font><Font size="11"/></font></Label>
-                    </VBox>
+                    <!-- Date cells will be dynamically generated by controller -->
                 </GridPane>
             </VBox>
         </StackPane>

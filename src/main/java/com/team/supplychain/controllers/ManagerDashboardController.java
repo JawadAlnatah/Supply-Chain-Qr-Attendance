@@ -1,11 +1,15 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.InventoryDAO;
+import com.team.supplychain.models.InventoryItem;
 import com.team.supplychain.models.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -14,6 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the Manager Dashboard view
@@ -38,13 +45,14 @@ public class ManagerDashboardController {
     @FXML private Label posInTransitLabel;
 
     // Charts
-    @FXML private BarChart<String, Number> stockLevelsChart;
+    @FXML private PieChart stockLevelsPieChart;
 
     // Activity and PO containers
     @FXML private VBox recentActivityContainer;
     @FXML private VBox posInProgressContainer;
 
     private User currentUser;
+    private final InventoryDAO inventoryDAO = new InventoryDAO();
 
     /**
      * Set the current logged-in manager user
@@ -64,10 +72,92 @@ public class ManagerDashboardController {
             initialDashboardContent = centerScrollPane.getContent();
         }
 
+        // Load inventory distribution pie chart
+        loadInventoryPieChart();
+
         // TODO: Load real-time operations data from database
-        // TODO: Populate stock levels chart
         // TODO: Load recent activity/alerts
         // TODO: Load purchase orders in progress with ETA countdown
+    }
+
+    /**
+     * Load and display inventory distribution pie chart
+     */
+    private void loadInventoryPieChart() {
+        if (stockLevelsPieChart == null) return;
+
+        // Fetch inventory data from database
+        List<InventoryItem> items = inventoryDAO.getAllInventoryItems();
+        if (items == null || items.isEmpty()) return;
+
+        // Group items by category and sum quantities
+        Map<String, Integer> categoryQuantities = new HashMap<>();
+        for (InventoryItem item : items) {
+            String category = item.getCategory();
+            int quantity = item.getQuantity();
+            categoryQuantities.put(category, categoryQuantities.getOrDefault(category, 0) + quantity);
+        }
+
+        // Create pie chart data
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+        // Define vibrant solid colors for different categories
+        String[] colors = {
+            "#8b5cf6",  // Purple
+            "#3b82f6",  // Blue
+            "#10b981",  // Green
+            "#f59e0b",  // Amber
+            "#ef4444",  // Red
+            "#7c3aed"   // Deep Purple
+        };
+
+        // Add data for each category
+        for (Map.Entry<String, Integer> entry : categoryQuantities.entrySet()) {
+            PieChart.Data slice = new PieChart.Data(entry.getKey() + " (" + entry.getValue() + ")", entry.getValue());
+            pieChartData.add(slice);
+        }
+
+        // Set data to pie chart
+        stockLevelsPieChart.setData(pieChartData);
+
+        // Apply individual colors to each slice with enhanced styling
+        javafx.application.Platform.runLater(() -> {
+            int colorIndex = 0;
+            for (PieChart.Data data : pieChartData) {
+                javafx.scene.Node node = data.getNode();
+                if (node != null) {
+                    String color = colors[colorIndex % colors.length];
+
+                    // Base style with shadow
+                    String baseStyle =
+                        "-fx-pie-color: " + color + "; " +
+                        "-fx-border-width: 2px; " +
+                        "-fx-border-color: white; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.1, 0, 2);";
+
+                    node.setStyle(baseStyle);
+
+                    // Enhanced hover effect
+                    node.setOnMouseEntered(e -> {
+                        node.setStyle(
+                            "-fx-pie-color: " + color + "; " +
+                            "-fx-border-width: 3px; " +
+                            "-fx-border-color: white; " +
+                            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 15, 0.3, 0, 4);"
+                        );
+                        node.setScaleX(1.08);
+                        node.setScaleY(1.08);
+                    });
+
+                    node.setOnMouseExited(e -> {
+                        node.setStyle(baseStyle);
+                        node.setScaleX(1.0);
+                        node.setScaleY(1.0);
+                    });
+                }
+                colorIndex++;
+            }
+        });
     }
 
     /**
