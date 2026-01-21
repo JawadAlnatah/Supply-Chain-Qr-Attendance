@@ -235,12 +235,12 @@
                     </StackPane>
 
                     <VBox spacing="3" alignment="CENTER">
-                        <Label text="Jawad Hassan" styleClass="user-info-email">
+                        <Label fx:id="profileNameLabel" text="Jawad Hassan" styleClass="user-info-email">
                             <font>
                                 <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
-                        <Label text="Inventory Specialist" styleClass="user-info-email" style="-fx-font-size: 10px; -fx-opacity: 0.8;"/>
+                        <Label fx:id="profilePositionLabel" text="Inventory Specialist" styleClass="user-info-email" style="-fx-font-size: 10px; -fx-opacity: 0.8;"/>
                         <Label text="● Active" styleClass="user-status">
                             <font>
                                 <Font size="10.0" />
@@ -411,41 +411,6 @@
 
                     <!-- Quick Actions & Team Info Card -->
                     <VBox spacing="20" prefWidth="320">
-
-                        <!-- Check In/Out Card -->
-                        <VBox styleClass="stat-card-modern" spacing="15" alignment="CENTER">
-                            <padding>
-                                <Insets top="25" right="25" bottom="25" left="25"/>
-                            </padding>
-
-                            <StackPane>
-                                <Circle radius="50" styleClass="status-circle, status-checked-in"/>
-                                <Label text="✓" style="-fx-text-fill: white; -fx-font-size: 40px;"/>
-                            </StackPane>
-
-                            <Label text="You're Checked In" style="-fx-text-fill: #43a047; -fx-font-size: 16px;">
-                                <font>
-                                    <Font name="System Bold" size="16.0" />
-                                </font>
-                            </Label>
-
-                            <VBox spacing="8" alignment="CENTER">
-                                <HBox spacing="8" alignment="CENTER">
-                                    <Label text="🕐" style="-fx-font-size: 14px;"/>
-                                    <Label text="Check-in: 8:15 AM" style="-fx-text-fill: #757575; -fx-font-size: 12px;"/>
-                                </HBox>
-                                <HBox spacing="8" alignment="CENTER">
-                                    <Label text="⏱" style="-fx-font-size: 14px;"/>
-                                    <Label text="Hours: 6h 30m" style="-fx-text-fill: #757575; -fx-font-size: 12px;"/>
-                                </HBox>
-                            </VBox>
-
-                            <Button text="Check Out" styleClass="action-button-primary" onAction="#handleCheckOut">
-                                <font>
-                                    <Font name="System Bold" size="13.0" />
-                                </font>
-                            </Button>
-                        </VBox>
 
                         <!-- Team Status Card -->
                         <VBox styleClass="stat-card-modern" spacing="15" alignment="CENTER">

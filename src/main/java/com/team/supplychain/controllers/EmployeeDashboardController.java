@@ -53,6 +53,8 @@ public class EmployeeDashboardController {
 
     // ==================== HEADER ELEMENTS ====================
     @FXML private Label userNameLabel;
+    @FXML private Label profileNameLabel;
+    @FXML private Label profilePositionLabel;
     @FXML private Button refreshButton;
     @FXML private Button logoutButton;
 
@@ -313,8 +315,24 @@ public class EmployeeDashboardController {
      * Update the user interface with current user information
      */
     private void updateUserInterface() {
-        if (currentUser != null && userNameLabel != null) {
-            userNameLabel.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+        if (currentUser != null) {
+            String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+
+            // Update header name label
+            if (userNameLabel != null) {
+                userNameLabel.setText(fullName);
+            }
+
+            // Update profile card name label
+            if (profileNameLabel != null) {
+                profileNameLabel.setText(fullName);
+            }
+
+            // Update profile position/department label
+            if (profilePositionLabel != null && currentEmployee != null) {
+                String position = currentEmployee.getPosition() != null ? currentEmployee.getPosition() : "Employee";
+                profilePositionLabel.setText(position);
+            }
         }
 
         // Update current date label

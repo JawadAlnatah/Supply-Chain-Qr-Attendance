@@ -193,53 +193,99 @@
         </VBox>
     </GridPane>
 
-    <!-- Inventory Distribution Chart -->
-    <VBox spacing="15" styleClass="stat-card-modern">
+    <!-- Inventory Distribution Chart - Ultra Modern & Spacious -->
+    <VBox spacing="25" styleClass="stat-card-modern" VBox.vgrow="ALWAYS">
         <padding>
-            <Insets top="25" right="25" bottom="25" left="25"/>
+            <Insets top="40" right="45" bottom="40" left="45"/>
         </padding>
         <style>
-            -fx-background-color: white;
-            -fx-background-radius: 15px;
-            -fx-border-color: #e0e0e0;
-            -fx-border-width: 1px;
-            -fx-border-radius: 15px;
-            -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
+            -fx-background-color: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #f3f4f6 100%);
+            -fx-background-radius: 20px;
+            -fx-border-color: linear-gradient(to right, #a78bfa, #8b5cf6, #7c3aed);
+            -fx-border-width: 3px;
+            -fx-border-radius: 20px;
+            -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.3), 25, 0.1, 0, 8);
+            -fx-pref-height: 700px;
+            -fx-min-height: 650px;
         </style>
 
-        <!-- Chart Header -->
-        <Label text="Inventory Distribution by Category" styleClass="section-title">
-            <font>
-                <Font name="System Bold" size="20"/>
-            </font>
-            <style>
-                -fx-text-fill: #2c3e50;
-            </style>
-        </Label>
+        <!-- Chart Header with Icon & Stats -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <VBox alignment="CENTER" spacing="5" style="-fx-background-color: linear-gradient(to bottom right, #a78bfa, #8b5cf6); -fx-background-radius: 15px; -fx-padding: 15px; -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.4), 10, 0, 0, 3);">
+                <Label text="📊" style="-fx-font-size: 40px;"/>
+            </VBox>
+            <VBox spacing="8">
+                <Label text="Inventory Distribution Analytics" styleClass="section-title">
+                    <font>
+                        <Font name="System Bold" size="24"/>
+                    </font>
+                    <style>
+                        -fx-text-fill: #2c3e50;
+                    </style>
+                </Label>
+                <Label text="Real-time stock visualization across all product categories" style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
+                <HBox spacing="15" style="-fx-padding: 5px 0 0 0;">
+                    <HBox spacing="6">
+                        <Label text="🔄" style="-fx-font-size: 14px;"/>
+                        <Label text="Auto-sync enabled" style="-fx-text-fill: #10b981; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <Label text="•" style="-fx-text-fill: #e0e0e0;"/>
+                    <HBox spacing="6">
+                        <Label text="⏱️" style="-fx-font-size: 14px;"/>
+                        <Label text="Updated just now" style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+                    </HBox>
+                </HBox>
+            </VBox>
+        </HBox>
 
-        <!-- Bar Chart -->
-        <BarChart fx:id="inventoryChart" prefHeight="300" animated="true" legendVisible="false">
-            <xAxis>
-                <CategoryAxis fx:id="categoryAxis" label="Category" side="BOTTOM">
-                    <tickLabelFont>
-                        <Font size="11"/>
-                    </tickLabelFont>
-                </CategoryAxis>
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="quantityAxis" label="Total Quantity" side="LEFT" autoRanging="true">
-                    <tickLabelFont>
-                        <Font size="11"/>
-                    </tickLabelFont>
-                </NumberAxis>
-            </yAxis>
-        </BarChart>
+        <!-- Separator Line -->
+        <HBox style="-fx-background-color: linear-gradient(to right, transparent, #e0e0e0, transparent); -fx-pref-height: 2px; -fx-max-height: 2px;"/>
+
+        <!-- Enhanced Pie Chart with More Vertical Space -->
+        <PieChart fx:id="inventoryPieChart" prefHeight="500" animated="true" legendVisible="true"
+                  legendSide="RIGHT" labelsVisible="true" labelLineLength="20" startAngle="90" VBox.vgrow="ALWAYS">
+            <style>
+                -fx-background-color: rgba(255, 255, 255, 0.5);
+                -fx-background-radius: 15px;
+                -fx-padding: 25px 20px 25px 20px;
+                -fx-border-color: rgba(167,139,250,0.1);
+                -fx-border-width: 1px;
+                -fx-border-radius: 15px;
+            </style>
+        </PieChart>
+
+        <!-- Enhanced Chart Legend/Info Bar -->
+        <HBox alignment="CENTER" spacing="40" style="-fx-padding: 15px 20px; -fx-background-color: rgba(167,139,250,0.08); -fx-background-radius: 12px;">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="●" style="-fx-text-fill: #a78bfa; -fx-font-size: 24px;"/>
+                <VBox spacing="2">
+                    <Label text="Stock Levels" style="-fx-text-fill: #2c3e50; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    <Label text="By category" style="-fx-text-fill: #9ca3af; -fx-font-size: 11px;"/>
+                </VBox>
+            </HBox>
+            <Label text="|" style="-fx-text-fill: #d1d5db; -fx-font-size: 20px;"/>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="📈" style="-fx-font-size: 22px;"/>
+                <VBox spacing="2">
+                    <Label text="Live Data" style="-fx-text-fill: #2c3e50; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    <Label text="Real-time sync" style="-fx-text-fill: #9ca3af; -fx-font-size: 11px;"/>
+                </VBox>
+            </HBox>
+            <Label text="|" style="-fx-text-fill: #d1d5db; -fx-font-size: 20px;"/>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="⚡" style="-fx-font-size: 22px;"/>
+                <VBox spacing="2">
+                    <Label text="Auto-refreshed" style="-fx-text-fill: #2c3e50; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    <Label text="Every update" style="-fx-text-fill: #9ca3af; -fx-font-size: 11px;"/>
+                </VBox>
+            </HBox>
+        </HBox>
     </VBox>
 
     <!-- Inventory Table Card -->
-    <VBox spacing="15" styleClass="stat-card-modern">
+    <VBox spacing="20" styleClass="stat-card-modern">
         <padding>
-            <Insets top="25" right="25" bottom="25" left="25"/>
+            <Insets top="30" right="30" bottom="30" left="30"/>
         </padding>
         <style>
             -fx-background-color: white;
@@ -250,54 +296,144 @@
             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 3);
         </style>
 
-        <!-- Table Header -->
-        <HBox alignment="CENTER_LEFT" spacing="20">
-            <Label text="Inventory Items" styleClass="section-title">
-                <font>
-                    <Font name="System Bold" size="20"/>
-                </font>
-                <style>
-                    -fx-text-fill: #2c3e50;
-                </style>
-            </Label>
-            <Region HBox.hgrow="ALWAYS"/>
-            <ComboBox fx:id="categoryFilter" promptText="Filter by Category" styleClass="modern-combobox">
-                <style>
-                    -fx-pref-width: 200px;
-                </style>
-            </ComboBox>
-            <TextField fx:id="searchField" promptText="Search items..." styleClass="search-field">
-                <font><Font size="13"/></font>
-                <style>
-                    -fx-background-color: #f8f9fa;
-                    -fx-background-radius: 10px;
-                    -fx-padding: 10px 15px;
-                    -fx-pref-width: 250px;
-                    -fx-border-color: #e0e0e0;
-                    -fx-border-radius: 10px;
-                    -fx-border-width: 1px;
-                </style>
-            </TextField>
-        </HBox>
+        <!-- Table Header with Search & Filters -->
+        <VBox spacing="18">
+            <!-- Title Row -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="📦" style="-fx-font-size: 28px;"/>
+                <Label text="Inventory Items" styleClass="section-title">
+                    <font>
+                        <Font name="System Bold" size="22"/>
+                    </font>
+                    <style>
+                        -fx-text-fill: #2c3e50;
+                    </style>
+                </Label>
+                <Label fx:id="itemCountLabel" text="(0 items)" style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
+            </HBox>
 
-        <!-- TableView -->
-        <TableView fx:id="inventoryTable" VBox.vgrow="ALWAYS">
+            <!-- Search & Filter Row -->
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <!-- Search Field -->
+                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #f8f9fa; -fx-background-radius: 12px; -fx-padding: 5px 15px; -fx-border-color: #e0e0e0; -fx-border-radius: 12px; -fx-border-width: 1px;">
+                    <Label text="🔍" style="-fx-font-size: 16px; -fx-text-fill: #a78bfa;"/>
+                    <TextField fx:id="searchField" promptText="Search by name, category, or location..." styleClass="search-field">
+                        <font><Font size="13"/></font>
+                        <style>
+                            -fx-background-color: transparent;
+                            -fx-pref-width: 380px;
+                            -fx-border-width: 0;
+                            -fx-prompt-text-fill: #bdc3c7;
+                        </style>
+                    </TextField>
+                </HBox>
+
+                <!-- Category Filter -->
+                <ComboBox fx:id="categoryFilter" promptText="All Categories" styleClass="modern-combobox">
+                    <style>
+                        -fx-background-color: #f8f9fa;
+                        -fx-background-radius: 12px;
+                        -fx-pref-width: 200px;
+                        -fx-min-width: 200px;
+                        -fx-border-color: #e0e0e0;
+                        -fx-border-radius: 12px;
+                        -fx-border-width: 1px;
+                        -fx-padding: 10px 15px;
+                        -fx-font-size: 13px;
+                    </style>
+                </ComboBox>
+
+                <!-- Stock Status Filter -->
+                <ComboBox fx:id="statusFilter" promptText="All Stock Status" styleClass="modern-combobox">
+                    <style>
+                        -fx-background-color: #f8f9fa;
+                        -fx-background-radius: 12px;
+                        -fx-pref-width: 180px;
+                        -fx-min-width: 180px;
+                        -fx-border-color: #e0e0e0;
+                        -fx-border-radius: 12px;
+                        -fx-border-width: 1px;
+                        -fx-padding: 10px 15px;
+                        -fx-font-size: 13px;
+                    </style>
+                </ComboBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Clear Filters Button -->
+                <Button text="Clear Filters" onAction="#handleClearFilters">
+                    <font><Font size="12"/></font>
+                    <style>
+                        -fx-background-color: transparent;
+                        -fx-text-fill: #a78bfa;
+                        -fx-background-radius: 10px;
+                        -fx-padding: 8px 16px;
+                        -fx-cursor: hand;
+                        -fx-underline: true;
+                    </style>
+                </Button>
+            </HBox>
+        </VBox>
+
+        <!-- Enhanced TableView -->
+        <TableView fx:id="inventoryTable" VBox.vgrow="ALWAYS" style="-fx-min-height: 500px;">
             <columns>
-                <TableColumn fx:id="itemIdColumn" text="ID" prefWidth="80"/>
-                <TableColumn fx:id="itemNameColumn" text="Item Name" prefWidth="250"/>
-                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="150"/>
+                <!-- Item ID Column -->
+                <TableColumn fx:id="itemIdColumn" text="ID" prefWidth="70"/>
+
+                <!-- Item Name Column -->
+                <TableColumn fx:id="itemNameColumn" text="Item Name" prefWidth="220"/>
+
+                <!-- Category Column -->
+                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="140"/>
+
+                <!-- Location Column -->
+                <TableColumn fx:id="locationColumn" text="Location" prefWidth="130"/>
+
+                <!-- Quantity Column -->
                 <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100"/>
-                <TableColumn fx:id="reorderLevelColumn" text="Reorder Level" prefWidth="120"/>
-                <TableColumn fx:id="unitPriceColumn" text="Unit Price" prefWidth="100"/>
+
+                <!-- Reorder Level Column -->
+                <TableColumn fx:id="reorderLevelColumn" text="Reorder" prefWidth="90"/>
+
+                <!-- Unit Price Column -->
+                <TableColumn fx:id="unitPriceColumn" text="Unit Price" prefWidth="110"/>
+
+                <!-- Total Value Column -->
                 <TableColumn fx:id="totalValueColumn" text="Total Value" prefWidth="120"/>
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
-                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+
+                <!-- Status Column with Badge -->
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="130"/>
+
+                <!-- Actions Column -->
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="140"/>
             </columns>
+
+            <!-- Empty State Placeholder -->
+            <placeholder>
+                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 50px;">
+                    <Label text="📦" style="-fx-font-size: 64px; -fx-opacity: 0.3;"/>
+                    <Label text="No Inventory Items Found" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
+                    <Label text="Try adjusting your search or filters" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+            </placeholder>
+
             <style>
-                -fx-background-color: transparent;
-                -fx-table-cell-border-color: transparent;
+                -fx-background-color: #ffffff;
+                -fx-table-cell-border-color: #e5e7eb;
+                -fx-border-color: #d1d5da;
+                -fx-border-width: 1.5px;
+                -fx-border-radius: 12px;
+                -fx-background-radius: 12px;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.0, 0, 3);
             </style>
         </TableView>
+
+        <!-- Table Footer with Pagination Info -->
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10px 0 0 0;">
+            <Label text="Showing" style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;"/>
+            <Label fx:id="paginationLabel" text="0 items" style="-fx-text-fill: #2c3e50; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+        </HBox>
     </VBox>
 
 </VBox>

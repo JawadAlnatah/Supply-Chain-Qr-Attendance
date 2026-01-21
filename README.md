@@ -1,4 +1,4 @@
-# 🏭 Supply Chain Management System with Employee Attendance Tracking
+# Supply Chain Management System with Employee Attendance Tracking
 
 > A comprehensive JavaFX enterprise application featuring role-based access control, real-time inventory management, and automated attendance tracking
 
@@ -8,7 +8,7 @@
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 An enterprise-grade desktop application that streamlines supply chain operations and employee management. Built from the ground up using JavaFX and MySQL, this system demonstrates full-stack development capabilities with secure authentication, multi-role dashboards, real-time data visualization, and comprehensive audit logging.
 
@@ -25,27 +25,27 @@ To demonstrate enterprise software development skills including secure authentic
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🔐 Security & Authentication
+### Security & Authentication
 - **BCrypt password hashing** (10 salt rounds) with asynchronous verification
 - **Role-based access control** (Admin, Manager, Employee, Supplier)
 - **Comprehensive audit logging** for all system actions
 - **Account management** with disable/enable functionality
 
-### 📊 Multi-Role Dashboard System
+### Multi-Role Dashboard System
 - **Admin Dashboard**: System health monitoring, user management, security alerts
 - **Manager Dashboard**: Inventory overview, purchase orders, employee tracking
 - **Employee Dashboard**: Live attendance status, weekly calendar, personal requisitions
 
-### 📦 Inventory Management
+### Inventory Management
 - Real-time stock tracking with status indicators (In Stock / Low Stock / Out of Stock)
 - Category-based organization and filtering
 - Supplier integration with purchase order linking
 - **CSV export functionality** for reporting
 - Dynamic bar charts for inventory distribution visualization
 
-### 👥 Employee Attendance System
+### Employee Attendance System
 - Automated check-in/check-out with timestamp recording
 - **Automatic LATE detection** (after 8:30 AM threshold)
 - Weekly and monthly attendance statistics
@@ -53,14 +53,14 @@ To demonstrate enterprise software development skills including secure authentic
 - Date-range queries for historical data
 - Infrastructure ready for QR code integration
 
-### 📝 Requisition & Purchase Orders
+### Requisition & Purchase Orders
 - Employee requisition creation and tracking
 - Status workflow (Pending → Approved → Completed)
 - Manager approval system
 - Purchase order management with supplier linking
 - Real-time status updates and notifications
 
-### 📋 Audit & Compliance
+### Audit & Compliance
 - **Immutable audit trail** for security compliance
 - Track all critical actions (LOGIN, CREATE, UPDATE, DELETE)
 - Advanced filtering (by action type, module, result, date range)
@@ -69,7 +69,7 @@ To demonstrate enterprise software development skills including secure authentic
 
 ---
 
-## 🎯 Technical Highlights
+## Technical Highlights
 
 ### Software Architecture
 - **MVC Pattern**: Clean separation between views (FXML), controllers (business logic), and models (POJOs)
@@ -117,7 +117,7 @@ To demonstrate enterprise software development skills including secure authentic
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Category | Technologies |
 |----------|-------------|
@@ -137,17 +137,17 @@ To demonstrate enterprise software development skills including secure authentic
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ### Layered Architecture Overview
 
 ```
 ┌─────────────────────────────────────────┐
 │     PRESENTATION LAYER (JavaFX)         │
-│  ┌──────────┐  ┌──────────┐  ┌───────┐ │
-│  │ FXML     │  │ CSS       │  │ Assets│ │
-│  │ Views    │  │ Styles    │  │ Images│ │
-│  └──────────┘  └──────────┘  └───────┘ │
+│  ┌──────────┐  ┌──────────┐  ┌───────┐  │
+│  │ FXML     │  │ CSS       │ │ Assets│  │
+│  │ Views    │  │ Styles    │ │ Images│  │
+│  └──────────┘  └──────────┘  └───────┘  │
 └─────────────────────────────────────────┘
                     ↕
 ┌─────────────────────────────────────────┐
@@ -189,7 +189,7 @@ To demonstrate enterprise software development skills including secure authentic
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **Java 17** or higher ([Download here](https://adoptium.net/temurin/releases/))
@@ -260,7 +260,7 @@ src/main/resources/config.properties
 
 ---
 
-## 💡 Key Learnings & Technical Decisions
+## Key Learnings & Technical Decisions
 
 ### Problem-Solving Highlights
 
@@ -294,7 +294,7 @@ src/main/resources/config.properties
 
 ---
 
-## 📈 Project Statistics
+## Project Statistics
 
 - **Total Lines of Code**: ~8,500+ Java lines
 - **Controllers**: 15+ FXML controllers
@@ -308,49 +308,7 @@ src/main/resources/config.properties
 
 ---
 
-## 📁 Project Structure
-
-```
-Supply-Chain-Management-System/
-│
-├── pom.xml                          # Maven configuration
-├── README.md                        # This file
-│
-├── src/
-│   ├── main/
-│   │   ├── java/com/team/supplychain/
-│   │   │   ├── Main.java                           # Application entry point
-│   │   │   ├── controllers/                        # UI Controllers (MVC)
-│   │   │   │   ├── LoginController.java
-│   │   │   │   ├── AdminDashboardController.java
-│   │   │   │   ├── ManagerInventoryController.java
-│   │   │   │   └── EmployeeAttendanceViewController.java
-│   │   │   ├── models/                             # Data models (POJOs)
-│   │   │   │   ├── User.java
-│   │   │   │   ├── InventoryItem.java
-│   │   │   │   ├── Employee.java
-│   │   │   │   └── AttendanceRecord.java
-│   │   │   ├── dao/                                # Database Access Objects
-│   │   │   │   ├── UserDAO.java
-│   │   │   │   ├── InventoryDAO.java
-│   │   │   │   ├── AttendanceDAO.java
-│   │   │   │   └── AuditLogDAO.java
-│   │   │   ├── utils/                              # Utility classes
-│   │   │   │   ├── DatabaseConnection.java
-│   │   │   │   └── PasswordUtil.java
-│   │   │   └── enums/                              # Enumerations
-│   │   │       └── UserRole.java
-│   │   └── resources/
-│   │       ├── fxml/                               # FXML UI layouts
-│   │       ├── css/                                # Stylesheets
-│   │       └── config.properties                   # Configuration
-│   └── test/                                       # Unit tests
-└── target/                                         # Build output
-```
-
----
-
-## 🛠️ Common Maven Commands
+## Common Maven Commands
 
 ```bash
 # Clean build directory
@@ -377,7 +335,7 @@ mvn clean compile javafx:run
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Issue: "mvn: command not found"
 
@@ -407,19 +365,19 @@ mvn javafx:run
 
 ---
 
-## 🔗 Repository & License
+## Repository & License
 
 **GitHub Repository**: [View Source Code](https://github.com/JawadAlnatah/Integrated-Supply-Chain-Management-System-with-QR-Based-Employee-Attendance-Tracking-)
 
 **License**: This project was developed as part of academic coursework at Imam Abdulrahman Bin Faisal University. Free to use for educational and portfolio purposes.
 
 **Developer**: Jawad Ali Alnatah
-**Contact**: [Your Email/LinkedIn]
-**Project Duration**: September 2024 - January 2025
+**Contact**: Jawad.Alnatah@gmail.com
+
 
 ---
 
-## 🎓 Academic Context
+## Academic Context
 
 Developed as part of CSC 305: Software Engineering course demonstrating:
 - Software Development Life Cycle (SDLC)

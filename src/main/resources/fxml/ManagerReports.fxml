@@ -131,7 +131,7 @@
 
         <Label text="Recent Reports"><font><Font name="System Bold" size="20"/></font><style>-fx-text-fill: #2c3e50;</style></Label>
 
-        <TableView fx:id="recentReportsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+        <TableView fx:id="recentReportsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: #ffffff; -fx-table-cell-border-color: #e5e7eb; -fx-border-color: #d1d5da; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.0, 0, 3);">
             <columns>
                 <TableColumn fx:id="reportNameColumn" text="Report Name" prefWidth="300"/>
                 <TableColumn fx:id="reportTypeColumn" text="Type" prefWidth="150"/>

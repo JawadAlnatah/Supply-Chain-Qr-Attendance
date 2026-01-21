@@ -83,8 +83,12 @@
                              styleClass="modern-combobox"
                              maxWidth="Infinity">
                         <style>
+                            -fx-background-color: #ffffff;
                             -fx-background-radius: 12;
+                            -fx-border-color: #d1d5da;
+                            -fx-border-width: 1.5px;
                             -fx-border-radius: 12;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0.0, 0, 2);
                         </style>
                     </ComboBox>
                 </VBox>
@@ -104,8 +108,12 @@
                              styleClass="modern-combobox"
                              maxWidth="Infinity">
                         <style>
+                            -fx-background-color: #ffffff;
                             -fx-background-radius: 12;
+                            -fx-border-color: #d1d5da;
+                            -fx-border-width: 1.5px;
                             -fx-border-radius: 12;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0.0, 0, 2);
                         </style>
                     </ComboBox>
                 </VBox>
@@ -125,8 +133,12 @@
                              styleClass="modern-combobox"
                              maxWidth="Infinity">
                         <style>
+                            -fx-background-color: #ffffff;
                             -fx-background-radius: 12;
+                            -fx-border-color: #d1d5da;
+                            -fx-border-width: 1.5px;
                             -fx-border-radius: 12;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0.0, 0, 2);
                         </style>
                     </ComboBox>
                 </VBox>
@@ -146,8 +158,12 @@
                              styleClass="modern-combobox"
                              maxWidth="Infinity">
                         <style>
+                            -fx-background-color: #ffffff;
                             -fx-background-radius: 12;
+                            -fx-border-color: #d1d5da;
+                            -fx-border-width: 1.5px;
                             -fx-border-radius: 12;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0.0, 0, 2);
                         </style>
                     </ComboBox>
                 </VBox>
@@ -168,8 +184,12 @@
                              wrapText="true"
                              prefRowCount="5">
                         <style>
+                            -fx-background-color: #ffffff;
                             -fx-background-radius: 12;
+                            -fx-border-color: #d1d5da;
+                            -fx-border-width: 1.5px;
                             -fx-border-radius: 12;
+                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0.0, 0, 2);
                         </style>
                     </TextArea>
                     <Label text="* Required fields">
@@ -433,12 +453,12 @@
                 </Button>
             </HBox>
 
-            <!-- Table with Clean Design -->
+            <!-- Enhanced Modern Table -->
             <TableView fx:id="itemsTable"
                       styleClass="modern-table"
                       prefHeight="400"
                       minHeight="400"
-                      style="-fx-background-color: #fafbfc; -fx-table-cell-border-color: #e1e4e8; -fx-border-color: #d1d5da; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
+                      style="-fx-background-color: #ffffff; -fx-table-cell-border-color: #e5e7eb; -fx-border-color: #d1d5da; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.0, 0, 3);">
                 <columns>
                     <TableColumn fx:id="itemNameColumn"
                                text="Item Name"
@@ -472,8 +492,8 @@
 
                     <TableColumn fx:id="actionsColumn"
                                text="Actions"
-                               prefWidth="100"
-                               minWidth="80"
+                               prefWidth="120"
+                               minWidth="120"
                                style="-fx-alignment: CENTER;"/>
                 </columns>
 

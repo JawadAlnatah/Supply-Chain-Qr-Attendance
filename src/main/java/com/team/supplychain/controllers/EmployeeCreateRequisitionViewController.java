@@ -1,6 +1,8 @@
 package com.team.supplychain.controllers;
 
+import com.team.supplychain.dao.InventoryDAO;
 import com.team.supplychain.dao.RequisitionDAO;
+import com.team.supplychain.models.InventoryItem;
 import com.team.supplychain.models.Requisition;
 import com.team.supplychain.models.User;
 import javafx.beans.property.*;
@@ -72,6 +74,7 @@ public class EmployeeCreateRequisitionViewController {
     private Map<String, String> supplierCategories;
     private int requisitionCounter = 1;
     private RequisitionDAO requisitionDAO;
+    private InventoryDAO inventoryDAO;
 
     // Filtering data structures
     private Map<String, Set<String>> supplierToCategories; // supplier → categories
@@ -96,6 +99,7 @@ public class EmployeeCreateRequisitionViewController {
 
         // Initialize DAO
         requisitionDAO = new RequisitionDAO();
+        inventoryDAO = new InventoryDAO();
 
         // Initialize collections
         itemsList = FXCollections.observableArrayList();
@@ -106,9 +110,9 @@ public class EmployeeCreateRequisitionViewController {
         supplierToCategories = new HashMap<>();
         filteredItems = FXCollections.observableArrayList();
 
-        // Load dummy data
-        loadDummySuppliers();
-        loadDummyInventoryItems();
+        // Load inventory data from database first, then extract suppliers
+        loadInventoryItemsFromDatabase();
+        loadSuppliersFromInventory();
         loadCategories();
         loadPriorities();
         loadDepartments();
@@ -140,28 +144,29 @@ public class EmployeeCreateRequisitionViewController {
     }
 
     /**
-     * Load dummy supplier data for dairy company
+     * Load suppliers from the inventory data that was already loaded from database
      */
-    private void loadDummySuppliers() {
-        suppliers.addAll(
-            "Al-Safi Dairy Farm - Riyadh",
-            "Nadec Dairy Farm - Kharj",
-            "Almarai Farm - Eastern Province",
-            "Gulf Packaging Supplies - Dammam",
-            "Saudi Paper & Plastic Co. - Jeddah",
-            "Modern Office Equipment - Riyadh"
-        );
+    private void loadSuppliersFromInventory() {
+        // Extract unique suppliers from the supplierToCategories map (populated during inventory loading)
+        if (!supplierToCategories.isEmpty()) {
+            suppliers.addAll(supplierToCategories.keySet());
+            suppliers.sort(String::compareTo);
 
-        supplierCategories.put("Al-Safi Dairy Farm - Riyadh", "Raw Materials");
-        supplierCategories.put("Nadec Dairy Farm - Kharj", "Raw Materials");
-        supplierCategories.put("Almarai Farm - Eastern Province", "Raw Materials");
-        supplierCategories.put("Gulf Packaging Supplies - Dammam", "Packaging");
-        supplierCategories.put("Saudi Paper & Plastic Co. - Jeddah", "Packaging");
-        supplierCategories.put("Modern Office Equipment - Riyadh", "Office Supplies");
+            // Build supplierCategories map (supplier -> first category, for backward compatibility)
+            for (Map.Entry<String, Set<String>> entry : supplierToCategories.entrySet()) {
+                String supplier = entry.getKey();
+                Set<String> categories = entry.getValue();
+                if (!categories.isEmpty()) {
+                    supplierCategories.put(supplier, categories.iterator().next());
+                }
+            }
+        }
 
         if (supplierCombo != null) {
             supplierCombo.setItems(suppliers);
         }
+
+        System.out.println("Loaded " + suppliers.size() + " suppliers from inventory data");
     }
 
     /**
@@ -271,57 +276,38 @@ public class EmployeeCreateRequisitionViewController {
     }
 
     /**
-     * Load dummy inventory items with prices, categories, and suppliers for dairy company
+     * Load inventory items from the database
      */
-    private void loadDummyInventoryItems() {
-        // RAW MATERIALS
-        inventoryMap.put("Whole Milk - Bulk (1000L)",
-            new InventoryItemData("Raw Materials", "Al-Safi Dairy Farm - Riyadh", new BigDecimal("2500.00")));
-        inventoryMap.put("Fresh Cream (200L)",
-            new InventoryItemData("Raw Materials", "Nadec Dairy Farm - Kharj", new BigDecimal("800.00")));
-        inventoryMap.put("Skimmed Milk Powder (50kg)",
-            new InventoryItemData("Raw Materials", "Almarai Farm - Eastern Province", new BigDecimal("450.00")));
-        inventoryMap.put("Butter (25kg blocks)",
-            new InventoryItemData("Raw Materials", "Al-Safi Dairy Farm - Riyadh", new BigDecimal("320.00")));
-        inventoryMap.put("Cheese Cultures (5kg)",
-            new InventoryItemData("Raw Materials", "Nadec Dairy Farm - Kharj", new BigDecimal("180.00")));
+    private void loadInventoryItemsFromDatabase() {
+        // Fetch all inventory items from database
+        List<InventoryItem> dbItems = inventoryDAO.getAllInventoryItems();
 
-        // PACKAGING
-        inventoryMap.put("Milk Bottles 1L (1000 units)",
-            new InventoryItemData("Packaging", "Gulf Packaging Supplies - Dammam", new BigDecimal("850.00")));
-        inventoryMap.put("Plastic Bottle Caps (5000 units)",
-            new InventoryItemData("Packaging", "Gulf Packaging Supplies - Dammam", new BigDecimal("120.00")));
-        inventoryMap.put("Product Labels - Roll (2000 units)",
-            new InventoryItemData("Packaging", "Saudi Paper & Plastic Co. - Jeddah", new BigDecimal("220.00")));
-        inventoryMap.put("Cardboard Boxes - Large (500 units)",
-            new InventoryItemData("Packaging", "Saudi Paper & Plastic Co. - Jeddah", new BigDecimal("380.00")));
-        inventoryMap.put("Shrink Wrap Film (100m roll)",
-            new InventoryItemData("Packaging", "Gulf Packaging Supplies - Dammam", new BigDecimal("95.00")));
-        inventoryMap.put("Yogurt Cups 200ml (2000 units)",
-            new InventoryItemData("Packaging", "Gulf Packaging Supplies - Dammam", new BigDecimal("420.00")));
+        if (dbItems == null || dbItems.isEmpty()) {
+            System.out.println("No inventory items found in database");
+            return;
+        }
 
-        // OFFICE SUPPLIES
-        inventoryMap.put("Office Chair - Ergonomic",
-            new InventoryItemData("Office Supplies", "Modern Office Equipment - Riyadh", new BigDecimal("250.00")));
-        inventoryMap.put("Whiteboard Markers (Set of 12)",
-            new InventoryItemData("Office Supplies", "Modern Office Equipment - Riyadh", new BigDecimal("8.50")));
-        inventoryMap.put("Printer Paper A4 (10 reams)",
-            new InventoryItemData("Office Supplies", "Modern Office Equipment - Riyadh", new BigDecimal("45.00")));
-        inventoryMap.put("Hand Sanitizer (500ml)",
-            new InventoryItemData("Office Supplies", "Modern Office Equipment - Riyadh", new BigDecimal("8.00")));
+        System.out.println("Loaded " + dbItems.size() + " inventory items from database");
 
-        inventoryItems.addAll(inventoryMap.keySet());
-        inventoryItems.sort(String::compareTo);
+        // Populate inventoryMap with database items
+        for (InventoryItem item : dbItems) {
+            String itemName = item.getItemName();
+            String category = item.getCategory() != null ? item.getCategory() : "Uncategorized";
+            String supplierName = item.getSupplierName() != null ? item.getSupplierName() : "Unknown Supplier";
+            BigDecimal unitPrice = item.getUnitPrice() != null ? item.getUnitPrice() : BigDecimal.ZERO;
 
-        // Build supplier → categories reverse lookup for filtering
-        for (Map.Entry<String, InventoryItemData> entry : inventoryMap.entrySet()) {
-            String supplier = entry.getValue().supplier;
-            String category = entry.getValue().category;
+            // Add to inventory map
+            inventoryMap.put(itemName, new InventoryItemData(category, supplierName, unitPrice));
 
+            // Build supplier → categories reverse lookup for filtering
             supplierToCategories
-                .computeIfAbsent(supplier, k -> new HashSet<>())
+                .computeIfAbsent(supplierName, k -> new HashSet<>())
                 .add(category);
         }
+
+        // Populate inventoryItems list and sort
+        inventoryItems.addAll(inventoryMap.keySet());
+        inventoryItems.sort(String::compareTo);
     }
 
     /**

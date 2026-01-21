@@ -37,19 +37,6 @@
 
     <!-- Action Buttons -->
     <HBox spacing="15">
-        <Button fx:id="createPOButton" text="+ Create New PO" onAction="#handleCreatePO" styleClass="action-button-primary">
-            <font>
-                <Font name="System Bold" size="13"/>
-            </font>
-            <style>
-                -fx-background-color: linear-gradient(to bottom right, #a78bfa, #8b5cf6);
-                -fx-text-fill: white;
-                -fx-background-radius: 10px;
-                -fx-padding: 12px 24px;
-                -fx-cursor: hand;
-                -fx-effect: dropshadow(gaussian, rgba(167,139,250,0.4), 10, 0, 0, 3);
-            </style>
-        </Button>
         <Button fx:id="approveButton" text="✓ Approve Selected" onAction="#handleApprove" styleClass="action-button-secondary">
             <font>
                 <Font name="System Bold" size="13"/>
@@ -279,7 +266,7 @@
             </TextField>
         </HBox>
 
-        <!-- TableView -->
+        <!-- Enhanced Modern TableView -->
         <TableView fx:id="purchaseOrdersTable" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="selectColumn" text="☑" prefWidth="50"/>
@@ -293,8 +280,13 @@
                 <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="180"/>
             </columns>
             <style>
-                -fx-background-color: transparent;
-                -fx-table-cell-border-color: transparent;
+                -fx-background-color: #ffffff;
+                -fx-table-cell-border-color: #e5e7eb;
+                -fx-border-color: #d1d5da;
+                -fx-border-width: 1.5px;
+                -fx-border-radius: 12px;
+                -fx-background-radius: 12px;
+                -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.0, 0, 3);
             </style>
         </TableView>
     </VBox>

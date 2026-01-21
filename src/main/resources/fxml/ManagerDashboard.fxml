@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
@@ -388,24 +386,21 @@
 
                 <!-- ROW 2: Stock Levels Chart and Recent Activity -->
                 <HBox spacing="20" alignment="TOP_CENTER">
-                    <!-- Stock Levels Bar Chart -->
+                    <!-- Stock Levels Pie Chart -->
                     <VBox styleClass="stat-card-modern" spacing="15" HBox.hgrow="ALWAYS" prefWidth="550">
                         <padding>
                             <Insets top="25" right="25" bottom="25" left="25"/>
                         </padding>
-                        <Label text="Stock Levels by Category" styleClass="section-title">
+                        <Label text="Inventory Distribution by Category" styleClass="section-title">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>
                         </Label>
-                        <BarChart fx:id="stockLevelsChart" legendVisible="false" animated="true" barGap="3" categoryGap="20">
-                            <xAxis>
-                                <CategoryAxis label="Product Category" side="BOTTOM"/>
-                            </xAxis>
-                            <yAxis>
-                                <NumberAxis label="Stock %" side="LEFT" upperBound="100"/>
-                            </yAxis>
-                        </BarChart>
+                        <PieChart fx:id="stockLevelsPieChart" legendVisible="true" legendSide="RIGHT"
+                                  labelsVisible="true" labelLineLength="15" startAngle="90"
+                                  animated="true" prefHeight="300"
+                                  style="-fx-background-color: transparent; -fx-padding: 15px;">
+                        </PieChart>
                     </VBox>
 
                     <!-- Recent Alerts & Actions Panel -->

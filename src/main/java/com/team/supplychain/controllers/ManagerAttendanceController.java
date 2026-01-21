@@ -285,11 +285,68 @@ public class ManagerAttendanceController {
     }
 
     /**
-     * Export attendance report (placeholder)
+     * Export attendance report to CSV
      */
     @FXML
     private void handleExport() {
-        showInfo("Export", "Attendance report export functionality will be implemented.");
+        if (attendanceData == null || attendanceData.isEmpty()) {
+            showError("No Data", "There is no attendance data to export.");
+            return;
+        }
+
+        // File chooser for save location
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Export Attendance Report");
+        fileChooser.setInitialFileName("attendance_report_" + java.time.LocalDate.now() + ".csv");
+        fileChooser.getExtensionFilters().add(
+            new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv")
+        );
+
+        java.io.File file = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+        if (file != null) {
+            try {
+                exportToCSV(file);
+                showInfo("Export Successful", "Attendance report exported to:\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Export Failed", "Failed to export attendance report: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Export attendance data to CSV file
+     */
+    private void exportToCSV(java.io.File file) throws Exception {
+        try (java.io.PrintWriter writer = new java.io.PrintWriter(file)) {
+            // Write CSV header
+            writer.println("Employee ID,Employee Name,Department,Date,Check In,Check Out,Hours Worked,Status");
+
+            // Write attendance records
+            for (Attendance record : attendanceData) {
+                writer.printf("%s,%s,%s,%s,%s,%s,%s,%s%n",
+                    escapeCSV(String.valueOf(record.getEmployeeId())),
+                    escapeCSV(record.getEmployeeFullName()),
+                    escapeCSV(record.getDepartment()),
+                    escapeCSV(record.getDate() != null ? record.getDate().toString() : ""),
+                    escapeCSV(record.getFormattedCheckInTime()),
+                    escapeCSV(record.getFormattedCheckOutTime()),
+                    escapeCSV(record.getFormattedHours()),
+                    escapeCSV(record.getStatus() != null ? record.getStatus().toString() : "")
+                );
+            }
+        }
+    }
+
+    /**
+     * Escape CSV values properly (handle commas, quotes, newlines)
+     */
+    private String escapeCSV(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 
     /**
