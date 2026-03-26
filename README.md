@@ -1,27 +1,78 @@
-# Supply Chain Management System with Employee Attendance Tracking
+# Supply Chain Management System with QR-Based Employee Attendance Tracking
 
-> A comprehensive JavaFX enterprise application featuring role-based access control, real-time inventory management, and automated attendance tracking
+> A comprehensive JavaFX enterprise application featuring role-based access control, real-time inventory management, and QR-based attendance tracking
 
-- **Developer:** Jawad Ali Alnatah
-- **Technologies:** Java 17, JavaFX, Maven, MySQL/TiDB Cloud, BCrypt
-- **Architecture:** MVC Pattern with DAO Layer
+![Java](https://img.shields.io/badge/Java-17_LTS-007396?logo=java)
+![JavaFX](https://img.shields.io/badge/JavaFX-21.0.1-informational)
+![Maven](https://img.shields.io/badge/Build-Maven_3.9.11-C71A36?logo=apachemaven)
+![Database](https://img.shields.io/badge/Database-TiDB_Cloud_(MySQL)-4A4A55?logo=mysql)
+![License](https://img.shields.io/badge/License-Academic-blue)
 
 ---
 
 ## Project Overview
 
-An enterprise-grade desktop application that streamlines supply chain operations and employee management. Built from the ground up using JavaFX and MySQL, this system demonstrates full-stack development capabilities with secure authentication, multi-role dashboards, real-time data visualization, and comprehensive audit logging.
+An enterprise-grade desktop application that streamlines supply chain operations and employee management for mid-size organizations. Built from the ground up with JavaFX and a cloud MySQL database (TiDB), it covers secure authentication, multi-role dashboards, QR-based attendance tracking, requisition workflows, and comprehensive audit logging.
 
 **What it does:**
 - Manages inventory across multiple categories with low-stock alerts
-- Tracks employee attendance with automated status calculations
-- Handles purchase orders and requisition workflows
-- Provides role-based dashboards (Admin, Manager, Employee)
-- Maintains complete audit trails for security compliance
-- Generates exportable reports (CSV format)
+- Tracks employee attendance via QR code scanning with automatic LATE/PRESENT detection
+- Handles purchase requisition workflows with multi-step manager approval
+- Provides role-based dashboards (Admin, Manager, Employee, Supplier)
+- Maintains immutable audit trails for security and compliance
+- Supports exportable reports (CSV, Excel, PDF)
 
-**Why I built it:**  
-To demonstrate enterprise software development skills including secure authentication, database design, async UI programming, and implementing real-world business logic for supply chain and HR management.
+---
+
+## Team & My Role
+
+This was a 6-person team project for CSC 305 (Software Engineering) at Imam Abdulrahman Bin Faisal University.
+
+| Name | ID | Role |
+|------|----|------|
+| **Jawad Ali Alnatah** | 2240002923 | **Team Leader** |
+| Mustafa AbdulKarim | 2240002959 | Backend Developer & Database Designer |
+| Abdullah Jaffer Masiri | 2240004545 | UI/UX Designer |
+| Ahmed Hussain Alghazwe | 2240002359 | Frontend Developer |
+| Abdullah Abdulaziz Alhamadi | 2240003012 | Frontend Developer & GUI Designer |
+| Mohammad Khalid Alqallaf | 2240005145 | Quality Assurance & Documentation |
+
+### My Contributions as Team Leader
+
+As team leader, I was responsible for laying the **entire technical foundation** that the rest of the team built on:
+
+- **Architecture Design** — Designed the full 3-tier layered architecture (Presentation → Controller → DAO → Database) and established the MVC + DAO patterns used throughout the project
+- **Backend Foundation** — Built the core backend infrastructure: database connection singleton, authentication system with BCrypt, DAO base pattern, session management, and the User/Employee/Audit models
+- **Database Design** — Designed the full relational schema (8+ tables), wrote the DDL scripts, set up TiDB Cloud with SSL/TLS, and established all foreign key relationships
+- **Frontend Foundation** — Created the main navigation shell (Dashboard), login screen, and the BorderPane-based scene-switching pattern that all other views follow
+- **Security Implementation** — Implemented BCrypt password hashing, Role-Based Access Control (RBAC), SQL injection prevention via PreparedStatements, and the full audit logging system
+- **Development Standards** — Set up Maven, established coding conventions, created the Git branching strategy, and wrote the developer guide so teammates could onboard quickly
+- **Team Coordination** — Led weekly meetings, resolved technical blockers for teammates, and integrated everyone's work into the main branch
+
+---
+
+## Screenshots
+
+### Login Screen
+![Login Screen](images/Login%20Screen.png)
+
+### Admin Dashboard
+![Admin Dashboard](images/Admin%20Dashboard.png)
+
+### Manager Dashboard
+![Manager Dashboard](images/Manager%20Dashboard.png)
+
+### Employee Attendance Dashboard
+![Employee Attendance Dashboard](images/Employee%20Attendance%20Dashboard.png)
+
+### QR Code Attendance Tracking
+![QR Code Attendance Tracking](images/QR%20Code%20Attendance%20Tracking.png)
+
+### Purchase Requisition — Employee View
+![Requisition Employee POV](images/Requisition%20Employee%20pov.png)
+
+### Purchase Requisition — Manager View
+![Requisition Manager POV](images/Requisition%20manager%20pov.png)
 
 ---
 
@@ -34,138 +85,82 @@ To demonstrate enterprise software development skills including secure authentic
 - **Account management** with disable/enable functionality
 
 ### Multi-Role Dashboard System
-- **Admin Dashboard**: System health monitoring, user management, security alerts
-- **Manager Dashboard**: Inventory overview, purchase orders, employee tracking
+- **Admin Dashboard**: System health monitoring, user management, security alerts, audit log viewer
+- **Manager Dashboard**: Inventory overview, purchase order tracking, employee attendance
 - **Employee Dashboard**: Live attendance status, weekly calendar, personal requisitions
 
 ### Inventory Management
 - Real-time stock tracking with status indicators (In Stock / Low Stock / Out of Stock)
 - Category-based organization and filtering
 - Supplier integration with purchase order linking
-- **CSV export functionality** for reporting
-- Dynamic bar charts for inventory distribution visualization
+- Dynamic bar charts for inventory distribution
+- CSV export for reporting
 
-### Employee Attendance System
-- Automated check-in/check-out with timestamp recording
-- **Automatic LATE detection** (after 8:30 AM threshold)
-- Weekly and monthly attendance statistics
-- Visual calendar view with attendance indicators
-- Date-range queries for historical data
-- Infrastructure ready for QR code integration
+### QR-Based Employee Attendance
+- Unique QR code per employee encoded with their ID
+- Web-based scanner interface accessible from any mobile device
+- **Automatic LATE detection** (configurable threshold, default 8:30 AM)
+- Work duration calculation (check-in to check-out)
+- Weekly and monthly attendance statistics with calendar view
 
-### Requisition & Purchase Orders
-- Employee requisition creation and tracking
-- Status workflow (Pending → Approved → Completed)
-- Manager approval system
-- Purchase order management with supplier linking
-- Real-time status updates and notifications
+### Purchase Requisition Workflow
+- Employee creates requisition with item selection and justification
+- Status workflow: `PENDING → IN_REVIEW → APPROVED / REJECTED`
+- Manager approval with notes and priority assignment
+- Real-time status updates, full audit trail
 
 ### Audit & Compliance
-- **Immutable audit trail** for security compliance
-- Track all critical actions (LOGIN, CREATE, UPDATE, DELETE)
-- Advanced filtering (by action type, module, result, date range)
+- **Immutable audit trail** — every CREATE, UPDATE, DELETE, LOGIN, and SECURITY_INCIDENT logged
+- Advanced filtering (action type, module, user, date range, result)
 - Export to CSV for compliance reporting
-- Log archival capability
 
 ---
 
-## Technical Highlights
+## Architecture
 
-### Software Architecture
-- **MVC Pattern**: Clean separation between views (FXML), controllers (business logic), and models (POJOs)
-- **DAO Pattern**: Centralized database access with PreparedStatements to prevent SQL injection
-- **Async Programming**: JavaFX Task pattern for non-blocking database operations
-- **Observer Pattern**: Observable collections for reactive UI updates
 
-### Key Technical Implementations
+![Layered Architecture](images/Layered%20arct.png)
 
-**1. Secure Authentication Pipeline**
-- BCrypt hashing with configurable salt rounds
-- Asynchronous authentication (prevents UI freezing during 100-500ms hash verification)
-- Failed login tracking for security monitoring
-- Generic error messages to prevent username enumeration
-
-**2. Performance Optimization**
-- Background thread execution for heavy database operations
-- 30-second auto-refresh intervals on dashboards
-- Pagination support for large datasets (100 records per page)
-- Lazy loading with search/filter persistence
-
-**3. Database Design**
-- TiDB Cloud (MySQL 8.0 compatible) with SSL/TLS encryption
-- Proper foreign key relationships and indexes
-- Singleton connection pattern with connection pooling
-- Transaction support for data consistency
-
-**4. UI/UX Excellence**
-- Custom cell factories for status badges (color-coded: green/yellow/red)
-- Real-time data visualization with BarChart components
-- Responsive layouts using BorderPane and VBox/HBox
-- Async data loading with progress indicators
-
-**5. Business Logic Implementation**
-- Automatic LATE status calculation based on check-in time threshold
-- Low stock detection (quantity ≤ reorder level)
-- Work duration calculation with formatted display
-- Requisition approval workflow with status transitions
-
-### Code Quality
-- Extensive Javadoc documentation for all public APIs
-- Consistent naming conventions (camelCase, PascalCase)
-- Try-with-resources for proper JDBC resource management
-- Comprehensive error handling with user-friendly dialogs
+**Key Design Patterns:**
+- **MVC (Model-View-Controller):** Separation of concerns between UI and logic
+- **DAO (Data Access Object):** Centralized database operations
+- **Singleton:** Single database connection instance
+- **Observer:** JavaFX Observable collections for reactive UI
+- **Factory:** Cell factories for custom table rendering
 
 ---
 
 ## Technology Stack
 
-| Category | Technologies |
-|----------|-------------|
-| **Language** | Java 17 (LTS) |
-| **UI Framework** | JavaFX 21.0.1 with FXML |
-| **Build Tool** | Apache Maven 3.9.11 |
-| **Database** | TiDB Cloud (MySQL 8.0 compatible) |
-| **Security** | BCrypt (jBCrypt 0.4) |
-| **Libraries** | ZXing (QR codes), Apache POI (Excel), iText (PDF), Gson (JSON) |
-| **JDBC** | MySQL Connector/J 8.2.0 |
-| **Architecture** | MVC + DAO Pattern |
-
-**Development Environment:**
-- IDE: IntelliJ IDEA / Visual Studio Code
-- Version Control: Git & GitHub
-- Database Client: TiDB Cloud Console
-
----
-
-## System Architecture
-
-### Layered Architecture Overview
-<img width="799" height="897" alt="image" src="https://github.com/user-attachments/assets/dd4ded09-4288-4176-9cbd-0e3a423f44dc" />
-
-**Key Design Patterns:**
-- **MVC (Model-View-Controller)**: Separation of concerns between UI and logic
-- **DAO (Data Access Object)**: Centralized database operations
-- **Singleton**: Single database connection instance
-- **Observer**: JavaFX Observable collections for reactive UI
-- **Factory**: Cell factories for custom table rendering
+| Category | Technology |
+|----------|-----------|
+| Language | Java 17 (LTS) |
+| UI Framework | JavaFX 21.0.1 with FXML |
+| Build Tool | Apache Maven 3.9.11 |
+| Database | TiDB Cloud (MySQL 8.0 compatible) |
+| Security | BCrypt via jBCrypt 0.4 |
+| QR Codes | ZXing 3.5.3 |
+| Reporting | Apache POI (Excel), iText (PDF) |
+| Web Server | Jetty 11 (QR scanner endpoint) |
+| Testing | JUnit 5, TestFX, Mockito |
 
 ---
 
 ## Quick Start
 
 ### Prerequisites
-- **Java 17** or higher ([Download here](https://adoptium.net/temurin/releases/))
+- **Java 17+** ([Adoptium Temurin](https://adoptium.net/temurin/releases/))
 - **Apache Maven 3.9+** ([Installation guide](https://maven.apache.org/install.html))
-- **Git** (for cloning the repository)
-- Internet connection (for database access)
+- Internet connection (for cloud database access)
 
 ### Installation
+
 ```bash
 # 1. Clone the repository
-git clone https://github.com/JawadAlnatah/Integrated-Supply-Chain-Management-System-with-QR-Based-Employee-Attendance-Tracking-.git
-cd Supply-Chain-Management-System-With-QR-Based-Attendance-Employee-Tracking-
+git clone https://github.com/JawadAlnatah/Supply-Chain-Qr-Attendance
+cd Supply-Chain-Qr-Attendance
 
-# 2. Build the project (downloads dependencies)
+# 2. Build the project (downloads all dependencies)
 mvn clean install
 
 # 3. Run the application
@@ -174,179 +169,103 @@ mvn javafx:run
 
 ### Database Configuration
 
-**IMPORTANT:** This project uses TiDB Cloud (MySQL-compatible database). You need to configure your own database credentials.
+This project uses TiDB Cloud (MySQL-compatible). You need your own database credentials.
 
-**Step 1: Copy the example configuration file**
+**Step 1:** Copy the example config
 ```bash
 cp src/main/resources/config.properties.example src/main/resources/config.properties
 ```
 
-**Step 2: Edit `config.properties` with your database credentials**
-
-Open `src/main/resources/config.properties` and replace the placeholder values:
+**Step 2:** Edit `config.properties`
 ```properties
 db.url=jdbc:mysql://YOUR_TIDB_HOST:4000/supply_chain_qr?sslMode=VERIFY_IDENTITY&useSSL=true
 db.username=YOUR_USERNAME
 db.password=YOUR_PASSWORD
 ```
 
-**Step 3: Get TiDB Cloud Credentials** (Free Tier Available)
-1. Sign up at [TiDB Cloud](https://tidbcloud.com/)
-2. Create a new cluster (free tier available)
-3. Use the database setup scripts in `/db/` directory to create tables
-4. Copy connection details to `config.properties`
+**Step 3:** Get free TiDB Cloud credentials at [tidbcloud.com](https://tidbcloud.com/), create a cluster, run the schema scripts in `/db/`, then connect.
 
-**Note:** The `config.properties` file is gitignored to protect your credentials. Never commit this file to GitHub.
+> `config.properties` is gitignored — never commit your credentials.
 
-For detailed setup instructions, see [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md).
+### Test Credentials
 
-### Login Credentials
-
-Test the application with these pre-configured accounts:
-
-| Username | Password | Role | Access Level |
-|----------|----------|------|--------------|
-| `admin` | `password123` | Administrator | Full system access |
-| `manager1` | `password123` | Manager | Inventory, employees, orders |
-| `employee1` | `employee123` | Employee | Personal dashboard, requisitions |
-
-### Database Configuration
-
-The application connects to a cloud-hosted TiDB database (MySQL compatible). Configuration is in:
-```
-src/main/resources/config.properties
-```
-
-**Note:** Database credentials are pre-configured for demo purposes. For production use, implement environment-based configuration.
-
----
-
-## Key Learnings & Technical Decisions
-
-### Problem-Solving Highlights
-
-**1. Async UI Performance**
-- **Challenge**: BCrypt password verification takes 100-500ms, freezing UI
-- **Solution**: Implemented JavaFX Task pattern for background authentication
-- **Result**: Smooth, responsive login experience
-
-**2. Real-Time Dashboard Updates**
-- **Challenge**: Dashboard data could become stale without page refresh
-- **Solution**: 30-second auto-refresh with cancellation on logout
-- **Result**: Always up-to-date metrics without manual refresh
-
-**3. CSV Export with Special Characters**
-- **Challenge**: Item names and descriptions containing commas broke CSV format
-- **Solution**: Implemented proper CSV escaping (wrap in quotes, escape quotes)
-- **Result**: Reliable exports that open correctly in Excel
-
-**4. Attendance Status Automation**
-- **Challenge**: Manual status entry prone to human error
-- **Solution**: Automatic LATE detection based on check-in timestamp vs 8:30 AM threshold
-- **Result**: Consistent, accurate attendance tracking
-
-### Why These Technologies?
-
-- **JavaFX**: Rich desktop UI framework with native feel, perfect for enterprise applications
-- **TiDB Cloud**: MySQL-compatible with serverless scaling, SSL/TLS security
-- **BCrypt**: Industry-standard password hashing resistant to rainbow table attacks
-- **Maven**: Simplified dependency management and consistent builds
-- **DAO Pattern**: Centralized database logic, easier to maintain and test
+| Username | Password | Role |
+|----------|----------|------|
+| `admin` | `password123` | Administrator |
+| `manager1` | `password123` | Manager |
+| `employee1` | `employee123` | Employee |
+| `supplier1` | `supplier123` | Supplier |
 
 ---
 
 ## Project Statistics
 
-- **Total Lines of Code**: ~8,500+ Java lines
-- **Controllers**: 15+ FXML controllers
-- **DAOs**: 7 data access objects
-- **Models**: 10+ domain models
-- **UI Views**: 20+ FXML layouts
-- **Database Tables**: 12+ tables
-- **Development Time**: 16 weeks (part-time development)
-- **Dependencies**: 15 external libraries
-- **Design Patterns**: MVC, DAO, Singleton, Observer, Factory
+| Metric | Value |
+|--------|-------|
+| Java lines of code | ~12,000 |
+| Controllers | 24 |
+| DAOs | 8 |
+| Domain models | 8 |
+| FXML views | 15+ |
+| Database tables | 8+ |
+| Test cases | 61 (96.7% pass rate) |
+| Development duration | 16 weeks |
+| Team size | 6 developers |
+| IEEE documentation | SDD (47+ pages), STS, SPMP |
 
 ---
 
 ## Common Maven Commands
+
 ```bash
-# Clean build directory
-mvn clean
-
-# Compile source code
-mvn compile
-
-# Run tests
-mvn test
-
-# Package as JAR
-mvn package
-
-# Install to local repository
-mvn install
-
-# Run the application
-mvn javafx:run
-
-# Clean, compile, and run
-mvn clean compile javafx:run
+mvn javafx:run          # Run the application (primary command)
+mvn clean install       # Clean build with all dependencies
+mvn compile             # Compile only
+mvn test                # Run tests
+mvn package             # Package as executable JAR
+mvn clean compile javafx:run  # Full clean run
 ```
 
 ---
 
 ## Troubleshooting
 
-### Issue: "mvn: command not found"
-
-**Solution:**
+**`mvn: command not found`**
 ```bash
-# Install Maven (Windows with Chocolatey)
-choco install maven -y
-
-# Verify installation
-mvn -version
+choco install maven -y   # Windows (Chocolatey)
+mvn -version             # Verify
 ```
 
-### Issue: Database Connection Failed
-
-**Solution:**
-1. Check internet connection
+**Database connection failed**
+1. Check your internet connection
 2. Verify credentials in `config.properties`
-3. Ensure TiDB Cloud database is accessible
+3. Ensure your TiDB Cloud cluster is active
 
-### Issue: JavaFX Runtime Components Missing
-
-**Solution:**
+**JavaFX runtime components missing**
 ```bash
-# Always use Maven to run (not IDE run button)
+# Always run via Maven, not the IDE run button
 mvn javafx:run
 ```
 
 ---
 
-## Repository & License
+## Academic Context
 
-- **GitHub Repository**: [View Source Code](https://github.com/JawadAlnatah/Integrated-Supply-Chain-Management-System-with-QR-Based-Employee-Attendance-Tracking-)
-- **License**: This project was developed as part of academic coursework at Imam Abdulrahman Bin Faisal University. Free to use for educational and portfolio purposes.
-- **Developer**: Jawad Ali Alnatah
-- **Contact**: Jawad.Alnatah@gmail.com
+Developed for **CSC 305: Software Engineering** at Imam Abdulrahman Bin Faisal University (Fall 2024), following a 16-week Agile development cycle with IEEE-standard documentation.
+
+**Deliverables:** IEEE 1016 Software Design Description, IEEE 829 Software Test Specification, SPMP with Gantt chart
+
+- **Instructor:** Dr. Rahma Ahmed
+- **Advisor:** Saeed Matar Alshahrani
+- **Institution:** College of Computer Science and Information Technology, IAU
 
 ---
 
-## Academic Context
+## Contact
 
-Developed as part of CSC 305: Software Engineering course demonstrating:
-- Software Development Life Cycle (SDLC)
-- Requirements analysis and system design
-- Agile development practices
-- Version control with Git
-- Documentation (SPMP, SRS, SDD)
-- Testing and quality assurance
-
-- **Advisor**: Saeed Matar Alshahrani
-- **Institution**: Imam Abdulrahman Bin Faisal University
-- **College**: Computer Science and Information Technology
+- **Jawad Ali Alnatah** (Team Leader & Architect)
+- Email: Jawad.Alnatah@gmail.com
+- GitHub: [JawadAlnatah](https://github.com/JawadAlnatah)
 
 ---
 
